@@ -1,0 +1,6 @@
+zone_id,zone_name,description,labour_multiplier,material_availability_note,source,source_date
+pune_central,Central Pune,Shivajinagar Deccan Camp Sadashiv Peth,1.08,High availability narrow access,PMC_SoR_2026,2026-09-30
+pune_east,East Pune,Kharadi Hadapsar Viman Nagar Wagholi,1.00,Good connectivity standard access,PMC_SoR_2026,2026-09-30
+pune_west,West & North-West,Baner Wakad Hinjewadi Aundh Bavdhan,1.05,High demand standard access,PMC_SoR_2026,2026-09-30
+pcmc,Pimpri-Chinchwad,Pimpri Chinchwad Nigdi Bhosari Rawet,0.98,Industrial zone good logistics,PMC_SoR_2026,2026-09-30
+pune_south_peripheral,South & Peripheral,Katraj Kondhwa Undri Ambegaon,0.95,Peripheral logistics extra transport,PMC_SoR_2026,2026-09-30
