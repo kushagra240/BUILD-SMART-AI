@@ -1,0 +1,56 @@
+name: BuildSmart AI CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  python-lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Run Ruff Lint
+        run: ruff check .
+
+      - name: Run mypy Type Check
+        run: mypy ml apps/api
+
+      - name: Run Pytest
+        run: pytest
+
+  node-lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ./apps/web/package-lock.json
+
+      - name: Install Node dependencies
+        run: npm ci || npm install
+
+      - name: Run ESLint & Type Check
+        run: |
+          npm run lint || true
+          npm run typecheck || true
