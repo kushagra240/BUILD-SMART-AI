@@ -48,9 +48,14 @@ jobs:
           cache-dependency-path: ./apps/web/package-lock.json
 
       - name: Install Node dependencies
-        run: npm ci || npm install
+        run: npm ci
 
-      - name: Run ESLint & Type Check
-        run: |
-          npm run lint || true
-          npm run typecheck || true
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript Type Check
+        run: npm run typecheck
+
+      - name: Run Vitest Unit Tests
+        run: npm test -- --run
+
