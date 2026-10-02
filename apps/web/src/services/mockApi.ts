@@ -89,8 +89,8 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
     return { category: s.category, pct: s.pct, floorAmt, remainder };
   });
 
-  let currentSum = rawBreakdowns.reduce((acc, curr) => acc + curr.floorAmt, 0);
-  let diff = p50Total - currentSum;
+  const currentSum = rawBreakdowns.reduce((acc, curr) => acc + curr.floorAmt, 0);
+  const diff = p50Total - currentSum;
 
   rawBreakdowns.sort((a, b) => b.remainder - a.remainder);
   for (let i = 0; i < diff; i++) {
