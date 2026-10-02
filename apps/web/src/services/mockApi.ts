@@ -78,7 +78,7 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
     { category: 'Plumbing', pct: 7.0 },
     { category: 'Electrical', pct: 7.0 },
     { category: 'Finishing', pct: 10.0 },
-    { category: 'Labour', pct: 14.0 },
+    { category: 'Labour', pct: 11.0 },
   ];
 
   // Calculate breakdown amounts ensuring exact sum to p50Total using largest remainder
