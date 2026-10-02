@@ -1,13 +1,13 @@
-material_id,category,grade_spec,description,unit,unit_cost_min_inr,unit_cost_max_inr,quality_level,min_budget_segment,notes,source,source_date
-mat_c01,cement,PPC IS 1489,Portland Pozzolana Cement for masonry & plaster,bag_50kg,340,370,economy,economy,Standard PPC grade for general works,PMC_SoR_2026,2026-09-30
-mat_c02,cement,OPC 43 IS 8112,Ordinary Portland Cement 43 Grade for structural RCC,bag_50kg,370,400,standard,standard,Structural RCC grade,PMC_SoR_2026,2026-09-30
-mat_c03,cement,OPC 53 IS 269,Ordinary Portland Cement 53 Grade high early strength,bag_50kg,400,440,premium,premium,High strength structural grade,PMC_SoR_2026,2026-09-30
-mat_s01,steel,Fe 500 IS 1786,TMT Rebars Fe 500 Grade,ton,52000,56000,economy,economy,Ductile TMT bars,PMC_SoR_2026,2026-09-30
-mat_s02,steel,Fe 500D IS 1786,TMT Rebars Fe 500D High Ductility,ton,56000,61000,standard,standard,Enhanced seismic safety grade,PMC_SoR_2026,2026-09-30
-mat_s03,steel,Fe 550D IS 1786,TMT Rebars Fe 550D Premium High Strength,ton,61000,67000,premium,premium,Premium high capacity structural steel,PMC_SoR_2026,2026-09-30
-mat_b01,bricks_blocks,AAC Blocks 600x200x150,Autoclaved Aerated Concrete Blocks,cu_m,3200,3600,standard,standard,Lightweight thermal efficient masonry,PMC_SoR_2026,2026-09-30
-mat_b02,bricks_blocks,Red Clay Bricks Class 35,Standard burnt red clay bricks,thousand,7500,9000,economy,economy,Traditional masonry bricks,PMC_SoR_2026,2026-09-30
-mat_f01,flooring,Vitrified Tiles 600x600mm,Glazed Vitrified Tiles,sq_ft,45,75,standard,standard,Stain resistant vitrified flooring,PMC_SoR_2026,2026-09-30
-mat_f02,flooring,Italian Marble / Large Slab,Premium polished natural marble / porcelain,sq_ft,180,350,premium,premium,Luxurious natural finish flooring,PMC_SoR_2026,2026-09-30
-mat_p01,paint,Tractor Emulsion,Acrylic Interior Wall Paint,litre,140,190,economy,economy,Washable interior wall paint,PMC_SoR_2026,2026-09-30
-mat_p02,paint,Premium Acrylic Emulsion,High durability smooth finish wall paint,litre,280,420,standard,standard,Stain resistant premium finish,PMC_SoR_2026,2026-09-30
+material_id,category,grade_spec,description,unit,unit_cost_min_inr,unit_cost_max_inr,quality_level,min_budget_segment,notes,data_type,source,source_date
+mat_c01,cement,PPC IS 1489,Portland Pozzolana Cement for masonry & plaster,bag_50kg,TODO(data),TODO(data),economy,economy,Standard PPC grade for general works,published_rate_derived,TODO(data),TODO(data)
+mat_c02,cement,OPC 43 IS 8112,Ordinary Portland Cement 43 Grade for structural RCC,bag_50kg,TODO(data),TODO(data),standard,standard,Structural RCC grade,published_rate_derived,TODO(data),TODO(data)
+mat_c03,cement,OPC 53 IS 269,Ordinary Portland Cement 53 Grade high early strength,bag_50kg,TODO(data),TODO(data),premium,premium,High strength structural grade,published_rate_derived,TODO(data),TODO(data)
+mat_s01,steel,Fe 500 IS 1786,TMT Rebars Fe 500 Grade,ton,TODO(data),TODO(data),economy,economy,Ductile TMT bars,published_rate_derived,TODO(data),TODO(data)
+mat_s02,steel,Fe 500D IS 1786,TMT Rebars Fe 500D High Ductility,ton,TODO(data),TODO(data),standard,standard,Enhanced seismic safety grade,published_rate_derived,TODO(data),TODO(data)
+mat_s03,steel,Fe 550D IS 1786,TMT Rebars Fe 550D Premium High Strength,ton,TODO(data),TODO(data),premium,premium,Premium high capacity structural steel,published_rate_derived,TODO(data),TODO(data)
+mat_b01,bricks_blocks,AAC Blocks 600x200x150,Autoclaved Aerated Concrete Blocks,cu_m,TODO(data),TODO(data),standard,standard,Lightweight thermal efficient masonry,published_rate_derived,TODO(data),TODO(data)
+mat_b02,bricks_blocks,Red Clay Bricks Class 35,Standard burnt red clay bricks,thousand,TODO(data),TODO(data),economy,economy,Traditional masonry bricks,published_rate_derived,TODO(data),TODO(data)
+mat_f01,flooring,Vitrified Tiles 600x600mm,Glazed Vitrified Tiles,sq_ft,TODO(data),TODO(data),standard,standard,Stain resistant vitrified flooring,published_rate_derived,TODO(data),TODO(data)
+mat_f02,flooring,Italian Marble / Large Slab,Premium polished natural marble / porcelain,sq_ft,TODO(data),TODO(data),premium,premium,Luxurious natural finish flooring,published_rate_derived,TODO(data),TODO(data)
+mat_p01,paint,Tractor Emulsion,Acrylic Interior Wall Paint,litre,TODO(data),TODO(data),economy,economy,Washable interior wall paint,published_rate_derived,TODO(data),TODO(data)
+mat_p02,paint,Premium Acrylic Emulsion,High durability smooth finish wall paint,litre,TODO(data),TODO(data),standard,standard,Stain resistant premium finish,published_rate_derived,TODO(data),TODO(data)
