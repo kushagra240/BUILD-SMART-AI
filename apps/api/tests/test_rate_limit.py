@@ -46,14 +46,12 @@ def test_attacker_rotating_ips_cannot_exceed_n_attempts_on_one_account() -> None
     # Attacker rotates 5 different IPs
     attacker_ips = ["1.1.1.1", "2.2.2.2", "3.3.3.3", "4.4.4.4", "5.5.5.5"]
     for _ip in attacker_ips:
-        PerAccountLockout.check_lockout(target_email)
+        assert not PerAccountLockout.is_locked_out(target_email)
         PerAccountLockout.record_failure(target_email)
 
-    # Attempt 6 from a brand new 6th IP (6.6.6.6) MUST fail with lockout
-    with pytest.raises(HTTPException) as exc_info:
-        PerAccountLockout.check_lockout(target_email)
-    assert exc_info.value.status_code == 400
-    assert "temporarily locked" in exc_info.value.detail
+    # Attempt 6 from a brand new 6th IP (6.6.6.6) MUST indicate account is locked out
+    assert PerAccountLockout.is_locked_out(target_email)
+    assert PerAccountLockout.get_remaining_lockout_seconds(target_email) > 0
 
 
 def test_legitimate_user_not_locked_out_permanently() -> None:
@@ -65,13 +63,11 @@ def test_legitimate_user_not_locked_out_permanently() -> None:
         PerAccountLockout.record_failure(email)
 
     # Account is locked out
-    with pytest.raises(HTTPException):
-        PerAccountLockout.check_lockout(email)
+    assert PerAccountLockout.is_locked_out(email)
 
     # Lockout expires / is cleared on success
     PerAccountLockout.record_success(email)
-    # Should now pass without error
-    PerAccountLockout.check_lockout(email)
+    assert not PerAccountLockout.is_locked_out(email)
 
 
 def test_trusted_proxy_x_forwarded_for_resolution() -> None:

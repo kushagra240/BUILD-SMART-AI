@@ -71,16 +71,36 @@ async def login_user(
     Returns (access_token, raw_refresh_token, user).
     """
     normalized_email = email.strip().lower()
+    now = datetime.now(UTC)
 
-    # Check per-account lockout (prevents IP-rotation brute force attacks)
-    PerAccountLockout.check_lockout(normalized_email)
-
+    # 1. Check existing user in database
     stmt = select(User).where(User.email == normalized_email)
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
 
+    # 2. Check if locked out (either via DB persistent locked_until or in-memory tracker)
+    is_locked = False
+    retry_after = 900  # Default 15 minutes in seconds
+
+    if user:
+        locked_until_utc = ensure_utc(user.locked_until)
+        if locked_until_utc and locked_until_utc > now:
+            is_locked = True
+            retry_after = max(int((locked_until_utc - now).total_seconds()), 1)
+
+    if not is_locked and PerAccountLockout.is_locked_out(normalized_email):
+        is_locked = True
+        retry_after = PerAccountLockout.get_remaining_lockout_seconds(normalized_email)
+
+    if is_locked:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=LOCKOUT_MESSAGE,
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    # 3. Non-existent email -> dummy password comparison to equalize timing, then 401
     if not user:
-        # Constant time dummy comparison
         verify_password(DUMMY_HASH, password)
         PerAccountLockout.record_failure(normalized_email)
         raise HTTPException(
@@ -88,16 +108,7 @@ async def login_user(
             detail="Invalid email or password",
         )
 
-    # Check database level user account lockout
-    now = datetime.now(UTC)
-    locked_until_utc = ensure_utc(user.locked_until)
-    if locked_until_utc and locked_until_utc > now:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=LOCKOUT_MESSAGE,
-        )
-
-    # Verify password
+    # 4. Registered user wrong password -> update DB failed_login_count & locked_until
     if not verify_password(user.password_hash, password):
         PerAccountLockout.record_failure(normalized_email)
         user.failed_login_count += 1
@@ -109,7 +120,7 @@ async def login_user(
             detail="Invalid email or password",
         )
 
-    # Password correct -> reset lockout & failed counters
+    # 5. Password correct -> reset DB & in-memory lockout counters
     PerAccountLockout.record_success(normalized_email)
     user.failed_login_count = 0
     user.locked_until = None

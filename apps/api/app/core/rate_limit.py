@@ -50,6 +50,7 @@ class RateLimiter:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Rate limit exceeded. Please try again later.",
+                headers={"Retry-After": str(window_seconds)},
             )
 
         valid_timestamps.append(now)
@@ -62,10 +63,15 @@ class RateLimiter:
 
 
 class PerAccountLockout:
-    """Global per-account lockout manager independent of client IP.
+    """Global per-account in-memory lockout tracker for non-existent or un-instantiated accounts.
 
-    Prevents IP-rotation brute force attacks where an attacker rotates IP addresses
-    to bypass per-IP rate limits while targeting a single user account.
+    NOTE ON LIMITATION:
+    - Registered user accounts use database columns `failed_login_count` and `locked_until`
+      on the `users` table so lockout state persists across server restarts.
+    - Non-existent emails use this in-memory `_failed_attempts` dictionary so attackers cannot
+      probe non-existent email accounts without hitting the identical HTTP 429 Retry-After response.
+      Limitation: In-memory state for non-existent emails resets if the application
+      process restarts.
     """
 
     _failed_attempts: ClassVar[dict[str, list[datetime]]] = {}
@@ -73,7 +79,7 @@ class PerAccountLockout:
     LOCKOUT_DURATION: ClassVar[timedelta] = timedelta(minutes=15)
 
     @classmethod
-    def check_lockout(cls, email: str) -> None:
+    def is_locked_out(cls, email: str) -> bool:
         key = email.strip().lower()
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
@@ -81,15 +87,21 @@ class PerAccountLockout:
         attempts = cls._failed_attempts.get(key, [])
         recent_attempts = [t for t in attempts if t > cutoff]
         cls._failed_attempts[key] = recent_attempts
+        return len(recent_attempts) >= cls.MAX_FAILED_ATTEMPTS
 
-        if len(recent_attempts) >= cls.MAX_FAILED_ATTEMPTS:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "Account is temporarily locked due to repeated failed login attempts. "
-                    "Please try again later."
-                ),
-            )
+    @classmethod
+    def get_remaining_lockout_seconds(cls, email: str) -> int:
+        key = email.strip().lower()
+        now = datetime.now(UTC)
+        cutoff = now - cls.LOCKOUT_DURATION
+
+        attempts = cls._failed_attempts.get(key, [])
+        recent_attempts = [t for t in attempts if t > cutoff]
+        if recent_attempts:
+            oldest = min(recent_attempts)
+            remaining = int((oldest + cls.LOCKOUT_DURATION - now).total_seconds())
+            return max(remaining, 1)
+        return int(cls.LOCKOUT_DURATION.total_seconds())
 
     @classmethod
     def record_failure(cls, email: str) -> None:
