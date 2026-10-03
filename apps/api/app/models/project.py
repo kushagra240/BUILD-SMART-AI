@@ -14,13 +14,9 @@ if TYPE_CHECKING:
 
 class Project(Base):
     __tablename__ = "projects"
-    __table_args__ = (
-        Index("idx_projects_user_created", "user_id", "created_at"),
-    )
+    __table_args__ = (Index("idx_projects_user_created", "user_id", "created_at"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )

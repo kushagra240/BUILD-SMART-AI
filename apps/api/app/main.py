@@ -1,4 +1,8 @@
+from app.api.v1 import health
+from app.api.v1.router import api_v1_router
 from app.core.config import settings
+from app.core.errors import setup_error_handlers
+from app.core.middleware import RequestIDMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,8 +14,11 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# Custom Middlewares
+app.add_middleware(RequestIDMiddleware)
+
 # CORS setup
-origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",")]
+origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -20,37 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Error handlers setup
+setup_error_handlers(app)
 
-@app.get("/health/live", tags=["Health"])
-async def health_live() -> dict[str, str]:
-    """Liveness probe to confirm backend is running."""
-    return {"status": "live", "service": "buildsmart-api"}
-
-
-@app.get("/health/ready", tags=["Health"])
-async def health_ready() -> dict[str, str]:
-    """Readiness probe to confirm database & ML model readiness."""
-    return {"status": "ready", "database": "ok", "model": "loaded"}
-
-
-@app.get("/api/v1/meta/options", tags=["Metadata"])
-async def get_meta_options() -> dict[str, list[dict[str, str]]]:
-    """Get location zones, quality tiers, and valid project input ranges."""
-    return {
-        "zones": [
-            {"id": "pune_central", "name": "Central Pune"},
-            {"id": "pune_east", "name": "East Pune (Kharadi, Hadapsar)"},
-            {"id": "pune_west", "name": "West & NW (Baner, Wakad, Hinjewadi)"},
-            {"id": "pcmc", "name": "Pimpri-Chinchwad (PCMC)"},
-            {"id": "pune_south_peripheral", "name": "South & Peripheral Pune"},
-        ],
-        "quality_tiers": [
-            {"id": "economy", "name": "Economy (Basic standard finish)"},
-            {"id": "standard", "name": "Standard (Good quality vitrified & branded fittings)"},
-            {"id": "premium", "name": "Premium (Luxury finish, Italian marble & high-grade steel)"},
-        ],
-        "construction_types": [
-            {"id": "rcc_framed", "name": "RCC Framed Structure"},
-            {"id": "load_bearing", "name": "Load Bearing Masonry"},
-        ],
-    }
+# Router includes
+app.include_router(health.router)
+app.include_router(api_v1_router)
