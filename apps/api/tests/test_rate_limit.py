@@ -1,13 +1,17 @@
 import pytest
-from app.core.rate_limit import PerIpAccountLockout, RateLimiter
+from app.core.rate_limit import PerAccountLockout, RateLimiter, get_client_ip
 from fastapi import HTTPException, Request
 
 
-def create_mock_request(client_ip: str) -> Request:
+def create_mock_request(client_ip: str, headers: dict[str, str] | None = None) -> Request:
+    headers_dict = headers or {}
+    raw_headers = [
+        (k.lower().encode("utf-8"), v.encode("utf-8")) for k, v in headers_dict.items()
+    ]
     scope = {
         "type": "http",
         "client": (client_ip, 50000),
-        "headers": [],
+        "headers": raw_headers,
     }
     return Request(scope)
 
@@ -31,31 +35,51 @@ def test_rate_limiter_blocks_over_limit() -> None:
     assert exc_info.value.status_code == 429
 
 
-def test_per_ip_account_lockout_isolated_by_ip() -> None:
-    PerIpAccountLockout.reset()
-    email = "test@example.com"
+def test_attacker_rotating_ips_cannot_exceed_n_attempts_on_one_account() -> None:
+    """An attacker rotating IPs attempting bad passwords on one target email.
 
-    # Fail 5 times on IP A
-    for _ in range(5):
-        PerIpAccountLockout.record_failure(email, "1.1.1.1")
+    Must be stopped by per-account lockout after N=5 attempts regardless of IP rotation.
+    """
+    PerAccountLockout.reset()
+    target_email = "victim@example.com"
 
-    # IP A should be locked out
+    # Attacker rotates 5 different IPs
+    attacker_ips = ["1.1.1.1", "2.2.2.2", "3.3.3.3", "4.4.4.4", "5.5.5.5"]
+    for _ip in attacker_ips:
+        PerAccountLockout.check_lockout(target_email)
+        PerAccountLockout.record_failure(target_email)
+
+    # Attempt 6 from a brand new 6th IP (6.6.6.6) MUST fail with lockout
     with pytest.raises(HTTPException) as exc_info:
-        PerIpAccountLockout.check_lockout(email, "1.1.1.1")
+        PerAccountLockout.check_lockout(target_email)
     assert exc_info.value.status_code == 400
-
-    # IP B should NOT be locked out for the same email
-    PerIpAccountLockout.check_lockout(email, "2.2.2.2")
+    assert "temporarily locked" in exc_info.value.detail
 
 
-def test_lockout_resets_on_success() -> None:
-    PerIpAccountLockout.reset()
+def test_legitimate_user_not_locked_out_permanently() -> None:
+    """Legitimate user lockout expires after lockout period or upon successful credentials."""
+    PerAccountLockout.reset()
     email = "user@example.com"
-    ip = "3.3.3.3"
 
-    for _ in range(4):
-        PerIpAccountLockout.record_failure(email, ip)
+    for _ in range(5):
+        PerAccountLockout.record_failure(email)
 
-    PerIpAccountLockout.record_success(email, ip)
-    # Should not raise any exception
-    PerIpAccountLockout.check_lockout(email, ip)
+    # Account is locked out
+    with pytest.raises(HTTPException):
+        PerAccountLockout.check_lockout(email)
+
+    # Lockout expires / is cleared on success
+    PerAccountLockout.record_success(email)
+    # Should now pass without error
+    PerAccountLockout.check_lockout(email)
+
+
+def test_trusted_proxy_x_forwarded_for_resolution() -> None:
+    """Verify X-Forwarded-For is read only from trusted proxies."""
+    # From trusted proxy 127.0.0.1 -> read X-Forwarded-For
+    req_trusted = create_mock_request("127.0.0.1", {"X-Forwarded-For": "203.0.113.195, 127.0.0.1"})
+    assert get_client_ip(req_trusted) == "203.0.113.195"
+
+    # From untrusted proxy 198.51.100.1 -> ignore X-Forwarded-For header
+    req_untrusted = create_mock_request("198.51.100.1", {"X-Forwarded-For": "203.0.113.195"})
+    assert get_client_ip(req_untrusted) == "198.51.100.1"

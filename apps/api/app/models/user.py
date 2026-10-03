@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import UUID, CheckConstraint, DateTime, Integer, String, func
+from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -10,6 +11,8 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.project import Project
     from app.models.refresh_token import RefreshToken
+
+CITEXT_TYPE = String(255).with_variant(CITEXT, "postgresql")
 
 
 class User(Base):
@@ -19,7 +22,7 @@ class User(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(CITEXT_TYPE, unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(50), default="user", nullable=False)

@@ -3,6 +3,32 @@ from typing import ClassVar
 
 from fastapi import HTTPException, Request, status
 
+from app.core.config import settings
+
+
+def get_client_ip(request: Request) -> str:
+    """Extract real client IP address.
+
+    Only reads X-Forwarded-For if the immediate connection host is present in TRUSTED_PROXIES
+    to prevent header spoofing attacks.
+    """
+    direct_ip = request.client.host if request.client else "127.0.0.1"
+    trusted_list = [
+        ip.strip() for ip in settings.TRUSTED_PROXIES.split(",") if ip.strip()
+    ]
+
+    # If direct connection is not a trusted proxy, ignore X-Forwarded-For
+    if direct_ip not in trusted_list and "*" not in trusted_list:
+        return direct_ip
+
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        ips = [ip.strip() for ip in forwarded_for.split(",") if ip.strip()]
+        if ips:
+            return ips[0]
+
+    return direct_ip
+
 
 class RateLimiter:
     """In-memory sliding window rate limiter per client IP."""
@@ -13,7 +39,7 @@ class RateLimiter:
     def check_rate_limit(
         cls, request: Request, max_requests: int = 10, window_seconds: int = 60
     ) -> None:
-        client_ip = request.client.host if request.client else "unknown"
+        client_ip = get_client_ip(request)
         now = datetime.now(UTC)
         cutoff = now - timedelta(seconds=window_seconds)
 
@@ -35,21 +61,20 @@ class RateLimiter:
         cls._requests.clear()
 
 
-class PerIpAccountLockout:
-    """Per-account and per-IP login failure lockout manager.
+class PerAccountLockout:
+    """Global per-account lockout manager independent of client IP.
 
-    Prevents account lockout Denial of Service (DoS) attacks where an attacker
-    attempts repeated bad passwords to lock out legitimate users from other IPs.
+    Prevents IP-rotation brute force attacks where an attacker rotates IP addresses
+    to bypass per-IP rate limits while targeting a single user account.
     """
 
-    # Key: (normalized_email, client_ip) -> list of failure datetimes
-    _failed_attempts: ClassVar[dict[tuple[str, str], list[datetime]]] = {}
+    _failed_attempts: ClassVar[dict[str, list[datetime]]] = {}
     MAX_FAILED_ATTEMPTS: ClassVar[int] = 5
     LOCKOUT_DURATION: ClassVar[timedelta] = timedelta(minutes=15)
 
     @classmethod
-    def check_lockout(cls, email: str, client_ip: str) -> None:
-        key = (email.strip().lower(), client_ip)
+    def check_lockout(cls, email: str) -> None:
+        key = email.strip().lower()
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
 
@@ -61,14 +86,14 @@ class PerIpAccountLockout:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(
-                    "Account is temporarily locked for this IP "
-                    "due to repeated failed login attempts."
+                    "Account is temporarily locked due to repeated failed login attempts. "
+                    "Please try again later."
                 ),
             )
 
     @classmethod
-    def record_failure(cls, email: str, client_ip: str) -> None:
-        key = (email.strip().lower(), client_ip)
+    def record_failure(cls, email: str) -> None:
+        key = email.strip().lower()
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
 
@@ -78,8 +103,8 @@ class PerIpAccountLockout:
         cls._failed_attempts[key] = recent_attempts
 
     @classmethod
-    def record_success(cls, email: str, client_ip: str) -> None:
-        key = (email.strip().lower(), client_ip)
+    def record_success(cls, email: str) -> None:
+        key = email.strip().lower()
         if key in cls._failed_attempts:
             del cls._failed_attempts[key]
 

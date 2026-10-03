@@ -20,11 +20,14 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
+    # 0. PostgreSQL extensions
+    op.execute("CREATE EXTENSION IF NOT EXISTS citext;")
+
     # 1. users table
     op.create_table(
         "users",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("email", sa.String(length=255), nullable=False),
+        sa.Column("email", postgresql.CITEXT(), nullable=False),
         sa.Column("password_hash", sa.String(length=255), nullable=False),
         sa.Column("full_name", sa.String(length=255), nullable=False),
         sa.Column("role", sa.String(length=50), server_default="user", nullable=False),
@@ -206,3 +209,4 @@ def downgrade() -> None:
     op.drop_table("projects")
     op.drop_table("refresh_tokens")
     op.drop_table("users")
+    op.execute("DROP EXTENSION IF EXISTS citext;")

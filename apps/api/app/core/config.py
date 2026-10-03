@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_TTL_MIN: int = 15
     REFRESH_TOKEN_TTL_DAYS: int = 7
 
+    # Reverse Proxy & Security
+    TRUSTED_PROXIES: str = "127.0.0.1,::1"
+
     # CORS
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
 

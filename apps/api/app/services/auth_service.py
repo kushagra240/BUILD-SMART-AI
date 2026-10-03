@@ -6,7 +6,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.rate_limit import PerIpAccountLockout
+from app.core.rate_limit import PerAccountLockout
 from app.core.security import (
     create_access_token,
     generate_opaque_token,
@@ -66,15 +66,14 @@ async def login_user(
     user_agent: str | None = None,
     ip_hash: str | None = None,
 ) -> tuple[str, str, User]:
-    """Authenticate user with per-IP/per-account lockout protection.
+    """Authenticate user with per-account lockout protection.
 
     Returns (access_token, raw_refresh_token, user).
     """
     normalized_email = email.strip().lower()
-    client_ip = ip_hash or "unknown"
 
-    # Check per-account AND per-IP lockout first to prevent global user lockout DoS
-    PerIpAccountLockout.check_lockout(normalized_email, client_ip)
+    # Check per-account lockout (prevents IP-rotation brute force attacks)
+    PerAccountLockout.check_lockout(normalized_email)
 
     stmt = select(User).where(User.email == normalized_email)
     res = await db.execute(stmt)
@@ -83,7 +82,7 @@ async def login_user(
     if not user:
         # Constant time dummy comparison
         verify_password(DUMMY_HASH, password)
-        PerIpAccountLockout.record_failure(normalized_email, client_ip)
+        PerAccountLockout.record_failure(normalized_email)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
@@ -100,7 +99,7 @@ async def login_user(
 
     # Verify password
     if not verify_password(user.password_hash, password):
-        PerIpAccountLockout.record_failure(normalized_email, client_ip)
+        PerAccountLockout.record_failure(normalized_email)
         user.failed_login_count += 1
         if user.failed_login_count >= MAX_FAILED_LOGINS:
             user.locked_until = now + timedelta(minutes=15)
@@ -111,7 +110,7 @@ async def login_user(
         )
 
     # Password correct -> reset lockout & failed counters
-    PerIpAccountLockout.record_success(normalized_email, client_ip)
+    PerAccountLockout.record_success(normalized_email)
     user.failed_login_count = 0
     user.locked_until = None
     user.last_login_at = now
