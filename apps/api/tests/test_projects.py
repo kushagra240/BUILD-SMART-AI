@@ -16,7 +16,7 @@ async def create_user_and_login(client: AsyncClient, email: str) -> dict[str, st
 
 
 @pytest.mark.asyncio
-async def test_projects_crud_and_idor_protection(client: AsyncClient):
+async def test_projects_crud_and_idor_protection(client: AsyncClient) -> None:
     headers_user_a = await create_user_and_login(client, "usera@example.com")
     headers_user_b = await create_user_and_login(client, "userb@example.com")
 

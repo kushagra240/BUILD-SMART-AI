@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_extra_payload_fields_forbidden(client: AsyncClient):
+async def test_extra_payload_fields_forbidden(client: AsyncClient) -> None:
     payload = {
         "email": "extrafield@example.com",
         "password": "StrongPassword123!",
@@ -18,7 +18,7 @@ async def test_extra_payload_fields_forbidden(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_request_id_header_propagation(client: AsyncClient):
+async def test_request_id_header_propagation(client: AsyncClient) -> None:
     custom_req_id = "test-uuid-1234-5678"
     headers = {"X-Request-ID": custom_req_id}
     res = await client.get("/health/live", headers=headers)

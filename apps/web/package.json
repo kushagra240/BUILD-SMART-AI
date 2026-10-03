@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "generate:api": "openapi-typescript ../../docs/api/openapi.json -o src/types/api.generated.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.28.0",
@@ -39,6 +40,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "jsdom": "^24.0.0",
+    "openapi-typescript": "^7.13.0",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",

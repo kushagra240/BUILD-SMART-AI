@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
-async def test_register_user_success(client: AsyncClient):
+async def test_register_user_success(client: AsyncClient) -> None:
     payload = {
         "email": "testuser@example.com",
         "password": "StrongPassword123!",
@@ -18,7 +18,7 @@ async def test_register_user_success(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_register_duplicate_email(client: AsyncClient):
+async def test_register_duplicate_email(client: AsyncClient) -> None:
     payload = {
         "email": "dupuser@example.com",
         "password": "StrongPassword123!",
@@ -33,7 +33,7 @@ async def test_register_duplicate_email(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_login_and_me_flow(client: AsyncClient):
+async def test_login_and_me_flow(client: AsyncClient) -> None:
     reg_payload = {
         "email": "flowuser@example.com",
         "password": "StrongPassword123!",
@@ -63,7 +63,7 @@ async def test_login_and_me_flow(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_login_wrong_credentials(client: AsyncClient):
+async def test_login_wrong_credentials(client: AsyncClient) -> None:
     reg_payload = {
         "email": "wrongpwd@example.com",
         "password": "StrongPassword123!",
@@ -81,7 +81,7 @@ async def test_login_wrong_credentials(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_account_lockout_on_failed_logins(client: AsyncClient):
+async def test_account_lockout_on_failed_logins(client: AsyncClient) -> None:
     reg_payload = {
         "email": "lockoutuser@example.com",
         "password": "StrongPassword123!",
@@ -105,7 +105,7 @@ async def test_account_lockout_on_failed_logins(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_refresh_token_rotation_and_reuse_detection(client: AsyncClient):
+async def test_refresh_token_rotation_and_reuse_detection(client: AsyncClient) -> None:
     reg_payload = {
         "email": "rotation@example.com",
         "password": "StrongPassword123!",

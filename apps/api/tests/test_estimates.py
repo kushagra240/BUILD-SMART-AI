@@ -15,7 +15,7 @@ async def get_auth_header(client: AsyncClient, email: str) -> dict[str, str]:
 
 
 @pytest.mark.asyncio
-async def test_create_and_fetch_estimate(client: AsyncClient):
+async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
     headers = await get_auth_header(client, "estimator@example.com")
 
     # Create project

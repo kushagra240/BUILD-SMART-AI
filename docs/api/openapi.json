@@ -1,0 +1,1582 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BuildSmart AI API",
+    "description": "Intelligent Construction Cost Estimation and Material Recommendation System API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Live",
+        "description": "Liveness probe confirming service process is responsive.",
+        "operationId": "health_live_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Live Health Live Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Ready",
+        "description": "Readiness probe confirming database connection is healthy.",
+        "operationId": "health_ready_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Ready Health Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Register",
+        "description": "Register a new user account.",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "Authenticate user, return JWT access token, set HttpOnly refresh cookie.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh",
+        "description": "Rotate refresh token using HttpOnly cookie, returning a new access token.",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "buildsmart_refresh",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Buildsmart Refresh"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "Revoke refresh token family and clear auth cookie.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "parameters": [
+          {
+            "name": "buildsmart_refresh",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Buildsmart Refresh"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Logout Api V1 Auth Logout Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get Me",
+        "description": "Get current authenticated user profile.",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Update Me",
+        "description": "Update current authenticated user's profile or password.",
+        "operationId": "update_me_api_v1_auth_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "List Projects",
+        "description": "List authenticated user's active projects.",
+        "operationId": "list_projects_api_v1_projects_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Create Project",
+        "description": "Create a new project for current user.",
+        "operationId": "create_project_api_v1_projects_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get Project",
+        "description": "Get project details. Returns 404 if project does not exist or belong to user.",
+        "operationId": "get_project_api_v1_projects__project_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update Project",
+        "description": "Update project. Returns 404 if project does not exist or belong to user.",
+        "operationId": "update_project_api_v1_projects__project_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Delete Project",
+        "description": "Soft delete project. Returns 404 if project does not exist or belong to user.",
+        "operationId": "delete_project_api_v1_projects__project_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/estimates": {
+      "post": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Create Estimate",
+        "description": "Create a new estimate snapshot for a project using the stubbed estimation engine.",
+        "operationId": "create_estimate_api_v1_projects__project_id__estimates_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estimates/{estimate_id}": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Get Estimate",
+        "description": "Get an existing estimate snapshot by ID.",
+        "operationId": "get_estimate_api_v1_estimates__estimate_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "estimate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Estimate Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/meta/options": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Get Meta Options",
+        "description": "Get Pune location zones, quality tiers, and valid project input options.",
+        "operationId": "get_meta_options_api_v1_meta_options_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaOptionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/meta/model": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Get Meta Model",
+        "description": "Get metadata for the currently active ML model version.",
+        "operationId": "get_meta_model_api_v1_meta_model_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaModelResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BreakdownCategoryItem": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "share_pct": {
+            "type": "number",
+            "title": "Share Pct"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "category",
+          "amount",
+          "share_pct"
+        ],
+        "title": "BreakdownCategoryItem"
+      },
+      "BudgetAssessment": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "within",
+              "tight",
+              "below_minimum",
+              "not_provided"
+            ],
+            "title": "Status"
+          },
+          "gap_inr": {
+            "type": "integer",
+            "title": "Gap Inr",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "BudgetAssessment"
+      },
+      "ConfidenceEstimate": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "enum": [
+              "High",
+              "Medium",
+              "Low"
+            ],
+            "title": "Label"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "reason"
+        ],
+        "title": "ConfidenceEstimate"
+      },
+      "ConstructionTypeOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ConstructionTypeOption"
+      },
+      "CostDriverItem": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "impact_pct": {
+            "type": "number",
+            "title": "Impact Pct"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "impact_pct"
+        ],
+        "title": "CostDriverItem"
+      },
+      "EstimateCreate": {
+        "properties": {
+          "built_up_area_sqft": {
+            "type": "number",
+            "maximum": 100000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Built Up Area Sqft",
+            "description": "Total built-up area in sqft"
+          },
+          "floors": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Floors",
+            "description": "Number of floors"
+          },
+          "bedrooms": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Bedrooms",
+            "description": "Number of bedrooms"
+          },
+          "bathrooms": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Bathrooms",
+            "description": "Number of bathrooms"
+          },
+          "zone_id": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2,
+            "title": "Zone Id",
+            "description": "Location zone identifier"
+          },
+          "quality_tier": {
+            "type": "string",
+            "enum": [
+              "economy",
+              "standard",
+              "premium"
+            ],
+            "title": "Quality Tier",
+            "description": "Quality tier"
+          },
+          "construction_type": {
+            "type": "string",
+            "enum": [
+              "rcc_framed",
+              "load_bearing"
+            ],
+            "title": "Construction Type",
+            "description": "Construction type"
+          },
+          "plot_area_sqft": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 200000.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plot Area Sqft",
+            "description": "Optional plot area"
+          },
+          "budget_inr": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Inr",
+            "description": "Optional target budget in INR"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "built_up_area_sqft",
+          "floors",
+          "bedrooms",
+          "bathrooms",
+          "zone_id",
+          "quality_tier",
+          "construction_type"
+        ],
+        "title": "EstimateCreate"
+      },
+      "EstimateResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Project Id"
+          },
+          "total": {
+            "$ref": "#/components/schemas/TotalEstimate"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/ConfidenceEstimate"
+          },
+          "breakdown": {
+            "items": {
+              "$ref": "#/components/schemas/BreakdownCategoryItem"
+            },
+            "type": "array",
+            "title": "Breakdown"
+          },
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/MaterialRecommendationItem"
+            },
+            "type": "array",
+            "title": "Materials"
+          },
+          "budget": {
+            "$ref": "#/components/schemas/BudgetAssessment"
+          },
+          "drivers": {
+            "items": {
+              "$ref": "#/components/schemas/CostDriverItem"
+            },
+            "type": "array",
+            "title": "Drivers"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ModelMetaItem"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          },
+          "inputs": {
+            "$ref": "#/components/schemas/EstimateCreate"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "project_id",
+          "total",
+          "confidence",
+          "breakdown",
+          "materials",
+          "budget",
+          "drivers",
+          "model",
+          "disclaimer",
+          "inputs",
+          "created_at"
+        ],
+        "title": "EstimateResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "MaterialRecommendationItem": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "primary": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Primary"
+          },
+          "alternative": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Alternative"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "category",
+          "primary",
+          "alternative",
+          "reason"
+        ],
+        "title": "MaterialRecommendationItem"
+      },
+      "MetaModelResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "data_version": {
+            "type": "string",
+            "title": "Data Version"
+          },
+          "metrics": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metrics"
+          },
+          "card": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "data_version",
+          "is_active"
+        ],
+        "title": "MetaModelResponse"
+      },
+      "MetaOptionsResponse": {
+        "properties": {
+          "zones": {
+            "items": {
+              "$ref": "#/components/schemas/ZoneOption"
+            },
+            "type": "array",
+            "title": "Zones"
+          },
+          "quality_tiers": {
+            "items": {
+              "$ref": "#/components/schemas/QualityTierOption"
+            },
+            "type": "array",
+            "title": "Quality Tiers"
+          },
+          "construction_types": {
+            "items": {
+              "$ref": "#/components/schemas/ConstructionTypeOption"
+            },
+            "type": "array",
+            "title": "Construction Types"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "zones",
+          "quality_tiers",
+          "construction_types"
+        ],
+        "title": "MetaOptionsResponse"
+      },
+      "ModelMetaItem": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "data_version": {
+            "type": "string",
+            "title": "Data Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "version",
+          "data_version"
+        ],
+        "title": "ModelMetaItem"
+      },
+      "ProjectCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "description": "Project name"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "description": "Optional notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "ProjectCreate"
+      },
+      "ProjectListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "ProjectListResponse"
+      },
+      "ProjectResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "name",
+          "notes",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ProjectResponse"
+      },
+      "ProjectUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ProjectUpdate"
+      },
+      "QualityTierOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "QualityTierOption"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "title": "Password",
+            "description": "Minimum 10 characters"
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Full Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "full_name"
+        ],
+        "title": "RegisterRequest"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In",
+            "default": 900
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "access_token"
+        ],
+        "title": "TokenResponse"
+      },
+      "TotalEstimate": {
+        "properties": {
+          "p50": {
+            "type": "integer",
+            "title": "P50"
+          },
+          "p10": {
+            "type": "integer",
+            "title": "P10"
+          },
+          "p90": {
+            "type": "integer",
+            "title": "P90"
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "default": "INR"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "p50",
+          "p10",
+          "p90"
+        ],
+        "title": "TotalEstimate"
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role",
+          "is_active",
+          "created_at"
+        ],
+        "title": "UserResponse"
+      },
+      "UserUpdateRequest": {
+        "properties": {
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 10
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "UserUpdateRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ZoneOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ZoneOption"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

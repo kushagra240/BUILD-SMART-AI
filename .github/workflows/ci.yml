@@ -9,6 +9,20 @@ on:
 jobs:
   python-lint-and-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: buildsmart
+          POSTGRES_PASSWORD: buildsmart_dev_secret
+          POSTGRES_DB: buildsmart_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +43,9 @@ jobs:
       - name: Run mypy Type Check
         run: mypy ml apps/api
 
-      - name: Run Pytest
+      - name: Run Pytest Integration Suite
+        env:
+          DATABASE_URL: postgresql+asyncpg://buildsmart:buildsmart_dev_secret@localhost:5432/buildsmart_db
         run: pytest
 
   node-lint-and-test:
@@ -58,4 +74,3 @@ jobs:
 
       - name: Run Vitest Unit Tests
         run: npm test -- --run
-

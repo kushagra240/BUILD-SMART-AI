@@ -24,6 +24,14 @@ LOCKOUT_MESSAGE = (
 )
 
 
+def ensure_utc(dt: datetime | None) -> datetime | None:
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
+
+
 async def register_user(db: AsyncSession, email: str, password: str, full_name: str) -> User:
     """Register a new user with Argon2id password hashing."""
     normalized_email = email.strip().lower()
@@ -74,7 +82,8 @@ async def login_user(
 
     # Check account lockout
     now = datetime.now(UTC)
-    if user.locked_until and user.locked_until > now:
+    locked_until_utc = ensure_utc(user.locked_until)
+    if locked_until_utc and locked_until_utc > now:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=LOCKOUT_MESSAGE,
@@ -161,7 +170,8 @@ async def refresh_access_token(
             detail="Token reuse detected. Token family revoked.",
         )
 
-    if token_entity.expires_at < now:
+    expires_at_utc = ensure_utc(token_entity.expires_at)
+    if expires_at_utc and expires_at_utc < now:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token expired",
