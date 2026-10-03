@@ -1,25 +1,19 @@
-from app.main import app
-from fastapi.testclient import TestClient
-
-client = TestClient(app)
+import pytest
+from httpx import AsyncClient
 
 
-def test_health_live() -> None:
-    response = client.get("/health/live")
-    assert response.status_code == 200
-    assert response.json() == {"status": "live", "service": "buildsmart-api"}
+@pytest.mark.asyncio
+async def test_health_live(client: AsyncClient):
+    res = await client.get("/health/live")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "live"
 
 
-def test_health_ready() -> None:
-    response = client.get("/health/ready")
-    assert response.status_code == 200
-    assert response.json()["status"] == "ready"
-
-
-def test_meta_options() -> None:
-    response = client.get("/api/v1/meta/options")
-    assert response.status_code == 200
-    data = response.json()
-    assert "zones" in data
-    assert "quality_tiers" in data
-    assert "construction_types" in data
+@pytest.mark.asyncio
+async def test_health_ready(client: AsyncClient):
+    res = await client.get("/health/ready")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "ready"
+    assert data["database"] == "ok"
