@@ -1,10 +1,11 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.v1 import health
 from app.api.v1.router import api_v1_router
 from app.core.config import settings
 from app.core.errors import setup_error_handlers
-from app.core.middleware import RequestIDMiddleware
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from app.core.middleware import RequestIDMiddleware, SecurityHeadersMiddleware
 
 app = FastAPI(
     title="BuildSmart AI API",
@@ -16,6 +17,7 @@ app = FastAPI(
 
 # Custom Middlewares
 app.add_middleware(RequestIDMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # CORS setup
 origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",") if origin.strip()]

@@ -77,4 +77,7 @@ class EstimateResponse(BaseSchema):
     model: ModelMetaItem
     disclaimer: str
     inputs: EstimateCreate
+    is_mock: bool = Field(
+        default=True, description="Flag indicating if estimate is from stub/mock model"
+    )
     created_at: datetime

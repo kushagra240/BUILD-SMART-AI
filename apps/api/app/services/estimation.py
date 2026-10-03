@@ -175,6 +175,7 @@ async def create_estimate_for_project(
         drivers=drivers_list,
         budget_inr=inputs.budget_inr,
         budget_status=budget_status,
+        is_mock=True,
     )
     db.add(estimate)
     await db.commit()
@@ -195,6 +196,7 @@ async def create_estimate_for_project(
         model=ModelMetaItem(version="v0.1-stub", data_version="pune-sor-v1-stub"),
         disclaimer=disclaimer_str,
         inputs=inputs,
+        is_mock=True,
         created_at=estimate.created_at,
     )
 
@@ -250,5 +252,6 @@ async def get_estimate_by_id(
         model=ModelMetaItem(version="v0.1-stub", data_version="pune-sor-v1-stub"),
         disclaimer="[MOCK STUB] Saved estimate snapshot.",
         inputs=EstimateCreate.model_validate(estimate.inputs),
+        is_mock=getattr(estimate, "is_mock", True),
         created_at=estimate.created_at,
     )

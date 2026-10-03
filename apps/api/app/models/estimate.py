@@ -6,12 +6,14 @@ from sqlalchemy import (
     JSON,
     UUID,
     BigInteger,
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
     String,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -55,6 +57,9 @@ class Estimate(Base):
     drivers: Mapped[list[dict[str, Any]] | None] = mapped_column(JSON_TYPE, nullable=True)
     budget_inr: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     budget_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    is_mock: Mapped[bool] = mapped_column(
+        Boolean, default=True, nullable=False, server_default=text("true")
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

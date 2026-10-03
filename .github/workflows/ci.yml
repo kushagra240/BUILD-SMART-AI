@@ -48,6 +48,11 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://buildsmart:buildsmart_dev_secret@localhost:5432/buildsmart_db
         run: pytest
 
+      - name: Run pip-audit Security Scan
+        run: |
+          pip install pip-audit
+          pip-audit --desc
+
   node-lint-and-test:
     runs-on: ubuntu-latest
     defaults:
@@ -74,3 +79,18 @@ jobs:
 
       - name: Run Vitest Unit Tests
         run: npm test -- --run
+
+      - name: Run npm audit (High Severity)
+        run: npm audit --audit-level=high
+
+  gitleaks-secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks Secret Scanning
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

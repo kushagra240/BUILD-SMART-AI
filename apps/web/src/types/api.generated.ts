@@ -406,6 +406,12 @@ export interface components {
             disclaimer: string;
             inputs: components["schemas"]["EstimateCreate"];
             /**
+             * Is Mock
+             * @description Flag indicating if estimate is from stub/mock model
+             * @default true
+             */
+            is_mock: boolean;
+            /**
              * Created At
              * Format: date-time
              */

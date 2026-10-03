@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMetaOptions, calculateEstimateMock } from '../services/mockApi';
+import { fetchMetaOptions } from '../services/mockApi';
+import { apiClient } from '../services/apiClient';
 import { MetaOptions, ProjectInputs, QualityTier, ConstructionType } from '../types/estimate';
 import { formatNumber, formatINR } from '../lib/formatters';
 import { Calculator, ArrowRight, ArrowLeft, CheckCircle2, Home, MapPin, DollarSign, Layers } from 'lucide-react';
@@ -81,7 +82,15 @@ export function WizardPage() {
       budget_inr: enableBudget ? inputs.budget_inr : null,
     };
     try {
-      const response = await calculateEstimateMock(finalInputs);
+      // 1. Create real project in database
+      const project = await apiClient.createProject({
+        name: `Pune House - ${inputs.built_up_area_sqft} sq ft`,
+        notes: `Quality Tier: ${inputs.quality_tier}, Zone: ${inputs.zone_id}`,
+      });
+
+      // 2. Create estimate snapshot for project
+      const response = await apiClient.createEstimate(project.id, finalInputs);
+
       // Navigate to results page passing estimate response state
       navigate(`/app/estimates/${response.id}`, { state: { estimate: response } });
     } catch (err) {

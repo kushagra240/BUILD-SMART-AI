@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { HardHat, UserPlus, CheckCircle2 } from 'lucide-react';
 import { z } from 'zod';
 
+import { apiClient } from '../services/apiClient';
+
 const registerSchema = z
   .object({
     fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -26,10 +28,13 @@ export function RegisterPage() {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiError(null);
     const result = registerSchema.safeParse(formData);
     if (!result.success) {
       const formattedErrors: Partial<Record<keyof RegisterFormData, string>> = {};
@@ -43,10 +48,27 @@ export function RegisterPage() {
     }
 
     setErrors({});
-    setSubmitted(true);
-    setTimeout(() => {
-      navigate('/app/new');
-    }, 600);
+    setLoading(true);
+    try {
+      await apiClient.register({
+        email: formData.email,
+        password: formData.password,
+        full_name: formData.fullName,
+      });
+      // Automatically log in after registration
+      await apiClient.login({
+        email: formData.email,
+        password: formData.password,
+      });
+      setSubmitted(true);
+      setTimeout(() => {
+        navigate('/app/new');
+      }, 600);
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,13 +79,19 @@ export function RegisterPage() {
             <HardHat className="w-6 h-6" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create your Account</h1>
-          <p className="text-xs text-amber-600 font-semibold uppercase tracking-wider">MOCK Authentication System</p>
+          <p className="text-xs text-slate-500 font-medium">Preliminary Cost Estimation & History</p>
         </div>
+
+        {apiError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs font-medium" role="alert">
+            {apiError}
+          </div>
+        )}
 
         {submitted ? (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center space-y-2" role="alert">
             <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-            <h2 className="font-bold text-sm">Account Created (Mock)!</h2>
+            <h2 className="font-bold text-sm">Account Created!</h2>
             <p className="text-xs text-emerald-700">Redirecting to Estimate Wizard...</p>
           </div>
         ) : (
@@ -146,10 +174,11 @@ export function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-colors flex items-center justify-center gap-2 focus:ring-4 focus:ring-amber-500/40"
+              disabled={loading}
+              className="w-full py-3 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-colors flex items-center justify-center gap-2 focus:ring-4 focus:ring-amber-500/40 disabled:opacity-50"
             >
               <UserPlus className="w-4 h-4" aria-hidden="true" />
-              <span>Create Account (Mock)</span>
+              <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
             </button>
           </form>
         )}

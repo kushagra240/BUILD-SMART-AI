@@ -46,6 +46,7 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
     assert est_res.status_code == 201
     est_data = est_res.json()
     assert est_data["project_id"] == proj_id
+    assert est_data["is_mock"] is True
 
     # Verify 9 categories sum EXACTLY to P50 total
     total_p50 = est_data["total"]["p50"]
@@ -59,3 +60,4 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
     get_res = await client.get(f"/api/v1/estimates/{est_id}", headers=headers)
     assert get_res.status_code == 200
     assert get_res.json()["id"] == est_id
+    assert get_res.json()["is_mock"] is True

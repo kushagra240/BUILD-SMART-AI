@@ -986,6 +986,12 @@
           "inputs": {
             "$ref": "#/components/schemas/EstimateCreate"
           },
+          "is_mock": {
+            "type": "boolean",
+            "title": "Is Mock",
+            "description": "Flag indicating if estimate is from stub/mock model",
+            "default": true
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",

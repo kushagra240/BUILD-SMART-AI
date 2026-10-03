@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.deps import get_current_user, get_db
+from app.core.rate_limit import RateLimiter
 from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,
@@ -44,9 +45,11 @@ def clear_refresh_cookie(response: Response) -> None:
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     req: RegisterRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db),
 ) -> User:
     """Register a new user account."""
+    RateLimiter.check_rate_limit(request)
     return await auth_service.register_user(
         db, email=req.email, password=req.password, full_name=req.full_name
     )
@@ -60,6 +63,7 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ) -> TokenResponse:
     """Authenticate user, return JWT access token, set HttpOnly refresh cookie."""
+    RateLimiter.check_rate_limit(request)
     user_agent = request.headers.get("User-Agent")
     client_ip = request.client.host if request.client else "unknown"
 
@@ -87,6 +91,7 @@ async def refresh(
     db: AsyncSession = Depends(get_db),
 ) -> TokenResponse:
     """Rotate refresh token using HttpOnly cookie, returning a new access token."""
+    RateLimiter.check_rate_limit(request)
     user_agent = request.headers.get("User-Agent")
     client_ip = request.client.host if request.client else "unknown"
 

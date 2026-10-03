@@ -161,6 +161,7 @@ def upgrade() -> None:
         sa.Column("drivers", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column("budget_inr", sa.BigInteger(), nullable=True),
         sa.Column("budget_status", sa.String(length=50), nullable=True),
+        sa.Column("is_mock", sa.Boolean(), server_default="true", nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
