@@ -1,8 +1,9 @@
 import uuid
 from datetime import datetime
 
-from app.schemas.base import BaseSchema
 from pydantic import EmailStr, Field, field_validator
+
+from app.schemas.base import BaseSchema
 
 COMMON_WEAK_PASSWORDS = {
     "password123",

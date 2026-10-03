@@ -1,10 +1,11 @@
 import uuid
 from datetime import UTC, datetime
 
-from app.models.project import Project
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.project import Project
 
 
 async def create_project(

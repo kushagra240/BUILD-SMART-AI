@@ -5,9 +5,10 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
-from app.core.config import settings
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+
+from app.core.config import settings
 
 ph = PasswordHasher()
 

@@ -1,6 +1,10 @@
 import uuid
 from datetime import UTC, datetime, timedelta
 
+from fastapi import HTTPException, status
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import settings
 from app.core.security import (
     create_access_token,
@@ -11,16 +15,12 @@ from app.core.security import (
 )
 from app.models.refresh_token import RefreshToken
 from app.models.user import User
-from fastapi import HTTPException, status
-from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 # Dummy hash used to equalize response timing when email is not found
 DUMMY_HASH = "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$RkJWd2lSWm9YWnhOTVpWd1pXNW9iUT09"
 MAX_FAILED_LOGINS = 5
 LOCKOUT_MESSAGE = (
-    "Account is temporarily locked due to repeated failed login attempts. "
-    "Please try again later."
+    "Account is temporarily locked due to repeated failed login attempts. Please try again later."
 )
 
 

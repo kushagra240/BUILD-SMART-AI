@@ -1,5 +1,8 @@
 import uuid
 
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.deps import get_current_user, get_db
 from app.models.user import User
 from app.schemas.project import (
@@ -9,8 +12,6 @@ from app.schemas.project import (
     ProjectUpdate,
 )
 from app.services import project_service
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 

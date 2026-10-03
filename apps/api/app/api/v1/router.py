@@ -1,5 +1,6 @@
-from app.api.v1 import auth, estimates, meta, projects
 from fastapi import APIRouter
+
+from app.api.v1 import auth, estimates, meta, projects
 
 api_v1_router = APIRouter(prefix="/api/v1")
 

@@ -1,3 +1,7 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.deps import get_db
 from app.models.model_version import ModelVersion
 from app.schemas.meta import (
@@ -7,9 +11,6 @@ from app.schemas.meta import (
     QualityTierOption,
     ZoneOption,
 )
-from fastapi import APIRouter, Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/meta", tags=["Metadata"])
 
@@ -27,8 +28,12 @@ async def get_meta_options() -> MetaOptionsResponse:
         ],
         quality_tiers=[
             QualityTierOption(id="economy", name="Economy (Basic standard finish)"),
-            QualityTierOption(id="standard", name="Standard (Good quality vitrified & branded fittings)"),
-            QualityTierOption(id="premium", name="Premium (Luxury finish, Italian marble & high-grade steel)"),
+            QualityTierOption(
+                id="standard", name="Standard (Good quality vitrified & branded fittings)"
+            ),
+            QualityTierOption(
+                id="premium", name="Premium (Luxury finish, Italian marble & high-grade steel)"
+            ),
         ],
         construction_types=[
             ConstructionTypeOption(id="rcc_framed", name="RCC Framed Structure"),

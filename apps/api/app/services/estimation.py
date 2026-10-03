@@ -1,6 +1,10 @@
 import uuid
 from typing import Any, Literal
 
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.estimate import Estimate
 from app.schemas.estimate import (
     BreakdownCategoryItem,
@@ -14,9 +18,6 @@ from app.schemas.estimate import (
     TotalEstimate,
 )
 from app.services import project_service
-from fastapi import HTTPException, status
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 # 9 category allocation percentages (sum = 100%)
 STAGE_SHARES = {
@@ -221,9 +222,7 @@ async def get_estimate_by_id(
             detail="Estimate not found",
         )
 
-    saved_confidence_label: Literal["High", "Medium", "Low"] = (
-        estimate.confidence_label  # type: ignore[assignment]
-    )
+    saved_confidence_label: Literal["High", "Medium", "Low"] = estimate.confidence_label  # type: ignore[assignment]
     saved_budget_status: Literal["within", "tight", "below_minimum", "not_provided"] = (
         estimate.budget_status or "not_provided"  # type: ignore[assignment]
     )

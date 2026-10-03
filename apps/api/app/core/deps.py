@@ -1,14 +1,15 @@
 import uuid
 from collections.abc import AsyncGenerator
 
-from app.core.security import decode_access_token
-from app.db.session import AsyncSessionLocal
-from app.models.user import User
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import PyJWTError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.security import decode_access_token
+from app.db.session import AsyncSessionLocal
+from app.models.user import User
 
 security_bearer = HTTPBearer(auto_error=False)
 

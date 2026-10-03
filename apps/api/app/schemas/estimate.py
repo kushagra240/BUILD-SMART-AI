@@ -2,8 +2,9 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from app.schemas.base import BaseSchema
 from pydantic import Field
+
+from app.schemas.base import BaseSchema
 
 
 class EstimateCreate(BaseSchema):

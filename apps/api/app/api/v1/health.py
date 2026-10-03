@@ -1,7 +1,8 @@
-from app.core.deps import get_db
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.deps import get_db
 
 router = APIRouter(prefix="/health", tags=["Health"])
 

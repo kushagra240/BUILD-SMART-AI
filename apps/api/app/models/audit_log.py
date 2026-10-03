@@ -2,10 +2,11 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from app.db.base import Base
 from sqlalchemy import BigInteger, DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.db.base import Base
 
 
 class AuditLog(Base):
