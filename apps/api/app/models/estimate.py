@@ -2,8 +2,18 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import BigInteger, CheckConstraint, DateTime, ForeignKey, Index, String, func
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import (
+    JSON,
+    UUID,
+    BigInteger,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    func,
+)
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -11,6 +21,8 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.model_version import ModelVersion
     from app.models.project import Project
+
+JSON_TYPE = JSON().with_variant(JSONB, "postgresql")
 
 
 class Estimate(Base):
@@ -33,14 +45,14 @@ class Estimate(Base):
         UUID(as_uuid=True), ForeignKey("model_versions.id", ondelete="SET NULL"), nullable=True
     )
 
-    inputs: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    inputs: Mapped[dict[str, Any]] = mapped_column(JSON_TYPE, nullable=False)
     total_p50: Mapped[int] = mapped_column(BigInteger, nullable=False)
     total_p10: Mapped[int] = mapped_column(BigInteger, nullable=False)
     total_p90: Mapped[int] = mapped_column(BigInteger, nullable=False)
     confidence_label: Mapped[str] = mapped_column(String(50), nullable=False)
-    breakdown: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
-    materials: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
-    drivers: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
+    breakdown: Mapped[list[dict[str, Any]]] = mapped_column(JSON_TYPE, nullable=False)
+    materials: Mapped[list[dict[str, Any]]] = mapped_column(JSON_TYPE, nullable=False)
+    drivers: Mapped[list[dict[str, Any]] | None] = mapped_column(JSON_TYPE, nullable=True)
     budget_inr: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     budget_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
 

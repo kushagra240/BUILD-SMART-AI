@@ -2,11 +2,13 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Index, String, func, text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import JSON, UUID, Boolean, DateTime, Index, String, func, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
+
+JSON_TYPE = JSON().with_variant(JSONB, "postgresql")
 
 
 class ModelVersion(Base):
@@ -24,8 +26,8 @@ class ModelVersion(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     version: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     data_version: Mapped[str] = mapped_column(String(50), nullable=False)
-    metrics: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
-    card: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    metrics: Mapped[dict[str, Any] | None] = mapped_column(JSON_TYPE, nullable=True)
+    card: Mapped[dict[str, Any] | None] = mapped_column(JSON_TYPE, nullable=True)
     artifact_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 

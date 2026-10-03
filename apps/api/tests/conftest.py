@@ -2,12 +2,17 @@ from collections.abc import AsyncGenerator
 
 import pytest_asyncio
 from app.core.config import settings
+from app.core.deps import get_db
 from app.db.base import Base
-from app.db.session import get_db
 from app.main import app
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 TEST_PG_URL = settings.DATABASE_URL.replace("buildsmart_db", "buildsmart_test_db")
 FALLBACK_SQLITE_URL = "sqlite+aiosqlite:///:memory:"
