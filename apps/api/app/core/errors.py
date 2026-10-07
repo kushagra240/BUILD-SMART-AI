@@ -12,10 +12,12 @@ def make_error_response(
     message: str,
     request_id: str,
     details: Any = None,
+    headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     """Build standardized JSON error response matching README section 13."""
     return JSONResponse(
         status_code=status_code,
+        headers=headers,
         content={
             "error": {
                 "code": code,
@@ -45,6 +47,7 @@ def setup_error_handlers(app: FastAPI) -> None:
             status.HTTP_409_CONFLICT: "CONFLICT",
             status.HTTP_422_UNPROCESSABLE_ENTITY: "UNPROCESSABLE_ENTITY",
             status.HTTP_429_TOO_MANY_REQUESTS: "TOO_MANY_REQUESTS",
+            status.HTTP_501_NOT_IMPLEMENTED: "NOT_IMPLEMENTED",
         }
         error_code = code_map.get(exc.status_code, "HTTP_ERROR")
         detail = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
@@ -54,6 +57,7 @@ def setup_error_handlers(app: FastAPI) -> None:
             message=detail,
             request_id=request_id,
             details=exc.detail if isinstance(exc.detail, dict | list) else None,
+            headers=exc.headers,
         )
 
     @app.exception_handler(StarletteHTTPException)
@@ -66,6 +70,7 @@ def setup_error_handlers(app: FastAPI) -> None:
             code="HTTP_ERROR",
             message=str(exc.detail),
             request_id=request_id,
+            headers=exc.headers,
         )
 
     @app.exception_handler(RequestValidationError)
