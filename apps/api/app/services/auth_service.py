@@ -1,3 +1,4 @@
+import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -17,8 +18,10 @@ from app.core.security import (
 from app.models.refresh_token import RefreshToken
 from app.models.user import User
 
-# Dummy hash used to equalize response timing when email is not found
-DUMMY_HASH = "$argon2id$v=19$m=65536,t=3,p=4$c29tZXNhbHQ$RkJWd2lSWm9YWnhOTVpWd1pXNW9iUT09"
+# Cryptographically valid Argon2id hash generated at startup using the active PasswordHasher
+# parameters. Ensures ph.verify executes the full Argon2id key derivation (~40ms), equalizing
+# login timing between registered and unknown emails to prevent account enumeration.
+DUMMY_HASH = hash_password(secrets.token_hex(32))
 MAX_FAILED_LOGINS = 5
 LOCKOUT_MESSAGE = (
     "Account is temporarily locked due to repeated failed login attempts. Please try again later."

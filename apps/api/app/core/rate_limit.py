@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import UTC, datetime, timedelta
 from typing import ClassVar
 
@@ -31,9 +32,20 @@ def get_client_ip(request: Request) -> str:
 
 
 class RateLimiter:
-    """In-memory sliding window rate limiter per client IP."""
+    """In-memory sliding window rate limiter per client IP with cap and expiration."""
 
-    _requests: ClassVar[dict[str, list[datetime]]] = {}
+    _requests: ClassVar[OrderedDict[str, list[datetime]]] = OrderedDict()
+    MAX_TRACKED_IPS: ClassVar[int] = 10_000
+
+    @classmethod
+    def _prune_expired(cls, now: datetime, window_seconds: int) -> None:
+        cutoff = now - timedelta(seconds=window_seconds)
+        expired_ips = [
+            ip for ip, timestamps in cls._requests.items()
+            if not timestamps or timestamps[-1] <= cutoff
+        ]
+        for ip in expired_ips:
+            cls._requests.pop(ip, None)
 
     @classmethod
     def check_rate_limit(
@@ -53,8 +65,15 @@ class RateLimiter:
                 headers={"Retry-After": str(window_seconds)},
             )
 
+        if client_ip not in cls._requests:
+            if len(cls._requests) >= cls.MAX_TRACKED_IPS:
+                cls._prune_expired(now, window_seconds)
+            while len(cls._requests) >= cls.MAX_TRACKED_IPS:
+                cls._requests.popitem(last=False)
+
         valid_timestamps.append(now)
         cls._requests[client_ip] = valid_timestamps
+        cls._requests.move_to_end(client_ip)
 
     @classmethod
     def reset(cls) -> None:
@@ -70,13 +89,33 @@ class PerAccountLockout:
       on the `users` table so lockout state persists across server restarts.
     - Non-existent emails use this in-memory `_failed_attempts` dictionary so attackers cannot
       probe non-existent email accounts without hitting the identical HTTP 429 Retry-After response.
-      Limitation: In-memory state for non-existent emails resets if the application
-      process restarts.
+      To prevent denial-of-service through unbounded growth, entries expire after LOCKOUT_DURATION
+      and total tracked accounts are capped at MAX_TRACKED_ACCOUNTS using LRU eviction.
     """
 
-    _failed_attempts: ClassVar[dict[str, list[datetime]]] = {}
+    _failed_attempts: ClassVar[OrderedDict[str, list[datetime]]] = OrderedDict()
     MAX_FAILED_ATTEMPTS: ClassVar[int] = 5
     LOCKOUT_DURATION: ClassVar[timedelta] = timedelta(minutes=15)
+    MAX_TRACKED_ACCOUNTS: ClassVar[int] = 10_000
+
+    @classmethod
+    def _prune_expired(cls, now: datetime) -> None:
+        """Prune any accounts whose attempts have all expired beyond LOCKOUT_DURATION."""
+        cutoff = now - cls.LOCKOUT_DURATION
+        expired_keys = [
+            email for email, attempts in cls._failed_attempts.items()
+            if not attempts or attempts[-1] <= cutoff
+        ]
+        for key in expired_keys:
+            cls._failed_attempts.pop(key, None)
+
+    @classmethod
+    def _enforce_cap(cls, now: datetime) -> None:
+        """Prune expired entries and evict oldest if capacity is reached."""
+        if len(cls._failed_attempts) >= cls.MAX_TRACKED_ACCOUNTS:
+            cls._prune_expired(now)
+        while len(cls._failed_attempts) >= cls.MAX_TRACKED_ACCOUNTS:
+            cls._failed_attempts.popitem(last=False)
 
     @classmethod
     def is_locked_out(cls, email: str) -> bool:
@@ -84,9 +123,17 @@ class PerAccountLockout:
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
 
-        attempts = cls._failed_attempts.get(key, [])
+        attempts = cls._failed_attempts.get(key)
+        if attempts is None:
+            return False
+
         recent_attempts = [t for t in attempts if t > cutoff]
+        if not recent_attempts:
+            cls._failed_attempts.pop(key, None)
+            return False
+
         cls._failed_attempts[key] = recent_attempts
+        cls._failed_attempts.move_to_end(key)
         return len(recent_attempts) >= cls.MAX_FAILED_ATTEMPTS
 
     @classmethod
@@ -95,13 +142,20 @@ class PerAccountLockout:
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
 
-        attempts = cls._failed_attempts.get(key, [])
+        attempts = cls._failed_attempts.get(key)
+        if not attempts:
+            return int(cls.LOCKOUT_DURATION.total_seconds())
+
         recent_attempts = [t for t in attempts if t > cutoff]
-        if recent_attempts:
-            oldest = min(recent_attempts)
-            remaining = int((oldest + cls.LOCKOUT_DURATION - now).total_seconds())
-            return max(remaining, 1)
-        return int(cls.LOCKOUT_DURATION.total_seconds())
+        if not recent_attempts:
+            cls._failed_attempts.pop(key, None)
+            return int(cls.LOCKOUT_DURATION.total_seconds())
+
+        cls._failed_attempts[key] = recent_attempts
+        cls._failed_attempts.move_to_end(key)
+        oldest = min(recent_attempts)
+        remaining = int((oldest + cls.LOCKOUT_DURATION - now).total_seconds())
+        return max(remaining, 1)
 
     @classmethod
     def record_failure(cls, email: str) -> None:
@@ -109,18 +163,23 @@ class PerAccountLockout:
         now = datetime.now(UTC)
         cutoff = now - cls.LOCKOUT_DURATION
 
-        attempts = cls._failed_attempts.get(key, [])
-        recent_attempts = [t for t in attempts if t > cutoff]
-        recent_attempts.append(now)
-        cls._failed_attempts[key] = recent_attempts
+        if key not in cls._failed_attempts:
+            cls._enforce_cap(now)
+            cls._failed_attempts[key] = []
+        else:
+            cls._failed_attempts.move_to_end(key)
+
+        attempts = [t for t in cls._failed_attempts[key] if t > cutoff]
+        attempts.append(now)
+        cls._failed_attempts[key] = attempts
 
     @classmethod
     def record_success(cls, email: str) -> None:
         key = email.strip().lower()
-        if key in cls._failed_attempts:
-            del cls._failed_attempts[key]
+        cls._failed_attempts.pop(key, None)
 
     @classmethod
     def reset(cls) -> None:
         """Reset all lockout state (for test setup)."""
         cls._failed_attempts.clear()
+
