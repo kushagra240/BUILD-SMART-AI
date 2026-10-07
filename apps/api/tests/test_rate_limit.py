@@ -1,9 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from fastapi import HTTPException, Request
-
 from app.core.rate_limit import PerAccountLockout, RateLimiter, get_client_ip
+from fastapi import HTTPException, Request
 
 
 def create_mock_request(client_ip: str, headers: dict[str, str] | None = None) -> Request:

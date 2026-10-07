@@ -3,6 +3,11 @@ from collections.abc import AsyncGenerator
 
 import pytest
 import pytest_asyncio
+from app.core.config import settings
+from app.core.deps import get_db
+from app.core.rate_limit import PerAccountLockout, RateLimiter
+from app.db.base import Base
+from app.main import app
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -10,12 +15,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-
-from app.core.config import settings
-from app.core.deps import get_db
-from app.core.rate_limit import PerAccountLockout, RateLimiter
-from app.db.base import Base
-from app.main import app
 
 
 @pytest.fixture(autouse=True)

@@ -1,10 +1,9 @@
 import time
 
 import pytest
-from httpx import AsyncClient
-
 from app.core.security import verify_password
 from app.services.auth_service import DUMMY_HASH
+from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
