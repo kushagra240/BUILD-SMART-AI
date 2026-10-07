@@ -577,7 +577,7 @@
           "Estimates"
         ],
         "summary": "Create Estimate",
-        "description": "Create a new estimate snapshot for a project using the stubbed estimation engine.",
+        "description": "Create a new estimate snapshot for a project.\n\nWhen is_mock is False, stub placeholders are completely unreachable and return 501.",
         "operationId": "create_estimate_api_v1_projects__project_id__estimates_post",
         "security": [
           {
@@ -594,6 +594,18 @@
               "format": "uuid",
               "title": "Project Id"
             }
+          },
+          {
+            "name": "is_mock",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Whether to use mock stub engine",
+              "default": true,
+              "title": "Is Mock"
+            },
+            "description": "Whether to use mock stub engine"
           }
         ],
         "requestBody": {

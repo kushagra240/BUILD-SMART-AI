@@ -211,7 +211,9 @@ export interface paths {
         put?: never;
         /**
          * Create Estimate
-         * @description Create a new estimate snapshot for a project using the stubbed estimation engine.
+         * @description Create a new estimate snapshot for a project.
+         *
+         *     When is_mock is False, stub placeholders are completely unreachable and return 501.
          */
         post: operations["create_estimate_api_v1_projects__project_id__estimates_post"];
         delete?: never;
@@ -1033,7 +1035,10 @@ export interface operations {
     };
     create_estimate_api_v1_projects__project_id__estimates_post: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Whether to use mock stub engine */
+                is_mock?: boolean;
+            };
             header?: never;
             path: {
                 project_id: string;
