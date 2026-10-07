@@ -23,3 +23,9 @@ dist/
 .venv/
 env/
 venv/
+
+# Database / SQLite
+*.db
+*.sqlite
+*.sqlite3
+

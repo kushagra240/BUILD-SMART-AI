@@ -79,3 +79,43 @@ def test_trusted_proxy_x_forwarded_for_resolution() -> None:
     # From untrusted proxy 198.51.100.1 -> ignore X-Forwarded-For header
     req_untrusted = create_mock_request("198.51.100.1", {"X-Forwarded-For": "203.0.113.195"})
     assert get_client_ip(req_untrusted) == "198.51.100.1"
+
+
+def test_per_account_lockout_expires_stale_accounts() -> None:
+    """Stale failed login entries older than LOCKOUT_DURATION are automatically purged."""
+    from datetime import UTC, datetime, timedelta
+
+    PerAccountLockout.reset()
+    stale_email = "stale@example.com"
+    old_time = datetime.now(UTC) - timedelta(minutes=20)
+
+    # Manually inject stale attempt
+    PerAccountLockout._failed_attempts[stale_email] = [old_time] * 5
+    assert stale_email in PerAccountLockout._failed_attempts
+
+    # is_locked_out must recognize expiration, remove stale entry from tracker, and return False
+    assert not PerAccountLockout.is_locked_out(stale_email)
+    assert stale_email not in PerAccountLockout._failed_attempts
+
+
+def test_per_account_lockout_capping_and_lru_eviction() -> None:
+    """Tracker enforces MAX_TRACKED_ACCOUNTS cap and evicts oldest entries."""
+    PerAccountLockout.reset()
+    original_cap = PerAccountLockout.MAX_TRACKED_ACCOUNTS
+    try:
+        PerAccountLockout.MAX_TRACKED_ACCOUNTS = 3
+
+        # Add 3 accounts
+        PerAccountLockout.record_failure("user1@example.com")
+        PerAccountLockout.record_failure("user2@example.com")
+        PerAccountLockout.record_failure("user3@example.com")
+        assert len(PerAccountLockout._failed_attempts) == 3
+
+        # Adding 4th account must evict user1
+        PerAccountLockout.record_failure("user4@example.com")
+        assert len(PerAccountLockout._failed_attempts) == 3
+        assert "user1@example.com" not in PerAccountLockout._failed_attempts
+        assert "user4@example.com" in PerAccountLockout._failed_attempts
+    finally:
+        PerAccountLockout.MAX_TRACKED_ACCOUNTS = original_cap
+

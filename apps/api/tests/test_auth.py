@@ -1,5 +1,10 @@
+import time
+
 import pytest
 from httpx import AsyncClient
+
+from app.core.security import verify_password
+from app.services.auth_service import DUMMY_HASH
 
 
 @pytest.mark.asyncio
@@ -100,8 +105,9 @@ async def test_account_lockout_on_failed_logins(client: AsyncClient) -> None:
 
     # 6th attempt should be locked
     res_locked = await client.post("/api/v1/auth/login", json=login_payload)
-    assert res_locked.status_code == 400
+    assert res_locked.status_code == 429
     assert "temporarily locked" in res_locked.json()["error"]["message"]
+    assert "Retry-After" in res_locked.headers
 
 
 @pytest.mark.asyncio
@@ -137,3 +143,27 @@ async def test_refresh_token_rotation_and_reuse_detection(client: AsyncClient) -
     client.cookies.set("buildsmart_refresh", second_cookie)
     family_res = await client.post("/api/v1/auth/refresh")
     assert family_res.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_dummy_argon2_verification_equalizes_timing(client: AsyncClient) -> None:
+    """Unknown email triggers full Argon2id key derivation using valid DUMMY_HASH."""
+    # 1. DUMMY_HASH must be a valid argon2id hash string
+    assert DUMMY_HASH.startswith("$argon2id$")
+
+    # 2. verify_password against DUMMY_HASH must run full algorithm without raising InvalidHashError
+    t0 = time.perf_counter()
+    res = verify_password(DUMMY_HASH, "wrongpass123!")
+    elapsed = time.perf_counter() - t0
+    assert res is False
+    # Verifying a valid Argon2 hash takes multiple milliseconds (> 5ms), not 0ms
+    assert elapsed > 0.005
+
+    # 3. HTTP login with non-existent user returns 401 with identical message
+    login_res = await client.post(
+        "/api/v1/auth/login",
+        json={"email": "nonexistent_target_user@example.com", "password": "SamplePassword123!"},
+    )
+    assert login_res.status_code == 401
+    assert login_res.json()["error"]["message"] == "Invalid email or password"
+
