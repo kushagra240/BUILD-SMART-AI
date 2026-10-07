@@ -1,6 +1,11 @@
+import uuid
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.schemas.estimate import EstimateCreate
+from app.services import estimation
 
 
 async def get_auth_header(client: AsyncClient, email: str) -> dict[str, str]:
@@ -108,12 +113,10 @@ async def test_stub_numbers_unreachable_when_is_mock_false_endpoint(client: Asyn
 
 
 @pytest.mark.asyncio
-async def test_stub_numbers_unreachable_when_is_mock_false_service(db_session: AsyncSession) -> None:
+async def test_stub_numbers_unreachable_when_is_mock_false_service(
+    db_session: AsyncSession,
+) -> None:
     """Service method raises RuntimeError preventing any code from reading mock stub numbers."""
-    import uuid
-    from app.schemas.estimate import EstimateCreate
-    from app.services import estimation
-
     dummy_user_id = uuid.uuid4()
     dummy_project_id = uuid.uuid4()
     inputs = EstimateCreate(

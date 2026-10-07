@@ -1,6 +1,9 @@
+from datetime import UTC, datetime, timedelta
+
 import pytest
-from app.core.rate_limit import PerAccountLockout, RateLimiter, get_client_ip
 from fastapi import HTTPException, Request
+
+from app.core.rate_limit import PerAccountLockout, RateLimiter, get_client_ip
 
 
 def create_mock_request(client_ip: str, headers: dict[str, str] | None = None) -> Request:
@@ -83,8 +86,6 @@ def test_trusted_proxy_x_forwarded_for_resolution() -> None:
 
 def test_per_account_lockout_expires_stale_accounts() -> None:
     """Stale failed login entries older than LOCKOUT_DURATION are automatically purged."""
-    from datetime import UTC, datetime, timedelta
-
     PerAccountLockout.reset()
     stale_email = "stale@example.com"
     old_time = datetime.now(UTC) - timedelta(minutes=20)
