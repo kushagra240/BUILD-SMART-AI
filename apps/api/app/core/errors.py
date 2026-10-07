@@ -12,12 +12,10 @@ def make_error_response(
     message: str,
     request_id: str,
     details: Any = None,
-    headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     """Build standardized JSON error response matching README section 13."""
     return JSONResponse(
         status_code=status_code,
-        headers=headers,
         content={
             "error": {
                 "code": code,
@@ -51,27 +49,31 @@ def setup_error_handlers(app: FastAPI) -> None:
         }
         error_code = code_map.get(exc.status_code, "HTTP_ERROR")
         detail = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
-        return make_error_response(
+        resp = make_error_response(
             status_code=exc.status_code,
             code=error_code,
             message=detail,
             request_id=request_id,
             details=exc.detail if isinstance(exc.detail, dict | list) else None,
-            headers=exc.headers,
         )
+        if exc.headers:
+            resp.headers.update(exc.headers)
+        return resp
 
     @app.exception_handler(StarletteHTTPException)
     async def starlette_http_exception_handler(
         request: Request, exc: StarletteHTTPException
     ) -> JSONResponse:
         request_id = get_request_id(request)
-        return make_error_response(
+        resp = make_error_response(
             status_code=exc.status_code,
             code="HTTP_ERROR",
             message=str(exc.detail),
             request_id=request_id,
-            headers=exc.headers,
         )
+        if exc.headers:
+            resp.headers.update(exc.headers)
+        return resp
 
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(
