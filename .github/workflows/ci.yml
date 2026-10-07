@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Pytest Integration Suite
         env:
-          DATABASE_URL: postgresql+asyncpg://buildsmart:buildsmart_dev_secret@localhost:5432/buildsmart_db
+          DATABASE_URL: postgresql+asyncpg://buildsmart:buildsmart_dev_secret@localhost:5432/buildsmart_test_db
         run: pytest
 
       - name: Run pip-audit Security Scan
