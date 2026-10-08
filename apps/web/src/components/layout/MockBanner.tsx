@@ -1,15 +1,13 @@
-import { AlertTriangle } from 'lucide-react';
-
 export function MockBanner() {
   return (
     <div
       role="region"
       aria-label="Demo mode disclaimer banner"
-      className="bg-amber-500 text-amber-950 px-4 py-2 text-xs font-semibold flex items-center justify-center gap-2 shadow-inner"
+      className="bg-paper-deep text-ink border-b border-ink/14 px-4 py-1.5 text-xs flex items-center justify-center gap-2 font-mono"
     >
-      <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-950" aria-hidden="true" />
+      <span className="w-2 h-2 rounded-full bg-ochre inline-block" aria-hidden="true" />
       <span>
-        <strong className="uppercase tracking-wider">Demo Mode (Mock Data):</strong> All cost estimates, rates, and recommendations are simulated placeholders. No real backend connected yet.
+        <strong className="font-semibold uppercase tracking-wider text-brick">Demo Mode (Mock API):</strong> Running with simulated Pune planning data. All figures are round estimates.
       </span>
     </div>
   );

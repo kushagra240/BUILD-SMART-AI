@@ -1,158 +1,252 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HardHat, Calculator, BookOpen, User, Menu, X, LogIn, UserPlus } from 'lucide-react';
-import { MockBanner } from './MockBanner';
+import { Home, MapPin, Menu, X, ChevronDown, User, LogIn, UserPlus } from 'lucide-react';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
 
-  // Simple mock user state stored in memory
-  const [mockUser] = useState<{ name: string; email: string } | null>(null);
+  // Mock logged-in user profile shown in screenshots
+  const [currentUser] = useState<{ initials: string; name: string } | null>({
+    initials: 'AD',
+    name: 'Aniket Deshmukh',
+  });
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/app') {
+      return location.pathname === '/app';
+    }
+    if (path === '/app/new') {
+      return location.pathname === '/app/new';
+    }
+    if (path === '/app/projects') {
+      return location.pathname === '/app/projects' || location.pathname.startsWith('/app/projects/');
+    }
+    if (path === '/materials') {
+      return location.pathname === '/materials';
+    }
+    return location.pathname === path;
+  };
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-900 text-slate-100 shadow-md border-b border-slate-800">
-      <MockBanner />
+    <header className="sticky top-0 z-50 bg-paper border-b border-ink/14 text-ink">
+      {/* Top Main Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 border-b border-ink/10">
           {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-md p-1">
-            <div className="bg-amber-500 text-slate-950 p-2 rounded-lg group-hover:bg-amber-400 transition-colors">
-              <HardHat className="w-5 h-5" aria-hidden="true" />
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 group rounded p-1 focus-ring"
+            aria-label="BuildSmart AI home"
+          >
+            <div className="w-8 h-8 rounded-md bg-paper-deep border border-ink/14 flex items-center justify-center text-forest group-hover:border-forest transition-colors">
+              <Home className="w-4 h-4 stroke-[2]" aria-hidden="true" />
             </div>
-            <div>
-              <span className="text-xl font-bold tracking-tight text-white group-hover:text-amber-400 transition-colors">
-                BuildSmart <span className="text-amber-500">AI</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-headline font-bold text-lg tracking-tight text-ink">
+                BuildSmart
               </span>
-              <span className="hidden sm:inline-block ml-2 text-xs text-slate-400 font-mono bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
-                Pune
+              <span className="text-[10px] font-mono font-medium px-1.5 py-0.2 rounded bg-clay text-ink-soft border border-ink/14">
+                AI
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
-            <Link
-              to="/"
-              className={`px-3.5 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/')
-                  ? 'bg-slate-800 text-amber-400 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              to="/app/new"
-              className={`px-3.5 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                isActive('/app/new')
-                  ? 'bg-amber-500 text-slate-950 font-semibold shadow-sm'
-                  : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
-              }`}
-            >
-              <Calculator className="w-4 h-4" aria-hidden="true" />
-              <span>Estimate Wizard</span>
-            </Link>
-            <Link
-              to="/methodology"
-              className={`px-3.5 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                isActive('/methodology')
-                  ? 'bg-slate-800 text-amber-400 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" aria-hidden="true" />
-              <span>Methodology</span>
-            </Link>
-          </nav>
+          {/* Center Context Label (Figma Header) */}
+          <div className="hidden md:flex items-center text-[10px] uppercase font-mono tracking-widest text-ink-soft">
+            <span>HOUSE CONSTRUCTION / PUNE, INDIA</span>
+          </div>
 
-          {/* Right Action / Auth Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            {mockUser ? (
-              <div className="flex items-center gap-2 bg-slate-800 text-slate-200 px-3 py-1.5 rounded-full text-xs border border-slate-700">
-                <User className="w-4 h-4 text-amber-400" aria-hidden="true" />
-                <span>{mockUser.name} (Mock)</span>
+          {/* Right Action / User Profile */}
+          <div className="hidden sm:flex items-center gap-3">
+            {currentUser ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md hover:bg-paper-deep text-xs font-medium text-ink border border-transparent hover:border-ink/14 transition-colors focus-ring"
+                  aria-expanded={profileDropdownOpen}
+                >
+                  <span className="w-6 h-6 rounded-full bg-clay border border-ink/14 flex items-center justify-center text-[11px] font-mono font-semibold text-ink">
+                    {currentUser.initials}
+                  </span>
+                  <span>{currentUser.name}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-ink-soft" aria-hidden="true" />
+                </button>
+
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-1 w-48 bg-paper border border-ink/14 rounded-lg shadow-subtle py-1 z-50 text-xs">
+                    <div className="px-3 py-2 border-b border-ink/10 text-ink-soft font-mono">
+                      Signed in as Aniket
+                    </div>
+                    <Link
+                      to="/app"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
+                    >
+                      Project overview
+                    </Link>
+                    <Link
+                      to="/app/projects"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
+                    >
+                      Saved projects
+                    </Link>
+                    <Link
+                      to="/login"
+                      onClick={() => setProfileDropdownOpen(false)}
+                      className="block px-3 py-1.5 hover:bg-paper-deep text-brick border-t border-ink/10"
+                    >
+                      Log out
+                    </Link>
+                  </div>
+                )}
               </div>
             ) : (
-              <>
+              <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1 hover:bg-slate-800 rounded transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-ink rounded hover:bg-paper-deep"
                 >
-                  <LogIn className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Log in</span>
+                  Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="px-3.5 py-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-md transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 text-xs font-semibold text-paper bg-brick hover:bg-brick-hover rounded shadow-sm"
                 >
-                  <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Register</span>
+                  Register
                 </Link>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Mobile menu trigger button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile hamburger menu toggle */}
+          <div className="flex sm:hidden items-center">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              aria-controls="mobile-menu"
-              aria-expanded={mobileMenuOpen}
-              aria-label="Toggle main menu"
+              className="p-1.5 rounded text-ink-soft hover:text-ink hover:bg-paper-deep focus-ring"
+              aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
+          </div>
+        </div>
+
+        {/* Sub-Navigation Tabs Row (Figma Screenshot 1, 2, 3, 4) */}
+        <div className="flex items-center justify-between text-xs overflow-x-auto scrollbar-none py-1">
+          <nav className="flex items-center space-x-1 sm:space-x-6 whitespace-nowrap" aria-label="Sub navigation">
+            <Link
+              to="/app"
+              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
+                isActive('/app')
+                  ? 'border-brick text-ink font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
+            >
+              Overview
+            </Link>
+            <Link
+              to="/app/new"
+              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
+                isActive('/app/new')
+                  ? 'border-brick text-ink font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
+            >
+              New estimate
+            </Link>
+            <Link
+              to="/app/projects"
+              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
+                isActive('/app/projects')
+                  ? 'border-brick text-ink font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
+            >
+              Saved projects
+            </Link>
+            <Link
+              to="/materials"
+              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
+                isActive('/materials')
+                  ? 'border-brick text-ink font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
+            >
+              Materials guide
+            </Link>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-ink-soft whitespace-nowrap pl-4">
+            <MapPin className="w-3.5 h-3.5 text-forest" aria-hidden="true" />
+            <span>Planning for Pune</span>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <nav id="mobile-menu" className="md:hidden bg-slate-900 border-t border-slate-800 px-4 pt-2 pb-4 space-y-1">
+        <nav className="sm:hidden bg-paper-deep border-t border-ink/14 px-4 py-3 space-y-2 text-sm">
           <Link
-            to="/"
+            to="/app"
             onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isActive('/') ? 'bg-slate-800 text-amber-400' : 'text-slate-300 hover:bg-slate-800'
+            className={`block px-3 py-2 rounded-md ${
+              isActive('/app') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Home
+            Overview
           </Link>
           <Link
             to="/app/new"
             onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isActive('/app/new') ? 'bg-amber-500 text-slate-950 font-bold' : 'text-amber-400 hover:bg-slate-800'
+            className={`block px-3 py-2 rounded-md ${
+              isActive('/app/new') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Estimate Wizard (MOCK)
+            New estimate
+          </Link>
+          <Link
+            to="/app/projects"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block px-3 py-2 rounded-md ${
+              isActive('/app/projects') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
+            }`}
+          >
+            Saved projects
+          </Link>
+          <Link
+            to="/materials"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block px-3 py-2 rounded-md ${
+              isActive('/materials') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
+            }`}
+          >
+            Materials guide
           </Link>
           <Link
             to="/methodology"
             onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isActive('/methodology') ? 'bg-slate-800 text-amber-400' : 'text-slate-300 hover:bg-slate-800'
+            className={`block px-3 py-2 rounded-md ${
+              isActive('/methodology') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
             Methodology
           </Link>
-          <div className="pt-4 border-t border-slate-800 flex flex-col gap-2">
+          <div className="pt-2 border-t border-ink/10 flex justify-between gap-2">
             <Link
               to="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2 text-sm font-medium text-slate-200 bg-slate-800 rounded-md"
+              className="flex-1 text-center py-2 text-xs font-medium rounded border border-ink/14 bg-paper"
             >
               Log in
             </Link>
             <Link
               to="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2 text-sm font-semibold text-slate-950 bg-amber-500 rounded-md"
+              className="flex-1 text-center py-2 text-xs font-semibold rounded bg-brick text-paper"
             >
               Register
             </Link>
