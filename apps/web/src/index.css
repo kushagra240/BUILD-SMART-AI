@@ -1,9 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --color-paper: #F6F1E7;
+  --color-paper-deep: #EBE2D0;
+  --color-ink: #1F2421;
+  --color-ink-soft: #5A615C;
+  --color-brick: #B4472B;
+  --color-forest: #1F4D45;
+  --color-ochre: #D9A441;
+  --color-clay: #E8DCC7;
+  --color-success: #3F7D4E;
+  --color-warning: #C98B2B;
+  --color-error: #A32D2D;
+  --border-hairline: rgba(31, 36, 33, 0.14);
+
+  /* Chart tokens */
+  --chart-foundation: #6B4F3A;
+  --chart-structure: #1F4D45;
+  --chart-masonry: #B4472B;
+  --chart-roofing: #8A6FA0;
+  --chart-flooring: #D9A441;
+  --chart-plumbing: #4F86A6;
+  --chart-electrical: #9BB05A;
+  --chart-finishing: #D88C9A;
+  --chart-labour: #3A3F3C;
+}
+
+@layer base {
+  body {
+    background-color: #F6F1E7;
+    color: #1F2421;
+    font-family: 'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, .font-headline {
+    font-family: 'Fraunces', Georgia, serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  .font-figures, .font-mono {
+    font-family: 'IBM Plex Mono', Menlo, Monaco, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-paper), 0 0 0 4px var(--color-forest);
+  }
+
+  .hairline-border {
+    border-width: 1px;
+    border-color: rgba(31, 36, 33, 0.14);
+  }
+
+  .hairline-divide > * + * {
+    border-top-width: 1px;
+    border-top-color: rgba(31, 36, 33, 0.14);
+  }
 }
