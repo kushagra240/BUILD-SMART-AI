@@ -6,8 +6,41 @@ MIT School of Computing · Dept. of Computer Science & Engineering · MIT-ADT Un
 Group **SY 112** · Sem 3 · A.Y. 2026-27 · Guide: **Prof. Rinku Badgujar**
 Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradhan
 
-> **Status: PLANNING. No application code exists yet.**
-> This README is the single source of truth for the build. It is written for two readers: the team, and an AI coding agent (Google Antigravity) that will implement it phase by phase. Anything not specified here must be *asked about*, never guessed.
+> **Current Status: Active Prototype / Foundation Implemented**
+>
+> The project has progressed beyond the planning stage into an active prototype with foundational backend and frontend systems in place. Core application scaffolding, persistence, authentication, and user interfaces are implemented, while the statistical ML pipeline and real construction dataset remain pending.
+>
+> - **Implemented / Foundation**:
+>   - **Frontend / UI**: Complete responsive React + Vite application (landing page, auth flows, dashboard, 4-step wizard, results presentation, saved projects, materials reference, methodology, PDF preview layout, and shared design tokens).
+>   - **Backend / API**: FastAPI application foundation with modular v1 routers (`/auth`, `/projects`, `/estimates`, `/meta`, `/health`), Pydantic validation schemas, error envelopes, CORS/security configuration, and rate limiting.
+>   - **Authentication & Security**: Argon2id password hashing, JWT access tokens, rotating refresh tokens with reuse detection/revocation, account lockout, and object-level authorization.
+>   - **Database & Persistence**: SQLAlchemy async models, PostgreSQL persistence, and initial Alembic migrations for users, refresh tokens, projects, estimates, model versions, and audit logs.
+>   - **Testing & CI**: Pytest integration test suite (auth, projects, estimates, validation, health, rate limiting), Vitest frontend unit tests, type checking (mypy/TypeScript), linting (Ruff/ESLint), and GitHub Actions CI workflow with PostgreSQL service and pip-audit.
+>   - **Prototype Estimation Service**: Development estimation service implementing cost breakdown logic, rounding/invariant checks, output data schemas (P10/P50/P90 intervals and material allocations), and estimate snapshot persistence.
+> - **Pending / Incomplete (Intelligence Layer & Production Hardening)**:
+>   - **Real Construction Dataset**: Curated, verified Pune construction-cost dataset with validated provenance records (`TODO(data)`).
+>   - **Production ML Pipeline**: Feature engineering, model training, cross-validation, and hyperparameter tuning pipelines in `ml/`.
+>   - **Trained ML Models**: Serialized scikit-learn/gradient boosting model artifacts. The current estimation logic is a development mock/heuristic prototype, **not** a trained AI/ML model.
+>   - **Data-Backed Confidence & Intervals**: Statistically derived P10/P50/P90 quantile predictions and data-driven confidence scoring.
+>   - **Production Material Recommendation Engine**: Optimization engine trained on verified vendor rates and specifications.
+>   - **Full End-to-End Integration & Hardening**: Production backend integration across all frontend views (mock fallback currently enabled for standalone demos), headless PDF rendering engine, Playwright E2E coverage, and production cloud deployment.
+>
+> | Area | Status |
+> |---|---|
+> | Frontend / UI | Substantially implemented |
+> | Backend / API | Substantially implemented |
+> | Authentication / Security | Implemented foundation |
+> | Database / Persistence | Implemented foundation |
+> | Testing / CI | Implemented foundation |
+> | Mock estimation flow | Implemented |
+> | Real construction dataset | Pending |
+> | ML training pipeline | Pending |
+> | Trained ML model | Pending |
+> | Data-backed P10/P50/P90 | Pending |
+> | Real material intelligence | Pending |
+> | Full production integration | In progress |
+>
+> *This README serves as the single source of truth and definitive roadmap for the build. All principles in [§2](#2-non-negotiable-principles) remain strictly binding.*
 
 ---
 
