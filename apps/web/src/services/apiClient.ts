@@ -15,15 +15,7 @@ const MOCK_PROJECTS: ProjectResponse[] = [
     id: 'deshmukh-residence',
     user_id: 'usr_mock_1',
     name: 'Deshmukh residence',
-    zone_id: 'pune_west',
-    built_up_area_sqft: 1800,
-    floors: 2,
-    bedrooms: 3,
-    bathrooms: 3,
-    quality_tier: 'standard',
-    construction_type: 'rcc_framed',
-    plot_area_sqft: 1200,
-    budget_inr: 4320000,
+    notes: 'Baner, Pune · G+1 · 1,800 sq ft',
     created_at: '2026-10-07T11:42:00Z',
     updated_at: '2026-10-07T11:42:00Z',
   },
@@ -31,15 +23,7 @@ const MOCK_PROJECTS: ProjectResponse[] = [
     id: 'kulkarni-family-home',
     user_id: 'usr_mock_1',
     name: 'Kulkarni family home',
-    zone_id: 'pune_west',
-    built_up_area_sqft: 1500,
-    floors: 2,
-    bedrooms: 3,
-    bathrooms: 2,
-    quality_tier: 'standard',
-    construction_type: 'rcc_framed',
-    plot_area_sqft: 1000,
-    budget_inr: 3600000,
+    notes: 'Kothrud, Pune · G+1 · 1,500 sq ft',
     created_at: '2026-10-04T09:15:00Z',
     updated_at: '2026-10-04T09:15:00Z',
   },
@@ -47,15 +31,7 @@ const MOCK_PROJECTS: ProjectResponse[] = [
     id: 'wagholi-courtyard-home',
     user_id: 'usr_mock_1',
     name: 'Wagholi courtyard home',
-    zone_id: 'pune_east',
-    built_up_area_sqft: 1200,
-    floors: 2,
-    bedrooms: 2,
-    bathrooms: 2,
-    quality_tier: 'economy',
-    construction_type: 'rcc_framed',
-    plot_area_sqft: 900,
-    budget_inr: 2400000,
+    notes: 'Wagholi, Pune · G+1 · 1,200 sq ft',
     created_at: '2026-09-28T14:30:00Z',
     updated_at: '2026-09-28T14:30:00Z',
   },
@@ -63,15 +39,7 @@ const MOCK_PROJECTS: ProjectResponse[] = [
     id: 'patil-residence',
     user_id: 'usr_mock_1',
     name: 'Patil residence',
-    zone_id: 'pune_west',
-    built_up_area_sqft: 1600,
-    floors: 2,
-    bedrooms: 4,
-    bathrooms: 3,
-    quality_tier: 'premium',
-    construction_type: 'rcc_framed',
-    plot_area_sqft: 1400,
-    budget_inr: 4960000,
+    notes: 'Bavdhan, Pune · G+1 · 1,600 sq ft',
     created_at: '2026-09-22T16:00:00Z',
     updated_at: '2026-09-22T16:00:00Z',
   },
@@ -130,11 +98,12 @@ class ApiClient {
   // Auth flows
   async register(req: components['schemas']['RegisterRequest']): Promise<UserResponse> {
     if (USE_MOCK) {
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 100));
       return {
         id: 'usr_mock_1',
         email: req.email,
         full_name: req.full_name,
+        role: 'user',
         is_active: true,
         created_at: new Date().toISOString(),
       };
@@ -147,10 +116,11 @@ class ApiClient {
 
   async login(req: components['schemas']['LoginRequest']): Promise<TokenResponse> {
     if (USE_MOCK) {
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 100));
       const res: TokenResponse = {
         access_token: 'mock_jwt_token_for_demo',
         token_type: 'bearer',
+        expires_in: 900,
       };
       this.setAccessToken(res.access_token);
       return res;
@@ -181,6 +151,7 @@ class ApiClient {
         id: 'usr_mock_1',
         email: 'aniket@buildsmart.local',
         full_name: 'Aniket Deshmukh',
+        role: 'user',
         is_active: true,
         created_at: '2026-10-07T10:00:00Z',
       };
@@ -196,9 +167,6 @@ class ApiClient {
       return {
         items: MOCK_PROJECTS,
         total: MOCK_PROJECTS.length,
-        page: 1,
-        page_size: 10,
-        pages: 1,
       };
     }
     return this.request<ProjectListResponse>('/projects', {
@@ -212,15 +180,7 @@ class ApiClient {
         id: `proj_${Date.now()}`,
         user_id: 'usr_mock_1',
         name: req.name,
-        zone_id: req.zone_id,
-        built_up_area_sqft: req.built_up_area_sqft,
-        floors: req.floors,
-        bedrooms: req.bedrooms,
-        bathrooms: req.bathrooms,
-        quality_tier: req.quality_tier,
-        construction_type: req.construction_type,
-        plot_area_sqft: req.plot_area_sqft ?? null,
-        budget_inr: req.budget_inr ?? null,
+        notes: req.notes ?? null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
@@ -246,31 +206,19 @@ class ApiClient {
   // Estimate flows
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
     if (USE_MOCK) {
-      // Mock calculation returning round values per prompt specifications
-      const proj = MOCK_PROJECTS.find((p) => p.id === projectId) || MOCK_PROJECTS[0];
-      const area = proj.built_up_area_sqft;
-      const rate = proj.quality_tier === 'economy' ? 2000 : proj.quality_tier === 'premium' ? 3100 : 2400;
+      const area = req.built_up_area_sqft;
+      const rate = req.quality_tier === 'economy' ? 2000 : req.quality_tier === 'premium' ? 3100 : 2400;
       const totalP50 = area * rate;
       const contingency = Math.round(totalP50 * 0.05);
 
       return {
         id: 'BS-2026-004',
-        inputs: {
-          built_up_area_sqft: area,
-          floors: proj.floors,
-          bedrooms: proj.bedrooms,
-          bathrooms: proj.bathrooms,
-          zone_id: proj.zone_id,
-          quality_tier: proj.quality_tier,
-          construction_type: proj.construction_type,
-          plot_area_sqft: proj.plot_area_sqft,
-          budget_inr: proj.budget_inr,
-        },
+        project_id: projectId,
+        inputs: req,
         total: {
           p50: totalP50,
           p10: Math.round(totalP50 * 0.90),
           p90: Math.round(totalP50 * 1.10),
-          cost_per_sqft: rate,
           currency: 'INR',
         },
         confidence: {
@@ -278,22 +226,20 @@ class ApiClient {
           reason: 'Calibrated to Pune municipal norms and verified planning distributions.',
         },
         breakdown: [
-          { category: 'Site preparation & foundation', amount: Math.round(totalP50 * 0.12), share_pct: 12, p10: Math.round(totalP50 * 0.12 * 0.9), p90: Math.round(totalP50 * 0.12 * 1.1) },
-          { category: 'RCC structure', amount: Math.round(totalP50 * 0.31), share_pct: 31, p10: Math.round(totalP50 * 0.31 * 0.9), p90: Math.round(totalP50 * 0.31 * 1.1) },
-          { category: 'Masonry & plaster', amount: Math.round(totalP50 * 0.18), share_pct: 18, p10: Math.round(totalP50 * 0.18 * 0.9), p90: Math.round(totalP50 * 0.18 * 1.1) },
-          { category: 'Flooring & wall tiles', amount: Math.round(totalP50 * 0.10), share_pct: 10, p10: Math.round(totalP50 * 0.10 * 0.9), p90: Math.round(totalP50 * 0.10 * 1.1) },
-          { category: 'Doors & windows', amount: Math.round(totalP50 * 0.10), share_pct: 10, p10: Math.round(totalP50 * 0.10 * 0.9), p90: Math.round(totalP50 * 0.10 * 1.1) },
-          { category: 'Electrical works', amount: Math.round(totalP50 * 0.07), share_pct: 7, p10: Math.round(totalP50 * 0.07 * 0.9), p90: Math.round(totalP50 * 0.07 * 1.1) },
-          { category: 'Plumbing & sanitary', amount: Math.round(totalP50 * 0.07), share_pct: 7, p10: Math.round(totalP50 * 0.07 * 0.9), p90: Math.round(totalP50 * 0.07 * 1.1) },
-          { category: 'Painting & finishes', amount: Math.round(totalP50 * 0.07), share_pct: 7, p10: Math.round(totalP50 * 0.07 * 0.9), p90: Math.round(totalP50 * 0.07 * 1.1) },
-          { category: 'Contingency allowance', amount: contingency, share_pct: 5, p10: Math.round(contingency * 0.9), p90: Math.round(contingency * 1.1) },
+          { category: 'Site preparation & foundation', amount: Math.round(totalP50 * 0.12), share_pct: 12 },
+          { category: 'RCC structure', amount: Math.round(totalP50 * 0.31), share_pct: 31 },
+          { category: 'Masonry & plaster', amount: Math.round(totalP50 * 0.18), share_pct: 18 },
+          { category: 'Flooring & wall tiles', amount: Math.round(totalP50 * 0.10), share_pct: 10 },
+          { category: 'Doors & windows', amount: Math.round(totalP50 * 0.10), share_pct: 10 },
+          { category: 'Electrical works', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
+          { category: 'Plumbing & sanitary', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
+          { category: 'Painting & finishes', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
+          { category: 'Contingency allowance', amount: contingency, share_pct: 5 },
         ],
         materials: [],
         budget: {
           status: 'within',
           gap_inr: 0,
-          gap_pct: 0,
-          message: 'Budget comfortably accommodates planned construction tier.',
         },
         drivers: [],
         model: {
@@ -315,9 +261,15 @@ class ApiClient {
   async getEstimate(estimateId: string): Promise<EstimateResponse> {
     if (USE_MOCK) {
       return this.createEstimate('deshmukh-residence', {
-        construction_type: 'rcc_framed',
+        built_up_area_sqft: 1800,
+        floors: 2,
+        bedrooms: 3,
+        bathrooms: 3,
+        zone_id: 'pune_west',
         quality_tier: 'standard',
-        notes: null,
+        construction_type: 'rcc_framed',
+        plot_area_sqft: 1200,
+        budget_inr: 4320000,
       });
     }
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
