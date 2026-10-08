@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Check, Info, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Info } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 export function MaterialsGuidePage() {
@@ -70,7 +70,6 @@ export function MaterialsGuidePage() {
           {/* Right Materials Moodboard Vignette */}
           <div className="lg:col-span-4 bg-paper-deep/60 border border-ink/14 rounded-lg p-4 space-y-2">
             <div className="w-full h-44 rounded bg-clay/60 border border-ink/14 p-3 flex flex-col justify-between">
-              {/* Material palette graphic */}
               <div className="grid grid-cols-3 gap-2 h-full">
                 <div className="bg-paper border border-ink/14 rounded p-2 flex flex-col justify-end text-[10px] font-mono text-ink">
                   <span>Wood / Teak</span>
@@ -89,7 +88,7 @@ export function MaterialsGuidePage() {
           </div>
         </div>
 
-        {/* Three approaches, one sound foundation comparison table */}
+        {/* Three approaches table */}
         <div className="space-y-3 font-sans">
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-ink/14 pb-2">
             <h2 className="font-headline text-xl font-bold text-ink">
@@ -188,7 +187,7 @@ export function MaterialsGuidePage() {
           </p>
         </div>
 
-        {/* 3 Review Cards (AAC block, Vitrified, Details before brands) */}
+        {/* 3 Review Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-sans">
           <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 space-y-2.5">
             <div className="flex items-center justify-between">

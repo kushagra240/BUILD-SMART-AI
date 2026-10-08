@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, ChevronRight, FolderX, ArrowRight } from 'lucide-react';
+import { Plus, Search, ChevronRight, FolderX } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { formatNumber, formatINR } from '../lib/formatters';
 
@@ -213,13 +213,12 @@ export function SavedProjectsPage() {
             </div>
           </div>
         ) : (
-          /* Empty Search State (Matching Figma Screenshot 4 bottom left) */
           <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-8 text-center space-y-4">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-clay border border-ink/14 text-ink-soft">
               <FolderX className="w-6 h-6 stroke-[1.5]" />
             </div>
             <div className="space-y-1 max-w-sm mx-auto">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-brick">
+              <div className="text-[11px] font-mono uppercase tracking-widest text-brick">
                 SEARCH: {search.toUpperCase()}
               </div>
               <h3 className="font-headline text-lg font-bold text-ink">

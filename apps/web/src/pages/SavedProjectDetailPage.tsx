@@ -1,12 +1,9 @@
-import { Link, useParams } from 'react-router-dom';
-import { FileText, Edit3, ArrowRight, CheckCircle2, Info } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FileText, Edit3, ArrowRight, Info } from 'lucide-react';
 import { HouseSchematic } from '../components/common/HouseSchematic';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
-import { formatINR, formatNumber } from '../lib/formatters';
 
 export function SavedProjectDetailPage() {
-  const { id } = useParams();
-
   return (
     <div className="min-h-screen bg-paper text-ink pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
@@ -170,7 +167,7 @@ export function SavedProjectDetailPage() {
               </p>
             </div>
 
-            {/* How the plan has changed (Revision History) */}
+            {/* How the plan has changed */}
             <div className="space-y-4">
               <div className="flex items-baseline justify-between border-b border-ink/14 pb-2">
                 <h2 className="font-headline text-xl font-bold text-ink">
@@ -239,9 +236,8 @@ export function SavedProjectDetailPage() {
             </div>
           </div>
 
-          {/* Right Column: Schematic, Material choices, Scope */}
+          {/* Right Column */}
           <div className="lg:col-span-4 space-y-5">
-            {/* Schematic */}
             <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
               <HouseSchematic
                 groundArea="900 sq ft"
@@ -253,7 +249,6 @@ export function SavedProjectDetailPage() {
               </p>
             </div>
 
-            {/* Material choices */}
             <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3 font-sans">
               <div className="flex justify-between items-center">
                 <h3 className="font-headline text-base font-bold text-ink">
@@ -304,7 +299,6 @@ export function SavedProjectDetailPage() {
               </Link>
             </div>
 
-            {/* Scope stays important */}
             <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2 text-xs text-ink-soft leading-relaxed font-sans">
               <h3 className="font-headline text-base font-bold text-ink">
                 Scope stays important

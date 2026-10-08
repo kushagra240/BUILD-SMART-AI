@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchMetaOptions, calculateEstimateMock } from '../services/mockApi';
-import { MetaOptions, QualityTier } from '../types/estimate';
+import { MetaOptions, QualityTier, ConstructionType } from '../types/estimate';
 import { formatINR, formatNumber } from '../lib/formatters';
 import { HouseSchematic } from '../components/common/HouseSchematic';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
-import { ArrowRight, ArrowLeft, Check, Info, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
 
 interface WizardFormData {
   projectName: string;
@@ -15,7 +15,7 @@ interface WizardFormData {
   plotArea: number;
   floors: number;
   qualityTier: QualityTier;
-  structuralSystem: string;
+  structuralSystem: ConstructionType;
   walling: string;
   flooring: string;
   windows: string;
@@ -26,7 +26,7 @@ export function WizardPage() {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [meta, setMeta] = useState<MetaOptions | null>(null);
+  const [, setMeta] = useState<MetaOptions | null>(null);
 
   const [form, setForm] = useState<WizardFormData>({
     projectName: 'Deshmukh residence',
@@ -364,7 +364,6 @@ export function WizardPage() {
 
             {/* Right Information Panel */}
             <div className="lg:col-span-4 space-y-5">
-              {/* Measure the whole home card */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
                 <h3 className="font-headline text-base font-bold text-ink">
                   Measure the whole home
@@ -379,7 +378,6 @@ export function WizardPage() {
                 </p>
               </div>
 
-              {/* What happens next card */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2">
                 <h3 className="font-headline text-base font-bold text-ink">
                   What happens next
@@ -532,12 +530,13 @@ export function WizardPage() {
                     <select
                       id="structuralSystem"
                       value={form.structuralSystem}
-                      onChange={(e) => setForm({ ...form, structuralSystem: e.target.value })}
+                      onChange={(e) =>
+                        setForm({ ...form, structuralSystem: e.target.value as ConstructionType })
+                      }
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
                       <option value="rcc_framed">RCC framed structure</option>
                       <option value="load_bearing">Load-bearing masonry</option>
-                      <option value="composite">Composite steel & RCC</option>
                     </select>
                   </div>
 

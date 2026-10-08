@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { Download, ArrowRight, CheckCircle2, Bookmark, FileText } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
+import { Download, ArrowRight, CheckCircle2, Bookmark } from 'lucide-react';
 import { EstimateResponse } from '../types/estimate';
 import { calculateEstimateMock } from '../services/mockApi';
 import { formatINR, formatNumber } from '../lib/formatters';
@@ -35,7 +35,6 @@ function getCategoryColor(name: string): string {
 
 export function ResultsPage() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [estimate, setEstimate] = useState<EstimateResponse | null>(location.state?.estimate || null);
   const [loading, setLoading] = useState<boolean>(!location.state?.estimate);
   const [projectSaved, setProjectSaved] = useState<boolean>(false);
@@ -69,7 +68,7 @@ export function ResultsPage() {
 
   const projectName = location.state?.projectName || 'Deshmukh residence';
   const locality = location.state?.locality || 'Baner, Pune';
-  const totalCost = estimate.total_inr.p50;
+  const totalCost = estimate.total.p50;
   const areaSqFt = estimate.inputs.built_up_area_sqft;
   const ratePerSqFt = Math.round(totalCost / areaSqFt);
   const contingencyAmount = Math.round(totalCost * 0.05);
@@ -150,7 +149,7 @@ export function ResultsPage() {
               ₹{formatNumber(ratePerSqFt)} <span className="text-sm font-sans font-normal text-ink-soft">/ sq ft</span>
             </div>
             <div className="text-xs text-forest font-semibold pt-0.5">
-              Planning range: {formatINR(estimate.total_inr.p10)} – {formatINR(estimate.total_inr.p90)}
+              Planning range: {formatINR(estimate.total.p10)} – {formatINR(estimate.total.p90)}
             </div>
             <p className="text-[11px] text-ink-soft leading-tight">
               ±10% around median. A planning band, not a guaranteed price range.
@@ -195,10 +194,10 @@ export function ResultsPage() {
                   <div
                     key={item.category}
                     style={{
-                      width: `${item.percentage}%`,
+                      width: `${item.share_pct}%`,
                       backgroundColor: getCategoryColor(item.category),
                     }}
-                    title={`${item.category}: ${item.percentage}% (${formatINR(item.amount_inr)})`}
+                    title={`${item.category}: ${item.share_pct}% (${formatINR(item.amount)})`}
                     className="h-full transition-opacity hover:opacity-90"
                   />
                 ))}
@@ -212,7 +211,7 @@ export function ResultsPage() {
                       className="w-2.5 h-2.5 rounded-sm inline-block"
                       style={{ backgroundColor: getCategoryColor(item.category) }}
                     />
-                    <span>{item.category.split(' ')[0]} ({item.percentage}%)</span>
+                    <span>{item.category.split(' ')[0]} ({item.share_pct}%)</span>
                   </div>
                 ))}
               </div>
@@ -240,10 +239,10 @@ export function ResultsPage() {
                         <span className="font-medium text-ink">{cat.category}</span>
                       </td>
                       <td className="py-2.5 px-4 text-center font-mono text-ink-soft">
-                        {cat.percentage}%
+                        {cat.share_pct}%
                       </td>
                       <td className="py-2.5 px-4 text-right font-mono font-medium text-ink">
-                        {formatINR(cat.amount_inr)}
+                        {formatINR(cat.amount)}
                       </td>
                     </tr>
                   ))}

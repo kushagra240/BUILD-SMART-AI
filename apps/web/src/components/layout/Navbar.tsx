@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, MapPin, Menu, X, ChevronDown, User, LogIn, UserPlus } from 'lucide-react';
+import { Home, MapPin, Menu, X, ChevronDown } from 'lucide-react';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

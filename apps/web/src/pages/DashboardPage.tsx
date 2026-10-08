@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Plus, ArrowRight, FileText, ChevronRight, Lightbulb, Bookmark } from 'lucide-react';
+import { Plus, ArrowRight, FileText, ChevronRight, Lightbulb } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 export function DashboardPage() {
@@ -92,7 +92,6 @@ export function DashboardPage() {
           {/* Right Image / Architectural Vignette */}
           <div className="lg:col-span-5 bg-clay/40 border-t lg:border-t-0 lg:border-l border-ink/14 flex flex-col justify-between p-6">
             <div className="w-full h-48 sm:h-56 rounded-md overflow-hidden bg-forest/5 border border-ink/14 flex flex-col items-center justify-center p-4 relative">
-              {/* Architectural rendering representation */}
               <svg
                 viewBox="0 0 240 140"
                 className="w-full h-full max-h-48 text-forest"
@@ -102,21 +101,14 @@ export function DashboardPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                {/* Sun */}
                 <circle cx="210" cy="30" r="14" fill="#D9A441" fillOpacity="0.25" stroke="#D9A441" strokeWidth="1" />
-                {/* Trees background */}
                 <path d="M190 85 C190 70, 210 65, 215 75 C220 65, 235 70, 235 85 Z" fill="#1F4D45" fillOpacity="0.15" stroke="none" />
-                {/* House Base */}
                 <rect x="25" y="45" width="165" height="75" fill="#E8DCC7" fillOpacity="0.6" stroke="#1F2421" strokeOpacity="0.4" />
-                {/* Overhang Roof */}
                 <polygon points="15,45 110,25 200,45" fill="#B4472B" fillOpacity="0.15" stroke="#B4472B" strokeWidth="1.5" />
-                {/* First Floor Balcony */}
                 <rect x="35" y="55" width="60" height="25" fill="#FFFFFF" stroke="#1F4D45" strokeOpacity="0.5" />
                 <line x1="35" y1="70" x2="95" y2="70" stroke="#1F4D45" strokeOpacity="0.3" strokeDasharray="2 2" />
-                {/* Main Ground Entrance */}
                 <rect x="110" y="80" width="30" height="40" fill="#B4472B" fillOpacity="0.2" stroke="#B4472B" />
                 <rect x="148" y="80" width="32" height="25" fill="#FFFFFF" stroke="#1F4D45" strokeOpacity="0.5" />
-                {/* Landscaping foreground */}
                 <line x1="10" y1="120" x2="230" y2="120" stroke="#1F2421" strokeOpacity="0.3" />
                 <circle cx="30" cy="115" r="5" fill="#3F7D4E" fillOpacity="0.3" stroke="#3F7D4E" />
                 <circle cx="195" cy="115" r="7" fill="#3F7D4E" fillOpacity="0.3" stroke="#3F7D4E" />
@@ -130,7 +122,6 @@ export function DashboardPage() {
 
         {/* 3 Summary Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Saved projects */}
           <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
             <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
               Saved projects
@@ -141,7 +132,6 @@ export function DashboardPage() {
             <p className="text-xs text-ink-soft">Four estimates, kept together</p>
           </div>
 
-          {/* Latest planning range */}
           <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
             <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
               Latest planning range
@@ -152,7 +142,6 @@ export function DashboardPage() {
             <p className="text-xs text-ink-soft">Deshmukh residence · ±10% of estimate</p>
           </div>
 
-          {/* Contingency included */}
           <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
             <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
               Contingency included
@@ -181,7 +170,6 @@ export function DashboardPage() {
               </Link>
             </div>
 
-            {/* List items */}
             <div className="border border-ink/14 rounded-lg overflow-hidden divide-y divide-ink/10 bg-paper">
               <Link
                 to="/app/projects/deshmukh-residence"
@@ -247,7 +235,6 @@ export function DashboardPage() {
               </Link>
             </div>
 
-            {/* Tip box */}
             <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-4 flex gap-3 items-start text-xs text-ink-soft">
               <Lightbulb className="w-4 h-4 text-ochre flex-shrink-0 mt-0.5" />
               <p className="leading-relaxed">

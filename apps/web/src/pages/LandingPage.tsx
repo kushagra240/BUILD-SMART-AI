@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Calculator, ArrowRight, ShieldCheck, Layers, FileSpreadsheet, Sparkles, MapPin, CheckCircle2 } from 'lucide-react';
+import { Calculator, ArrowRight, ShieldCheck, Layers, MapPin, CheckCircle2 } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 export function LandingPage() {
