@@ -113,6 +113,7 @@ export function SavedProjectsPage() {
             <Search className="w-4 h-4 text-ink-soft absolute left-3 top-2.5 pointer-events-none" />
             <input
               type="text"
+              aria-label="Search by name or locality"
               placeholder="Search by name or locality"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -122,6 +123,7 @@ export function SavedProjectsPage() {
 
           <div className="sm:col-span-3">
             <select
+              aria-label="Filter by construction quality"
               value={qualityFilter}
               onChange={(e) => setQualityFilter(e.target.value)}
               className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-xs text-ink focus-ring font-sans"
@@ -135,6 +137,7 @@ export function SavedProjectsPage() {
 
           <div className="sm:col-span-4">
             <select
+              aria-label="Filter by Pune locality"
               value={localityFilter}
               onChange={(e) => setLocalityFilter(e.target.value)}
               className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-xs text-ink focus-ring font-sans"
