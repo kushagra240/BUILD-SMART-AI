@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HardHat, UserPlus, CheckCircle2 } from 'lucide-react';
+import { Home, UserPlus, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { z } from 'zod';
-
 import { apiClient } from '../services/apiClient';
+import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 const registerSchema = z
   .object({
-    fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+    full_name: z.string().min(2, 'Full name must be at least 2 characters'),
     email: z.string().email('Please enter a valid email address'),
     password: z.string().min(10, 'Password must be at least 10 characters long'),
     confirmPassword: z.string(),
@@ -22,10 +22,10 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export function RegisterPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<RegisterFormData>({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    full_name: 'Aniket Deshmukh',
+    email: 'aniket@buildsmart.local',
+    password: 'password12345',
+    confirmPassword: 'password12345',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
   const [apiError, setApiError] = useState<string | null>(null);
@@ -53,17 +53,12 @@ export function RegisterPage() {
       await apiClient.register({
         email: formData.email,
         password: formData.password,
-        full_name: formData.fullName,
-      });
-      // Automatically log in after registration
-      await apiClient.login({
-        email: formData.email,
-        password: formData.password,
+        full_name: formData.full_name,
       });
       setSubmitted(true);
       setTimeout(() => {
-        navigate('/app/new');
-      }, 600);
+        navigate('/app');
+      }, 500);
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -72,122 +67,152 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-8 space-y-6">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-12 bg-paper text-ink">
+      <div className="w-full max-w-md space-y-6">
+        {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 rounded-xl bg-amber-500 text-slate-950 mb-2">
-            <HardHat className="w-6 h-6" aria-hidden="true" />
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-paper-deep border border-ink/14 text-forest mb-1">
+            <Home className="w-5 h-5 stroke-[2]" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create your Account</h1>
-          <p className="text-xs text-slate-500 font-medium">Preliminary Cost Estimation & History</p>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
+              Create your notebook.
+            </h1>
+            <SampleDataBadge text="Mock auth" variant="subtle" />
+          </div>
+          <p className="text-xs text-ink-soft">
+            Save estimates, compare quality tiers, and track your house project plans.
+          </p>
         </div>
 
-        {apiError && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs font-medium" role="alert">
-            {apiError}
-          </div>
-        )}
+        {/* Card */}
+        <div className="bg-paper-deep/60 border border-ink/14 rounded-lg p-6 sm:p-8 shadow-card space-y-5">
+          {apiError && (
+            <div
+              role="alert"
+              className="p-3 text-xs bg-error/10 border border-error/20 text-error rounded-md"
+            >
+              {apiError}
+            </div>
+          )}
 
-        {submitted ? (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center space-y-2" role="alert">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-            <h2 className="font-bold text-sm">Account Created!</h2>
-            <p className="text-xs text-emerald-700">Redirecting to Estimate Wizard...</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div>
-              <label htmlFor="reg-name" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Full Name
+          {submitted && (
+            <div
+              role="status"
+              className="p-3 text-xs bg-forest/10 border border-forest/20 text-forest rounded-md flex items-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+              <span>Account created successfully. Redirecting to overview...</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="full_name" className="block text-xs font-medium text-ink">
+                Full name
               </label>
               <input
-                id="reg-name"
+                id="full_name"
                 type="text"
-                required
-                value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                placeholder="Kushagra Khare"
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.fullName ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                  errors.full_name ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.fullName}
+                placeholder="e.g. Aniket Deshmukh"
+                autoComplete="name"
               />
-              {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
+              {errors.full_name && (
+                <p className="text-[11px] text-error font-medium">{errors.full_name}</p>
+              )}
             </div>
 
-            <div>
-              <label htmlFor="reg-email" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Email Address
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-xs font-medium text-ink">
+                Email address
               </label>
               <input
-                id="reg-email"
+                id="email"
                 type="email"
-                required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="user@example.com"
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.email ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                  errors.email ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.email}
+                placeholder="name@example.com"
+                autoComplete="email"
               />
-              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-[11px] text-error font-medium">{errors.email}</p>
+              )}
             </div>
 
-            <div>
-              <label htmlFor="reg-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Password
-              </label>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="block text-xs font-medium text-ink">
+                  Password
+                </label>
+                <span className="text-[10px] text-ink-soft font-mono">Min 10 characters</span>
+              </div>
               <input
-                id="reg-password"
+                id="password"
                 type="password"
-                required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Minimum 10 characters"
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.password ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                  errors.password ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.password}
+                placeholder="••••••••••"
+                autoComplete="new-password"
               />
-              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-[11px] text-error font-medium">{errors.password}</p>
+              )}
             </div>
 
-            <div>
-              <label htmlFor="reg-confirm" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Confirm Password
+            <div className="space-y-1.5">
+              <label htmlFor="confirmPassword" className="block text-xs font-medium text-ink">
+                Confirm password
               </label>
               <input
-                id="reg-confirm"
+                id="confirmPassword"
                 type="password"
-                required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                placeholder="Re-enter password"
-                className={`w-full px-3.5 py-2 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.confirmPassword ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                  errors.confirmPassword ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.confirmPassword}
+                placeholder="••••••••••"
+                autoComplete="new-password"
               />
-              {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && (
+                <p className="text-[11px] text-error font-medium">{errors.confirmPassword}</p>
+              )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-colors flex items-center justify-center gap-2 focus:ring-4 focus:ring-amber-500/40 disabled:opacity-50"
+              disabled={loading || submitted}
+              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2"
             >
-              <UserPlus className="w-4 h-4" aria-hidden="true" />
-              <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
+              <UserPlus className="w-4 h-4" />
+              <span>{loading ? 'Creating notebook...' : 'Register notebook'}</span>
             </button>
           </form>
-        )}
+        </div>
 
-        <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100">
-          Already have an account?{' '}
-          <Link to="/login" className="text-amber-600 hover:text-amber-700 font-semibold">
-            Log in here
-          </Link>
+        {/* Footer Link */}
+        <div className="text-center text-xs text-ink-soft space-y-2">
+          <div>
+            Already have a notebook?{' '}
+            <Link to="/login" className="font-semibold text-brick hover:underline">
+              Sign in
+            </Link>
+          </div>
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-ink-soft">
+            <ShieldCheck className="w-3.5 h-3.5 text-forest" />
+            <span>Strict privacy: No telemetry, no selling of site queries</span>
+          </div>
         </div>
       </div>
     </div>

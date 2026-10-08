@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { HardHat, LogIn, CheckCircle2 } from 'lucide-react';
+import { Home, LogIn, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { z } from 'zod';
-
 import { apiClient } from '../services/apiClient';
+import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -14,7 +14,10 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<LoginFormData>({ email: '', password: '' });
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: 'aniket@buildsmart.local',
+    password: 'password12345',
+  });
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -41,8 +44,8 @@ export function LoginPage() {
       await apiClient.login(formData);
       setSubmitted(true);
       setTimeout(() => {
-        navigate('/app/new');
-      }, 600);
+        navigate('/app');
+      }, 500);
     } catch (err) {
       setApiError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -51,94 +54,118 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-xl p-8 space-y-6">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-12 bg-paper text-ink">
+      <div className="w-full max-w-md space-y-6">
+        {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex p-3 rounded-xl bg-amber-500 text-slate-950 mb-2">
-            <HardHat className="w-6 h-6" aria-hidden="true" />
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-paper-deep border border-ink/14 text-forest mb-1">
+            <Home className="w-5 h-5 stroke-[2]" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Log in to BuildSmart AI</h1>
-          <p className="text-xs text-slate-500 font-medium">Secure Access & Project Management</p>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
+              Welcome back.
+            </h1>
+            <SampleDataBadge text="Mock auth" variant="subtle" />
+          </div>
+          <p className="text-xs text-ink-soft">
+            Sign in to access your saved building notebook and project estimates.
+          </p>
         </div>
 
-        {apiError && (
-          <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs font-medium" role="alert">
-            {apiError}
-          </div>
-        )}
+        {/* Card */}
+        <div className="bg-paper-deep/60 border border-ink/14 rounded-lg p-6 sm:p-8 shadow-card space-y-5">
+          {apiError && (
+            <div
+              role="alert"
+              className="p-3 text-xs bg-error/10 border border-error/20 text-error rounded-md"
+            >
+              {apiError}
+            </div>
+          )}
 
-        {submitted ? (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center space-y-2" role="alert">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-            <h2 className="font-bold text-sm">Login Successful!</h2>
-            <p className="text-xs text-emerald-700">Redirecting to Estimate Wizard...</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div>
-              <label htmlFor="login-email" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Email Address
+          {submitted && (
+            <div
+              role="status"
+              className="p-3 text-xs bg-forest/10 border border-forest/20 text-forest rounded-md flex items-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+              <span>Authentication successful. Redirecting to notebook...</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-xs font-medium text-ink">
+                Email address
               </label>
               <input
-                id="login-email"
+                id="email"
                 type="email"
-                required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="user@example.com"
-                className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.email ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                  errors.email ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : undefined}
+                placeholder="name@example.com"
+                autoComplete="email"
               />
               {errors.email && (
-                <p id="email-error" className="mt-1 text-xs text-red-600 font-medium">
-                  {errors.email}
-                </p>
+                <p className="text-[11px] text-error font-medium">{errors.email}</p>
               )}
             </div>
 
-            <div>
-              <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-                Password
-              </label>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="block text-xs font-medium text-ink">
+                  Password
+                </label>
+                <span className="text-[10px] text-ink-soft font-mono">Min 10 characters</span>
+              </div>
               <input
-                id="login-password"
+                id="password"
                 type="password"
-                required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="••••••••••••"
-                className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 focus:outline-none focus:ring-2 ${
-                  errors.password ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 focus:ring-amber-500'
+                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                  errors.password ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? 'password-error' : undefined}
+                placeholder="••••••••••"
+                autoComplete="current-password"
               />
               {errors.password && (
-                <p id="password-error" className="mt-1 text-xs text-red-600 font-medium">
-                  {errors.password}
-                </p>
+                <p className="text-[11px] text-error font-medium">{errors.password}</p>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-colors flex items-center justify-center gap-2 focus:ring-4 focus:ring-amber-500/40 disabled:opacity-50"
+              disabled={loading || submitted}
+              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2"
             >
-              <LogIn className="w-4 h-4" aria-hidden="true" />
-              <span>{loading ? 'Logging in...' : 'Log In'}</span>
+              <LogIn className="w-4 h-4" />
+              <span>{loading ? 'Authenticating...' : 'Sign in to notebook'}</span>
             </button>
           </form>
-        )}
 
-        <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-amber-600 hover:text-amber-700 font-semibold">
-            Register here
-          </Link>
+          {/* Quick Demo Credentials Tip */}
+          <div className="pt-3 border-t border-ink/10 text-[11px] text-ink-soft flex items-center justify-between">
+            <span>Demo mode active</span>
+            <span className="font-mono text-ink">aniket@buildsmart.local</span>
+          </div>
+        </div>
+
+        {/* Footer Link */}
+        <div className="text-center text-xs text-ink-soft space-y-2">
+          <div>
+            Don&apos;t have a building notebook yet?{' '}
+            <Link to="/register" className="font-semibold text-brick hover:underline">
+              Create an account
+            </Link>
+          </div>
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-ink-soft">
+            <ShieldCheck className="w-3.5 h-3.5 text-forest" />
+            <span>Argon2id password hashing · HTTP-only cookie rotation</span>
+          </div>
         </div>
       </div>
     </div>
