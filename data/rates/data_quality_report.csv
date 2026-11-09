@@ -1,0 +1,49 @@
+check,severity,count,detail
+PK unique: data_source.source_id,OK,0,
+PK unique: zone.zone_id,OK,0,
+PK unique: labour_rate_ssr.ssr_sr,OK,0,
+PK unique: minimum_wage.wage_id,OK,0,
+PK unique: material_rate_ssr.material_id,OK,0,
+PK unique: work_item_ssr.work_item_id,OK,0,
+PK unique: quantity_norm.norm_id,OK,0,
+PK unique: transport_trip_cost.row_id,OK,0,
+PK unique: rate_rule.rule_id,OK,0,
+PK unique: wpi_item.wpi_code,OK,0,
+PK unique: material_wpi_map.material_id,OK,0,
+unique: work_item_ssr.ssr_sr,OK,0,
+unique: work_item_ssr.item_no,OK,0,
+FK source_id: labour_rate_ssr,OK,0,
+FK source_id: material_rate_ssr,OK,0,
+FK source_id: work_item_ssr,OK,0,
+FK source_id: quantity_norm,OK,0,
+FK source_id: transport_trip_cost,OK,0,
+FK source_id: rate_rule,OK,0,
+FK source_id: zone,OK,0,
+FK source_id: wpi_item,OK,0,
+FK source_id: wpi_series,OK,0,
+FK source_id: lead_charge_raw,OK,0,
+FK map->material,OK,0,
+FK map->wpi_item,OK,0,
+FK wpi_series->wpi_item,OK,0,
+material rate > 0,OK,0,
+labour_rate <= completed_rate,OK,0,
+work items where labour > 90% of rate (read item before use),INFO,69,
+work items with zero rate,OK,0,
+SSR building serial numbers 720-1619 present,WARN,5,"missing: [1598, 1599, 1600, 1601, 1602]"
+work items needing manual review,WARN,7,see csv/review/work_items_review.csv
+work items with unknown unit,WARN,7,
+material rows moved to review (merged two-column lines),WARN,9,road signage and merged lines; mostly not building-relevant
+material rows flagged duplicate sr within a section,INFO,32,"source numbering repeats; kept, flagged"
+quantity norms fully parsed,INFO,351,20 rows need review
+WPI: 42 months per item,OK,0,
+WPI: index values positive,OK,0,
+min wage: total = basic + allowance,OK,0,
+min wage: total equals value printed in notification,OK,0,confirms hand-read allowance digits
+"min wage: daily = ceil(total/26, 2)",OK,0,
+min wage allowance verified against the PDF by a human,WARN,9,"set allowance_verified=true after checking PDF page 3, entry 11"
+"norm plausibility: Plain Cement/cement concrete/Cement in [2,9]",OK,0,10 rows checked
+"norm plausibility: Brick/brick/Bricks in [300,700]",OK,0,11 rows checked
+"norm plausibility: Plastering/plaster/Cement in [0.03,0.4]",OK,0,12 rows checked
+core rate range: ^Cement 4000-9000 INR/MT,OK,0,"[{'material_id': 'MAT-0860', 'rate': 6000.0}]"
+core rate range: TMT 40000-90000 INR/MT,OK,0,"[{'material_id': 'MAT-0862', 'rate': 61000.0}]"
+core rate range: Sand - Crushed 600-3000 INR/cu.m,OK,0,"[{'material_id': 'MAT-0872', 'rate': 1200.0}]"

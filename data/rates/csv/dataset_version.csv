@@ -1,0 +1,2 @@
+version_id,label,created_on,price_basis,notes,is_active
+v1.0.0,Initial sourced rates database,2026-11-07,SSR 2022-23 ex-GST; WPI base 2022-23=100 to Sep-26,Built from uploaded government documents; see data_source and review/ folder,True

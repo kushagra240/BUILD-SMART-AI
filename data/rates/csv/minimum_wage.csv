@@ -1,0 +1,10 @@
+wage_id,industry,skill_class,zone,basic_monthly,special_allowance_monthly,total_monthly,total_monthly_as_printed,daily_rate,period_start,period_end,basic_source_id,allowance_source_id,allowance_verified,status
+MW-01,Construction or maintenance of roads or in building operations,Skilled,I,21860,3198,25058,25058,963.77,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-02,Construction or maintenance of roads or in building operations,Skilled,II,20990,3198,24188,24188,930.31,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-03,Construction or maintenance of roads or in building operations,Skilled,III,20125,3198,23323,23323,897.04,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-04,Construction or maintenance of roads or in building operations,Semi-skilled,I,20345,3198,23543,23543,905.5,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-05,Construction or maintenance of roads or in building operations,Semi-skilled,II,19475,3198,22673,22673,872.04,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-06,Construction or maintenance of roads or in building operations,Semi-skilled,III,18610,3198,21808,21808,838.77,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-07,Construction or maintenance of roads or in building operations,Unskilled,I,19265,3198,22463,22463,863.97,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-08,Construction or maintenance of roads or in building operations,Unskilled,II,18400,3198,21598,21598,830.7,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"
+MW-09,Construction or maintenance of roads or in building operations,Unskilled,III,17530,3198,20728,20728,797.24,2026-07-01,2026-12-31,SRC-02,SRC-03,False,"basic READ; allowance HAND-READ from scan, verify"

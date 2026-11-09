@@ -1,0 +1,6 @@
+zone_id,name,min_wage_zone,basis,transport_lead_km_to_main_materials,price_multiplier,source_id,status
+ZN-PMC,Pune Municipal Corporation limits,I,Zone I = all Municipal Corporations (min wage notification),,,SRC-02,min-wage zone READ; price factors TODO(data)
+ZN-PCMC,Pimpri-Chinchwad Municipal Corporation limits,I,Zone I = all Municipal Corporations,,,SRC-02,min-wage zone READ; price factors TODO(data)
+ZN-CANT,Pune / Khadki / Dehu Road Cantonment areas,II,Zone II = A/B/C class municipal councils and cantonment areas,,,SRC-02,min-wage zone READ; price factors TODO(data)
+ZN-COUNCIL,Municipal council towns around Pune,II,Zone II if A/B/C class council; confirm class per town,,,SRC-02,min-wage zone READ; price factors TODO(data)
+ZN-OTHER,Other areas (rural / villages),III,Zone III = all other areas,,,SRC-02,min-wage zone READ; price factors TODO(data)

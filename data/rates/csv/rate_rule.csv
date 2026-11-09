@@ -1,0 +1,22 @@
+rule_id,kind,description,value,unit,reference,note,source_id,status
+R01,lead,Initial lead included in completed item rates,50.0,m,"SSR general notes, Leads and lifts (c)",Additional lead charged per Statement C-1,SRC-01,READ
+R02,excavation_depth,Excavation depth 3.0 m to 4.5 m: add to basic rate of the item,20.0,%,SSR general note (xix),,SRC-01,READ
+R03,excavation_depth,Excavation depth 4.5 m to 6.0 m: add to basic rate of the item,30.0,%,SSR general note (xix),Beyond 6.0 m decided by Superintending Engineer,SRC-01,READ
+R04,floor_lift,Building items on first floor: increase,1.0,%,SSR general note (ii) floor lift,,SRC-01,READ
+R05,floor_lift,Building items on second floor: increase,2.0,%,SSR general note (ii) floor lift,,SRC-01,READ
+R06,floor_lift,Building items on third floor: increase,3.0,%,SSR general note (ii) floor lift,,SRC-01,READ
+R07,floor_lift,Building items on fourth floor: increase,4.0,%,SSR general note (ii) floor lift,Ground floor nil; above fourth decided by SE,SRC-01,READ
+R08,foul_condition,Excavation in severe/adverse/foul condition: increase over scheduled rate,25.0,%,SSR general note (xi)(a),Needs prior approval of SE,SRC-01,READ
+R09,foul_condition,Other items in foul condition up to ground/bed level: increase,5.0,%,SSR general note (xi)(b),Needs prior approval of SE,SRC-01,READ
+R10,scaffolding,External repair work at height with scaffolding: increase of item rate,1.0,%,SSR general note (viii) scaffolding,Not applied if scaffolding is a separate item,SRC-01,READ
+R11,curing,RCC with modified curing (curing compound): increase,5.0,%,SSR general note (xxi),,SRC-01,READ
+R12,royalty,"Royalty on sand (royalty + 2% surcharge + 10% DMF cess), not in rate abstract",237.37,INR/cum,SSR general note (v)(a),Reimbursed separately,SRC-01,READ
+R13,royalty,"Royalty on other minor minerals (royalty + 2% surcharge), not in rate abstract",216.18,INR/cum,SSR general note (v)(b),Reimbursed separately,SRC-01,READ
+R14,insurance,"Labour insurance (not in rate abstract), work value up to INR 25 lakh",0.5,%,SSR general note (i)A,Added in recapitulation sheet,SRC-01,READ
+R15,insurance,"Labour insurance (not in rate abstract), work value above INR 25 lakh",1.0,%,SSR general note (i)A,,SRC-01,READ
+R16,basis,All SSR rates exclude GST,,,SSR rate tables header,,SRC-01,READ
+R17,basis,Concrete items include normal curing,,,SSR general note (ix),,SRC-01,READ
+R18,basis,Excavation rates assume machine excavation; manual excavation needs SE permission,,,SSR general note (vii),,SRC-01,READ
+R19,transport,Truck payload used for lead calculations,10.0,MT,SSR Leads and lifts (b),,SRC-01,READ
+R20,transport,Diesel price used (as on 1 Apr 2022),102.88,INR/litre,SSR Statement C,,SRC-01,READ
+R21,transport,Truck hire used per day,2500.0,INR/day,SSR Statement C,,SRC-01,READ
