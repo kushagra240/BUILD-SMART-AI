@@ -30,3 +30,29 @@ export function formatNumber(value: number): string {
   if (isNaN(value)) return '0';
   return new Intl.NumberFormat('en-IN').format(value);
 }
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-IN', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+
+const DATE_TIME_FORMATTER = new Intl.DateTimeFormat('en-IN', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+export function formatDate(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return '—';
+  return DATE_FORMATTER.format(date);
+}
+
+export function formatDateTime(isoDate: string): string {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return '—';
+  return DATE_TIME_FORMATTER.format(date);
+}

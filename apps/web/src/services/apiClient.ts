@@ -371,11 +371,28 @@ class ApiClient {
 
   async getProject(projectId: string): Promise<ProjectResponse> {
     if (isMockApi()) {
-      const found = MOCK_PROJECTS.find((p) => p.id === projectId) || MOCK_PROJECTS[0];
+      const found = MOCK_PROJECTS.find((p) => p.id === projectId);
+      if (!found) {
+        throw new ApiError(404, 'NOT_FOUND', 'Project not found');
+      }
       return found;
     }
     return this.request<ProjectResponse>(`/projects/${projectId}`, {
       method: 'GET',
+    });
+  }
+
+  async deleteProject(projectId: string): Promise<void> {
+    if (isMockApi()) {
+      const index = MOCK_PROJECTS.findIndex((p) => p.id === projectId);
+      if (index === -1) {
+        throw new ApiError(404, 'NOT_FOUND', 'Project not found');
+      }
+      MOCK_PROJECTS.splice(index, 1);
+      return;
+    }
+    await this.request<void>(`/projects/${projectId}`, {
+      method: 'DELETE',
     });
   }
 
