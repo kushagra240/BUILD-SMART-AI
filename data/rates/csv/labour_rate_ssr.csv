@@ -1,0 +1,92 @@
+ssr_sr,trade,unit,rate_2022_23,ssr_page,pdf_page,source_id,status,unit_norm
+1,Black Smith With Tools - II Class,Day,648.0,545,552,SRC-01,READ,day
+2,Stone Cutter With Tools - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+3,Mason I Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+4,Mason II Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+5,Carpenter I Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+6,Carpenter II Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+7,Plumber With Tools - Skilled,Day,677.0,545,552,SRC-01,READ,day
+8,Glazier With Tools - Skilled,Day,677.0,545,552,SRC-01,READ,day
+9,Tin Smith With Tools - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+10,Painter I Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+11,Painter II Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+12,Head Fitter With Tools - Skilled,Day,677.0,545,552,SRC-01,READ,day
+13,Mechanic,Day,677.0,545,552,SRC-01,READ,day
+14,Lorry Driver / Mixer Operator,Day,677.0,545,552,SRC-01,READ,day
+15,Welder / Driller - Skilled,Day,677.0,545,552,SRC-01,READ,day
+16,Polishman - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+17,Assistant Plumber - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+18,Maistry Skilled / Supervisor / Mate,Day,677.0,545,552,SRC-01,READ,day
+19,Vibrator Operator - Skilled,Day,677.0,545,552,SRC-01,READ,day
+20,Semi Skilled Labour,Day,648.0,545,552,SRC-01,READ,day
+21,Boreman Skilled,Day,677.0,545,552,SRC-01,READ,day
+22,Asphalt Sprayer Skilled,Day,677.0,545,552,SRC-01,READ,day
+23,Minor or Blaster Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+24,Quarry Man - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+25,Painter / White Washer - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+26,Labour for Excavation in Hard Rock (Un Blast),Day,615.0,545,552,SRC-01,READ,day
+27,Tile Turner Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+28,Mazdoor - For Polishing,Day,615.0,545,552,SRC-01,READ,day
+29,Bar Bender Skilled,Day,677.0,545,552,SRC-01,READ,day
+30,Bhisti (Mixing / Curing) - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+31,Mukadam - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+32,Tar Handler - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+33,Helper Un Skilled,Day,615.0,545,552,SRC-01,READ,day
+34,Tree Cutter - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+35,Navaghani,Day,648.0,545,552,SRC-01,READ,day
+36,Mazdoor - Unskilled Heavy Male,Day,615.0,545,552,SRC-01,READ,day
+37,Mazdoor - Unskilled Heavy Female,Day,615.0,545,552,SRC-01,READ,day
+38,Below Boy,Day,615.0,545,552,SRC-01,READ,day
+39,Fitter With Tools I Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+40,Fitter With Tools II Class Skilled,Day,677.0,545,552,SRC-01,READ,day
+41,Gun Man for Guniting,Day,677.0,545,552,SRC-01,READ,day
+42,Laboratory Assistant,Day,677.0,545,552,SRC-01,READ,day
+43,Labour for Tile Turning,Day,615.0,545,552,SRC-01,READ,day
+44,Excavator - Unskilled Heavy,Day,615.0,545,552,SRC-01,READ,day
+45,Breaker - Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+46,Hole Driller Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+47,Chiseler Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+48,Foreman Skilled,Day,677.0,545,552,SRC-01,READ,day
+49,Bandhani Semi Skilled,Day,648.0,545,552,SRC-01,READ,day
+50,Emgraver for lettering Skilled,Day,677.0,545,552,SRC-01,READ,day
+51,Frabi - Weld - Drilling,Day,648.0,545,552,SRC-01,READ,day
+52,Khalashi / Diers,Day,677.0,545,552,SRC-01,READ,day
+53,Jack Hammer Operator,Day,677.0,545,552,SRC-01,READ,day
+54,Electrician,Day,677.0,545,552,SRC-01,READ,day
+55,Welder Skilled,Day,677.0,545,552,SRC-01,READ,day
+56,Labour for Traffic Regulation,Day,615.0,546,553,SRC-01,READ,day
+57,Watchman,Day,615.0,546,553,SRC-01,READ,day
+58,Compressor Operator / Driver,Day,677.0,546,553,SRC-01,READ,day
+59,Supervisor / Mate,Day,677.0,546,553,SRC-01,READ,day
+60,Blacksmith (1st Class) Welder / Plumber / Electrician.,Day,677.0,546,553,SRC-01,READ,day
+61,Blaster (Stone Cutter),Day,615.0,546,553,SRC-01,READ,day
+62,Mali,Day,648.0,546,553,SRC-01,READ,day
+63,Mazdoor / Dresser (Semi Skilled),Day,648.0,546,553,SRC-01,READ,day
+64,Mazdoor / Dresser Sinker B116 Skilled,Day,648.0,546,553,SRC-01,READ,day
+65,Medical Officer,Day,2413.0,546,553,SRC-01,READ,day
+66,Operator (grouting),Day,677.0,546,553,SRC-01,READ,day
+67,Para Medical Personnel,Day,1209.0,546,553,SRC-01,READ,day
+68,Mazdoor unskilled female (light),Day,648.0,546,553,SRC-01,READ,day
+69,Painting Lettering Number,Day,648.0,546,553,SRC-01,READ,day
+70,Junior Engineer,Day,1700.0,546,553,SRC-01,READ,day
+71,Surveyor,Day,1172.0,546,553,SRC-01,READ,day
+72,Autocad Operator,Day,1700.0,546,553,SRC-01,READ,day
+73,Attendent,Day,615.0,546,553,SRC-01,READ,day
+74,Computer Typist,Day,919.0,546,553,SRC-01,READ,day
+75,Tracer,Day,1172.0,546,553,SRC-01,READ,day
+76,Total Station Operator,Day,1700.0,546,553,SRC-01,READ,day
+77,Senior Engineer,Day,2477.0,546,553,SRC-01,READ,day
+78,Assistant,Day,919.0,546,553,SRC-01,READ,day
+79,Operator / Fitter,Day,677.0,546,553,SRC-01,READ,day
+80,Mazdoor Unskilled Light Male,Day,615.0,546,553,SRC-01,READ,day
+81,Computer Operator,Day,1035.0,546,553,SRC-01,READ,day
+82,Survey Helper,Day,615.0,546,553,SRC-01,READ,day
+83,Technician,Day,2477.0,546,553,SRC-01,READ,day
+84,Skilled Assistants-on the site,Day,677.0,546,553,SRC-01,READ,day
+85,Supervisor,Day,1172.0,546,553,SRC-01,READ,day
+86,Valuation expert,Day,2060.0,546,553,SRC-01,READ,day
+87,Office support Staff,Day,615.0,546,553,SRC-01,READ,day
+88,Co-ordinator,Day,1373.0,546,553,SRC-01,READ,day
+89,Senior Surveyor,Day,1172.0,546,553,SRC-01,READ,day
+90,Revenue expert,Day,1373.0,546,553,SRC-01,READ,day
+91,Welder,Day,648.0,546,553,SRC-01,READ,day
