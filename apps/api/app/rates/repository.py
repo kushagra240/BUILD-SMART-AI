@@ -27,6 +27,8 @@ from app.rates.tables import (
     quantity_norm,
     rate_rule,
     work_item_ssr,
+)
+from app.rates.tables import (
     zone as zone_table,
 )
 
@@ -111,6 +113,97 @@ class RatesRepository:
             return None
         return MaterialRateRecord.model_validate(dict(row))
 
+    async def _resolve_ssr_trade(
+        self,
+        clean_trade: str,
+    ) -> tuple[str | None, Decimal | None, str, str, str | None]:
+        """Resolve trade details, SSR rate, unit, source_id, and inferred skill class."""
+        if clean_trade.lower() in _SKILL_ALIASES:
+            skill_class = _SKILL_ALIASES[clean_trade.lower()]
+            rep_sr = _REPRESENTATIVE_SSR_SR.get(skill_class, 3)
+            rep_stmt = (
+                sa.select(labour_rate_ssr).where(labour_rate_ssr.c.ssr_sr == rep_sr).limit(1)
+            )
+            rep_res = await self.session.execute(rep_stmt)
+            rep_row = rep_res.mappings().first()
+            if rep_row is not None:
+                return (
+                    clean_trade,
+                    Decimal(str(rep_row["rate_2022_23"])),
+                    str(rep_row["unit_norm"]),
+                    str(rep_row["source_id"]),
+                    skill_class,
+                )
+            return (clean_trade, None, "day", "SRC-01", skill_class)
+
+        stmt = (
+            sa.select(labour_rate_ssr)
+            .where(
+                sa.or_(
+                    labour_rate_ssr.c.trade == clean_trade,
+                    labour_rate_ssr.c.trade.ilike(f"%{clean_trade}%"),
+                )
+            )
+            .limit(1)
+        )
+        result = await self.session.execute(stmt)
+        row = result.mappings().first()
+        if row is not None:
+            matched_trade = str(row["trade"])
+            return (
+                matched_trade,
+                Decimal(str(row["rate_2022_23"])),
+                str(row["unit_norm"]),
+                str(row["source_id"]),
+                _infer_skill_class(matched_trade),
+            )
+
+        return (None, None, "day", "SRC-01", None)
+
+    async def _resolve_min_wage(
+        self,
+        zone_id: str,
+        skill_class: str,
+    ) -> tuple[str | None, Decimal | None, str | None]:
+        """Resolve geographic zone to min_wage_zone and fetch daily minimum wage."""
+        clean_zone = zone_id.strip()
+        min_wage_zone: str | None = None
+        if clean_zone in ("I", "II", "III"):
+            min_wage_zone = clean_zone
+        else:
+            z_stmt = (
+                sa.select(zone_table.c.min_wage_zone)
+                .where(zone_table.c.zone_id == clean_zone)
+                .limit(1)
+            )
+            z_res = await self.session.execute(z_stmt)
+            z_val = z_res.scalar_one_or_none()
+            if z_val:
+                min_wage_zone = str(z_val)
+
+        if not min_wage_zone:
+            return (None, None, None)
+
+        mw_stmt = (
+            sa.select(minimum_wage.c.daily_rate, minimum_wage.c.basic_source_id)
+            .where(
+                sa.and_(
+                    minimum_wage.c.zone == min_wage_zone,
+                    minimum_wage.c.skill_class == skill_class,
+                )
+            )
+            .limit(1)
+        )
+        mw_res = await self.session.execute(mw_stmt)
+        mw_row = mw_res.mappings().first()
+        if mw_row is not None:
+            return (
+                min_wage_zone,
+                Decimal(str(mw_row["daily_rate"])),
+                str(mw_row["basic_source_id"]),
+            )
+        return (min_wage_zone, None, None)
+
     async def get_labour_rate(
         self,
         trade: str,
@@ -126,44 +219,13 @@ class RatesRepository:
         if not clean_trade:
             return None
 
-        matched_trade: str | None = None
-        ssr_rate: Decimal | None = None
-        source_id = "SRC-01"
-        unit = "day"
-        skill_class: str | None = None
-
-        if clean_trade.lower() in _SKILL_ALIASES:
-            skill_class = _SKILL_ALIASES[clean_trade.lower()]
-            rep_sr = _REPRESENTATIVE_SSR_SR.get(skill_class, 3)
-            rep_stmt = (
-                sa.select(labour_rate_ssr).where(labour_rate_ssr.c.ssr_sr == rep_sr).limit(1)
-            )
-            rep_res = await self.session.execute(rep_stmt)
-            rep_row = rep_res.mappings().first()
-            if rep_row is not None:
-                matched_trade = clean_trade
-                ssr_rate = Decimal(str(rep_row["rate_2022_23"]))
-                unit = str(rep_row["unit_norm"])
-                source_id = str(rep_row["source_id"])
-        else:
-            stmt = (
-                sa.select(labour_rate_ssr)
-                .where(
-                    sa.or_(
-                        labour_rate_ssr.c.trade == clean_trade,
-                        labour_rate_ssr.c.trade.ilike(f"%{clean_trade}%"),
-                    )
-                )
-                .limit(1)
-            )
-            result = await self.session.execute(stmt)
-            row = result.mappings().first()
-            if row is not None:
-                matched_trade = str(row["trade"])
-                ssr_rate = Decimal(str(row["rate_2022_23"]))
-                unit = str(row["unit_norm"])
-                source_id = str(row["source_id"])
-                skill_class = _infer_skill_class(matched_trade)
+        (
+            matched_trade,
+            ssr_rate,
+            unit,
+            source_id,
+            skill_class,
+        ) = await self._resolve_ssr_trade(clean_trade)
 
         if matched_trade is None and skill_class is None:
             return None
@@ -171,37 +233,12 @@ class RatesRepository:
         min_wage_zone: str | None = None
         min_wage_rate: Decimal | None = None
 
-        if zone_id:
-            clean_zone = zone_id.strip()
-            if clean_zone in ("I", "II", "III"):
-                min_wage_zone = clean_zone
-            else:
-                z_stmt = (
-                    sa.select(zone_table.c.min_wage_zone)
-                    .where(zone_table.c.zone_id == clean_zone)
-                    .limit(1)
-                )
-                z_res = await self.session.execute(z_stmt)
-                z_val = z_res.scalar_one_or_none()
-                if z_val:
-                    min_wage_zone = str(z_val)
-
-            if min_wage_zone and skill_class:
-                mw_stmt = (
-                    sa.select(minimum_wage.c.daily_rate, minimum_wage.c.basic_source_id)
-                    .where(
-                        sa.and_(
-                            minimum_wage.c.zone == min_wage_zone,
-                            minimum_wage.c.skill_class == skill_class,
-                        )
-                    )
-                    .limit(1)
-                )
-                mw_res = await self.session.execute(mw_stmt)
-                mw_row = mw_res.mappings().first()
-                if mw_row is not None:
-                    min_wage_rate = Decimal(str(mw_row["daily_rate"]))
-                    source_id = str(mw_row["basic_source_id"])
+        if zone_id and skill_class:
+            min_wage_zone, min_wage_rate, mw_source = await self._resolve_min_wage(
+                zone_id, skill_class
+            )
+            if mw_source:
+                source_id = mw_source
 
         if min_wage_rate is not None:
             daily_rate = min_wage_rate

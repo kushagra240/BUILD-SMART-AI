@@ -10,8 +10,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from sqlalchemy.dialects import postgresql
-
+import sqlalchemy as sa
 from app.rates import (
     RatesRepository,
     get_active_dataset_version,
@@ -31,6 +30,8 @@ from app.rates.tables import (
     quantity_norm,
     rate_rule,
     work_item_ssr,
+)
+from app.rates.tables import (
     zone as zone_table,
 )
 
@@ -477,12 +478,42 @@ async def test_get_active_dataset_version() -> None:
     assert ver.is_active is True
 
 
+@pytest.mark.asyncio
+async def test_rates_repository_class_interface() -> None:
+    session = AsyncMock()
+    session.execute.return_value = _make_mock_result(
+        row={
+            "work_item_id": "WI-0001",
+            "ssr_sr": 1,
+            "item_no": "21.01",
+            "ref_no": None,
+            "description": "Test",
+            "unit": "cum",
+            "completed_rate": Decimal("100.00"),
+            "labour_rate": Decimal("25.00"),
+            "ssr_page": 1,
+            "pdf_page": 2,
+            "parse_status": "OK",
+            "chapter_no": 21,
+            "chapter_name": "Earthwork",
+            "source_id": "SRC-01",
+            "basis": "SSR",
+        }
+    )
+
+    repo = RatesRepository(session)
+    item = await repo.get_work_item("WI-0001")
+    assert item is not None
+    assert item.completed_rate == Decimal("100.00")
+
+
 # --- SQL Dialect and Schema Target Verification ---
 
 
 def test_sql_dialect_compilation() -> None:
-    """Verify that all Core Table definitions target schema 'rates' and compile cleanly for Postgres."""
-    dialect = postgresql.dialect()
+    """Verify that Core Table definitions target schema 'rates' and compile for Postgres."""
+    mock_engine = sa.create_mock_engine("postgresql+asyncpg://", executor=lambda *a, **kw: None)
+    dialect = mock_engine.dialect
 
     for table in [
         work_item_ssr,
