@@ -1,4 +1,4 @@
-.PHONY: help setup dev test lint format train migrate clean
+.PHONY: help setup dev test lint format train migrate seed-rates clean
 
 help:
 	@echo "BuildSmart AI Makefile"
@@ -9,6 +9,7 @@ help:
 	@echo "  make test     - Run unit and property tests"
 	@echo "  make train    - Execute ML model training pipeline"
 	@echo "  make migrate  - Run database migrations via Alembic"
+	@echo "  make seed-rates - Seed rates database from CSV files"
 	@echo "  make clean    - Remove build artifacts and temp files"
 
 setup:
@@ -37,6 +38,9 @@ train:
 
 migrate:
 	cd apps/api && alembic upgrade head
+
+seed-rates:
+	python apps/api/app/db/seed_rates.py
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache __pycache__
