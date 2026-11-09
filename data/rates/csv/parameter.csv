@@ -1,0 +1,4 @@
+key,value,description
+wpi_base,100.0,WPI base value (FY2022-23 average = 100)
+ssr_price_year,2022.0,Price year of the SSR (effective 25 Jul 2022)
+min_wage_days_divisor,26.0,Monthly to daily minimum wage divisor per notification

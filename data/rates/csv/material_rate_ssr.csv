@@ -1,0 +1,987 @@
+material_id,section,sr,material,unit,rate,ssr_page,pdf_page,source_id,basis,status,unit_norm,row_quality,is_building_relevant
+MAT-0001,Building (Bd-A : Excavation),1,Blasting Powder,Kg.,88.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0002,Building (Bd-A : Excavation),2,Detonator,No.,21.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0003,Building (Bd-A : Excavation),3,Fuse,No.,200.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0004,Building (Bd-A : Excavation),4,Nipple For Fastening Detonator,No.,53.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0005,Building (Bd-A : Excavation),5,Noble Dynamite,Kg.,125.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0006,Building (Bd-A : Excavation),6,Red Tape Safety Fuse,R.Mt.,15.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0007,Building (Bd-A : Excavation),7,Blasting Fuse (Fuse wire),No.,22.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0008,Building (Bd-C : Structural Steel Work),1,M.S.screws etc. 35mm dia. and 75mm long (100nos.),Per Box,148.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,box,OK,True
+MAT-0009,Building (Bd-C : Structural Steel Work),2,Nut Bolts 16mm dia./Nails all size,Kg.,99.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0010,Building (Bd-C : Structural Steel Work),3,Nut Bolts washers 12mm dia. 45mm long,No.,18.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0011,Building (Bd-C : Structural Steel Work),4,Nut Bolts washers 12mm dia. 75mm long,No.,25.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0012,Building (Bd-C : Structural Steel Work),5,M.S. Locking Arrangement for gate,No.,857.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0013,Building (Bd-F : Reinforcement Cement concrete),1,Binding Wire,Kg.,91.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0014,Building (Bd-F : Reinforcement Cement concrete),2,Centering Oil,Ltr.,21.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0015,Building (Bd-F : Reinforcement Cement concrete),3,Plastic Cover Block,No.,4.3,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0016,Building (Bd-F : Reinforcement Cement concrete),4,R.C.C.Jali 50mm thick,Sq.Mt.,588.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0017,Building (Bd-F : Reinforcement Cement concrete),5,Plastizer (Rheobuild) 825 RMt.,Ltr.,172.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0018,Building (Bd-F : Reinforcement Cement concrete),6,Concrete Spacer Block 15 mm,No.,5.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0019,Building (Bd-F : Reinforcement Cement concrete),7,Concrete Spacer Block 20 mm,No.,6.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0020,Building (Bd-F : Reinforcement Cement concrete),8,Concrete Spacer Block 25 mm,No.,7.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0021,Building (Bd-F : Reinforcement Cement concrete),9,Concrete Spacer Block 30 / 40 mm,No.,8.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0022,Building (Bd-F : Reinforcement Cement concrete),10,Anticorrrisive Primer Coat,Ltr.,181.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0023,Building (Bd-F : Reinforcement Cement concrete),11,Swaling Coat,Ltr.,155.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0024,Building (Bd-F : Reinforcement Cement concrete),12,PVC Coated GI Wire,L/M,219.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0025,Building (Bd-F : Reinforcement Cement concrete),13,Repairs to cut ends and damages with special liquid epoxy,L/M,126.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0026,Building (Bd-F : Reinforcement Cement concrete),14,Epoxy paint,Ltr,493.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0027,Building (Bd-F : Reinforcement Cement concrete),15,R.C.C.Jali 80mm thick,Sq.Mt.,787.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0028,Building (Bd-G : Brick Work),1,I'st Class Bricks (Red),No.,9.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0029,Building (Bd-G : Brick Work),2,II'st Class Bricks (Red),No.,8.5,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0030,Building (Bd-G : Brick Work),3,AAC Block 600x200x100 mm,No.,58.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0031,Building (Bd-G : Brick Work),4,Jointing Mortar,Kg,23.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0032,Building (Bd-G : Brick Work),5,Fly ash Bricks,No.,7.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0033,Building (Bd-H : Stone Masonry),1,Corner stone 38*20*30cm,No.,102.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0034,Building (Bd-H : Stone Masonry),2,Khandakies,No.,88.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0035,Building (Bd-H : Stone Masonry),3,Pin Header (Standard Size),No.,70.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0036,Building (Bd-I : Cement Concrete Stone Masonry),1,Hollow Blocks C.C.0.2*0.2*0.4M,No.,45.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0037,Building (Bd-I : Cement Concrete Stone Masonry),2,Hollow Blocks C.C.0.1*0.2*0.4M,No.,39.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0038,Building (Bd-I : Cement Concrete Stone Masonry),3,Hollow Block C C 0.30 x 0.20 x 0.15,No.,47.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0039,Building (Bd-I : Cement Concrete Stone Masonry),4,Siporex Block 75x240x650 mm,No.,86.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0040,Building (Bd-I : Cement Concrete Stone Masonry),5,GBP Build Fast plus,Kg.,38.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0041,Building (Bd-I : Cement Concrete Stone Masonry),6,Siporex Block 100x240x650 mm,No.,95.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0042,Building (Bd-I : Cement Concrete Stone Masonry),7,Siporex Block 200x240x650 mm,No.,183.0,524,531,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0043,Building (Bd-J : Water Proofing),1,Bitumen (Compound),Kg.,68.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0044,Building (Bd-J : Water Proofing),2,Brick bats,Cu.Mt.,875.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0045,Building (Bd-J : Water Proofing),3,Water proof compound I.S,Kg.,179.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0046,Building (Bd-J : Water Proofing),4,Tar Felt B.H.I.S.I.3mm thick,Sq.Mt.,102.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0047,Building (Bd-J : Water Proofing),5,Acrylic Polymer Modified waterproofing Powder,Kg.,175.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0048,Building (Bd-J : Water Proofing),6,Acrylic Polymer Modified Liquid,Ltr.,238.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0049,Building (Bd-J : Water Proofing),7,Fibre Glass Mesh,Sq.Mt.,77.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0050,Building (Bd-J : Water Proofing),8,Bitumen 85/25 Grade,Kg.,69.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0051,Building (Bd-J : Water Proofing),9,Bitumen 85/25 Grade Cold Primer,Kg.,55.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0052,Building (Bd-J : Water Proofing),10,Grit (Add Below 5.6),Cmt,817.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0053,Building (Bd-J : Water Proofing),11,Bitumen Felt,Sqm,100.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0054,Building (Bd-K : Expansion Joint),1,Polydee-TP40 Primer,Kg.,604.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0055,Building (Bd-K : Expansion Joint),2,Polydee-TP40 Primer,Kg.,591.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0056,Building (Bd-K : Expansion Joint),3,Polydee-LM,Kg.,577.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0057,Building (Bd-K : Expansion Joint),4,Polydee-LM 150mm width,Kg.,655.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0058,Building (Bd-K : Expansion Joint),5,Bituflex Cloesdcell foam 30x30 mm,R.Mt.,73.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0059,Building (Bd-K : Expansion Joint),6,AG 10 Granules,Kg.,31.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0060,Building (Bd-K : Expansion Joint),7,Polydee-MC,Kg.,942.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0061,Building (Bd-K : Expansion Joint),8,Polydee-41 sealant and polyseal,Kg.,919.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0062,Building (Bd-K : Expansion Joint),9,Polydee-11,Kg.,1383.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0063,Building (Bd-K : Expansion Joint),10,Bitumen Pad 25mm thick 1.20 x 1.20 Mtr,Smt.,1188.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0064,Building (Bd-L : Plastering and Pointing),1,Neeru / Sanala,Kg.,7.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0065,Building (Bd-L : Plastering and Pointing),2,White Putty (Cement),Kg.,31.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0066,Building (Bd-L : Plastering and Pointing),3,Texture Material,bags,1495.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,bag,OK,True
+MAT-0067,"Building (Bd-M : Paving,Flooring and Dado)",1,Rough Shahabad 25 to 30mm thick,Sq.Mt.,246.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0068,"Building (Bd-M : Paving,Flooring and Dado)",2,Rough Shahabad 40 to 45 mm thick,Sq.Mt.,283.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0069,"Building (Bd-M : Paving,Flooring and Dado)",3,Polished Shahabad 25 to 30mm thick,Sq.Mt.,292.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0070,"Building (Bd-M : Paving,Flooring and Dado)",4,Rough Shahabad 50 to 60mm thick,Sq.Mt.,351.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0071,"Building (Bd-M : Paving,Flooring and Dado)",5,Polished Shahabad 40 to 50mm thick For step,Sq.Mt.,448.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0072,"Building (Bd-M : Paving,Flooring and Dado)",6,Polished Shahabad Machine cut 25mm thick,Sq.Mt.,333.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0073,"Building (Bd-M : Paving,Flooring and Dado)",7,Polished Shahabad for step 25mm thick,Sq.Mt.,347.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0074,"Building (Bd-M : Paving,Flooring and Dado)",8,Tandoor Polished 25mm thick (Machine cut),Sq.Mt.,418.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0075,"Building (Bd-M : Paving,Flooring and Dado)",9,Tandoor Polished 25mm thick (Hand Cut),Sq.Mt.,365.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0076,"Building (Bd-M : Paving,Flooring and Dado)",10,Tandoor Polished for steps 25mm thisk,Sq.Mt.,449.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0077,"Building (Bd-M : Paving,Flooring and Dado)",11,Black Kadappa (one side polish) (Machine cut) 25 mm thick,Sq.Mt.,451.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0078,"Building (Bd-M : Paving,Flooring and Dado)",12,Black Kadappa (one side polish) (Machine cut) 35mm thick,Sq.Mt.,518.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0079,"Building (Bd-M : Paving,Flooring and Dado)",13,Both Sides Polished Kadappa stone 25mm thick,Sq.Mt.,584.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0080,"Building (Bd-M : Paving,Flooring and Dado)",14,Kota stone (Machine cut) upto 25-30mm thick one side polished,Sq.Mt.,600.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0081,"Building (Bd-M : Paving,Flooring and Dado)",15,Kota stone (Hand cut) upto 25-30mm thick one side polished,Sq.Mt.,560.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0082,"Building (Bd-M : Paving,Flooring and Dado)",16,Kota stone for step polished) upto 25mm thick (1.2*0.3M),Sq.Mt.,610.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0083,"Building (Bd-M : Paving,Flooring and Dado)",17,Ceramic tiles 30*30cm,Sq.Mt.,509.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0084,"Building (Bd-M : Paving,Flooring and Dado)",18,Ceramic Antiskid Flooring Tiles 30 x 30 cm,Sq.Mt.,523.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0085,"Building (Bd-M : Paving,Flooring and Dado)",19,Ceramic Tiles for dado 30 cm x 30 cm,Sq.Mt.,504.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0086,"Building (Bd-M : Paving,Flooring and Dado)",20,Ceramic Tiles for dado 30 x 45 cm,Sq.Mt.,534.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0087,"Building (Bd-M : Paving,Flooring and Dado)",21,Heavy duty interlocking concrete block 60mm thick gray 300,Sq.Mt.,535.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0088,"Building (Bd-M : Paving,Flooring and Dado)",22,Heavy duty interlocking concrete block 60mm thick coloured,Sq.Mt.,596.0,525,532,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0089,"Building (Bd-M : Paving,Flooring and Dado)",23,Heavy duty interlocking concrete block 80mm thick gray,Sq.Mt.,684.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0090,"Building (Bd-M : Paving,Flooring and Dado)",24,Heavy duty interlocking concrete block 80mm thick coloured,Sq.Mt.,789.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0091,"Building (Bd-M : Paving,Flooring and Dado)",25,Heavy duty interlocking concrete block 80mm thick rubber mould,Sq.Mt.,972.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0092,"Building (Bd-M : Paving,Flooring and Dado)",26,Heavy duty interlocking concrete block 40mm thick colour 200,Sq.Mt.,536.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0093,"Building (Bd-M : Paving,Flooring and Dado)",27,Telephone Black Granite,Sq.Mt.,2656.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0094,"Building (Bd-M : Paving,Flooring and Dado)",28,Green marble,Sq.Mt.,1303.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0095,"Building (Bd-M : Paving,Flooring and Dado)",29,Vitrified tiles Glossy Size 590 to 605 mm* 590 to 605 mm*8 to,Sq.Mt.,608.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0096,"Building (Bd-M : Paving,Flooring and Dado)",30,Vitrified matt finish - size 590 to 605 mm* 590 to 605 mm *8 to,Sq.Mt.,938.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0097,"Building (Bd-M : Paving,Flooring and Dado)",31,Vitrified rustic matt stone finish size 590 to 605mm *590 to,Sq.Mt.,1005.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0098,"Building (Bd-M : Paving,Flooring and Dado)",32,Vertified stone effect finish size 590 to 605mm* 590 to 605mm * 8,Sq.Mt.,1040.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0099,"Building (Bd-M : Paving,Flooring and Dado)",33,Calcet Powder,Kg.,511.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0100,"Building (Bd-M : Paving,Flooring and Dado)",34,Black Oxide powder,Kg.,144.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0101,"Building (Bd-M : Paving,Flooring and Dado)",35,Fevi Matt Chemical 10 Kg Bag,bags,788.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,bag,OK,True
+MAT-0102,"Building (Bd-M : Paving,Flooring and Dado)",36,Marble chips,Kg.,56.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0103,"Building (Bd-M : Paving,Flooring and Dado)",37,Heavy duty interlocking concrete block 60mm thick rubber mould,Sq.Mt.,734.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0104,"Building (Bd-M : Paving,Flooring and Dado)",38,Tremix Treatment 100 mm thick,Sq.Mt.,92.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0105,"Building (Bd-M : Paving,Flooring and Dado)",39,Marble mosaic chequered tiles (gray),Sq.Mt.,294.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0106,"Building (Bd-M : Paving,Flooring and Dado)",40,Colour cement,Kg.,24.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0107,"Building (Bd-M : Paving,Flooring and Dado)",41,Heavy Duty Designer come. tile for flooring,Sq.Mt.,944.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0108,"Building (Bd-M : Paving,Flooring and Dado)",42,Heavy Duty Designer come. tile for Steps,Sq.Mt.,1015.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0109,"Building (Bd-M : Paving,Flooring and Dado)",43,PVC flooring,Sq.Mt.,389.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0110,"Building (Bd-M : Paving,Flooring and Dado)",44,Ceramic Tiles for dado 30 x 60 cm,Sq.Mt.,611.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0111,"Building (Bd-M : Paving,Flooring and Dado)",45,Marble (other than white makrana),Sq.Mt.,1399.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0112,"Building (Bd-M : Paving,Flooring and Dado)",46,Kota stone (Hand cut) upto 45-55mm thick one side polished,Sq.Mt.,610.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0113,"Building (Bd-M : Paving,Flooring and Dado)",47,Vitrified matt finish - size 895 to 900 mm* 895 to 900 mm *10 to,Sq.Mt.,1100.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0114,"Building (Bd-M : Paving,Flooring and Dado)",48,Italian marble 18mm thik,Sq.Mt.,4000.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0115,"Building (Bd-M : Paving,Flooring and Dado)",49,Kalinga stone tile,Sq.Mt.,8000.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0116,"Building (Bd-M : Paving,Flooring and Dado)",50,"Vitrified Tile 1200x1800 ,10mm thick",Sq.Mt.,1800.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0117,"Building (Bd-M : Paving,Flooring and Dado)",51,"Vitrified Tile 600x1200 ,8mm thick",Sq.Mt.,1500.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0118,"Building (Bd-M : Paving,Flooring and Dado)",52,"Vitrified Tile 800x1600 ,8mm thick",Sq.Mt.,130.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0119,"Building (Bd-M : Paving,Flooring and Dado)",53,"Parking Tile 600x600 ,12mm thick",Sq.Mt.,830.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0120,"Building (Bd-M : Paving,Flooring and Dado)",54,"Parking Tile 600x600 ,16mm thick",Sq.Mt.,1280.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0121,"Building (Bd-M : Paving,Flooring and Dado)",55,"Full Body Vitrified Tile 800x2400 ,8mm thick",Sq.Mt.,3000.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0122,"Building (Bd-M : Paving,Flooring and Dado)",56,Epoxy for joint sealing of tiles,Kg,1200.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0123,"Building (Bd-M : Paving,Flooring and Dado)",57,Brass spacer bar,Rft,210.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,r.ft,OK,True
+MAT-0124,Building (Bd-O : Oil Painting),1,Oil enamel paint/flat/glossy paint(ready mix) (with I.S.I. Mark),Ltr.,307.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0125,Building (Bd-O : Oil Painting),2,Synthetic paint (ready mix),Ltr.,301.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0126,Building (Bd-O : Oil Painting),3,Catonic emulsion paint,Kg.,385.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0127,Building (Bd-O : Oil Painting),4,White oil paint 100ml pack tin,No.,49.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0128,Building (Bd-O : Oil Painting),5,Red Oxide paint,Ltr.,209.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0129,Building (Bd-O : Oil Painting),6,Cement paint,Kg.,70.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0130,Building (Bd-O : Oil Painting),7,Steel Primer,Ltr.,193.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0131,Building (Bd-O : Oil Painting),8,Primer for plaster surface,Ltr.,205.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0132,Building (Bd-O : Oil Painting),9,Putty,Kg.,32.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0133,Building (Bd-O : Oil Painting),10,Boiled linseed oil,Ltr.,101.0,526,533,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0134,Building (Bd-O : Oil Painting),11,Linseed oil double boiled,Ltr.,143.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0135,Building (Bd-O : Oil Painting),12,Terpentine,Ltr.,106.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0136,Building (Bd-O : Oil Painting),13,Wood Primer,Ltr.,168.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0137,Building (Bd-O : Oil Painting),14,Brush for lettring,No.,44.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0138,Building (Bd-O : Oil Painting),15,Brush for road marking 5cm,No.,110.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0139,Building (Bd-O : Oil Painting),16,Brush for marking road 8cm,No.,206.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0140,Building (Bd-O : Oil Painting),17,Brush for road marking 10cm,No.,233.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0141,Building (Bd-O : Oil Painting),18,Lustre paint,Ltr.,266.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0142,Building (Bd-O : Oil Painting),19,Textured Synthetic paint,Ltr.,272.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0143,Building (Bd-O : Oil Painting),20,White lead paint,Kg.,320.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0144,Building (Bd-O : Oil Painting),21,Birla wall care putty,Kg.,55.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0145,Building (Bd-O : Oil Painting),22,Aluminium Paint,Lit.,359.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0146,Building (Bd-O : Oil Painting),23,Plastic emulsion paint,Ltr.,345.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0147,Building (Bd-O : Oil Painting),24,Acraylic Emulsion Paint,Ltr.,223.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0148,Building (Bd-O : Oil Painting),25,Exterior Primer,Ltr.,151.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0149,Building (Bd-O : Oil Painting),26,Weather shield paint,Ltr.,339.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0150,"Building (Bd-P : Colour,white washing,distempering)",1,Neel,Kg.,160.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0151,"Building (Bd-P : Colour,white washing,distempering)",2,Oil bound distemper,Kg.,123.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0152,"Building (Bd-P : Colour,white washing,distempering)",3,Red powder / Geru,Kg.,25.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0153,"Building (Bd-P : Colour,white washing,distempering)",4,Saras,Kg.,74.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0154,"Building (Bd-P : Colour,white washing,distempering)",5,Scrapping sand paper size (30 * 20cm),No.,15.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0155,"Building (Bd-P : Colour,white washing,distempering)",6,Dry distemper,Kg.,104.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0156,"Building (Bd-P : Colour,white washing,distempering)",7,Chunam / White lime Powder,Kg.,18.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0157,"Building (Bd-P : Colour,white washing,distempering)",8,paint Luster Paint,Ltr.,244.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0158,"Building (Bd-P : Colour,white washing,distempering)",9,Roller Brush,No.,302.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0159,"Building (Bd-P : Colour,white washing,distempering)",10,Royale Luxury Emulsion Paint,Ltr.,476.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0160,Building (Bd-Q : Wood work),1,Ghana teak wood,Cu.Mt.,97113.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0161,Building (Bd-Q : Wood work),2,Teak Wood planks above 2.5 m length,Cu.Mt.,105028.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0162,Building (Bd-Q : Wood work),3,"Teak wood bidding 1/2"" * 1/2""",Rmt,25.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0163,Building (Bd-Q : Wood work),4,T.W.Balli 100 mm dia,Rmt,207.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0164,Building (Bd-Q : Wood work),5,Jungle wood (non teak) normal,Cu.Mt.,42758.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0165,Building (Bd-Q : Wood work),6,Bamboo 25mm dia.(4.5 to 6m),No.,29.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0166,Building (Bd-Q : Wood work),7,Bamboo 50mm dia.,No.,32.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0167,Building (Bd-Q : Wood work),8,Bamboo Matting 1.2*1.8m,Sq.Mt.,71.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0168,Building (Bd-Q : Wood work),9,Ply wood 12mm thick,Sq.Mt.,496.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0169,Building (Bd-Q : Wood work),10,Ply wood 6mm thick,Sq.Mt.,378.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0170,Building (Bd-Q : Wood work),11,Mica laminate as per ISI 0.1 mm thick,Sq.Mt,873.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0171,Building (Bd-Q : Wood work),12,Face Veneel board 4 mm thick,Sq.Mt,578.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0172,Building (Bd-Q : Wood work),13,Particle board B.W.P.Phinol bond 12mm thick,Sq.Mt.,397.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0173,Building (Bd-Q : Wood work),14,Particle board B.W.P.Phinol bond 19 mm thick,Sq.Mt.,674.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0174,Building (Bd-Q : Wood work),15,Formica 1.5 mm thick,Sq.Mt,1148.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0175,Building (Bd-Q : Wood work),16,Tower bolt brass oxidised 10 mm dia length 150 mm,No,232.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0176,Building (Bd-Q : Wood work),17,Ferical,Kg,237.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0177,Building (Bd-Q : Wood work),18,Ply wood 18mm thick Commercial,No.,1030.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0178,Building (Bd-Q : Wood work),19,Teak wood battens 50 * 25mm,Cu.Mt.,66961.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0179,Building (Bd-Q : Wood work),20,Teak wood batten 25 mm * 12 mm,Cu.Mt.,67703.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0180,Building (Bd-Q : Wood work),21,Veneer 3.5 to 4 mm thick,Sq.mt.,661.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0181,Building (Bd-Q : Wood work),22,Alluminium rod 25mm dia,Rmt.,70.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0182,Building (Bd-Q : Wood work),23,1.25 mm thick Laminate,Sq.mt.,1200.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0183,Building (Bd-Q : Wood work),24,25mm block board full pine bwp with test report,Sq.mt.,1800.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0184,Building (Bd-Q : Wood work),25,4mm thick Veneer gurjan ply,Sq.mt.,2500.0,527,534,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0185,Building (Bd-Q : Wood work),26,19mm plywood 710 bwp full red core with test report,Sq.mt.,1200.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0186,Building (Bd-Q : Wood work),27,12mm plywood 710 bwp full red core with test report,Sq.mt.,950.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0187,Building (Bd-Q : Wood work),28,9mm plywood 710 bwp with test report,Sq.mt.,850.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0188,Building (Bd-Q : Wood work),29,19mm plywood 303 bwr full red core with test report,Sq.mt.,1050.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0189,Building (Bd-Q : Wood work),30,12mm plywood 303 bwr full red core with test report,Sq.mt.,750.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0190,Building (Bd-Q : Wood work),31,9mm plywood 303 bwr with test report,Sq.mt.,650.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0191,Building (Bd-Q : Wood work),32,1mm white laminate liner,Sq.mt.,600.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0192,Building (Bd-Q : Wood work),33,Fevicol marine,kg,280.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0193,Building (Bd-Q : Wood work),34,19mm black board full pine bwp with test report,Sq.mt.,1400.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0194,Building (Bd-Q : Wood work),35,Heavy Zinc Telescopic channels,Per inch,25.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,inch,OK,True
+MAT-0195,Building (Bd-Q : Wood work),36,Heavy Duty Floor spring,No.,6000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0196,Building (Bd-Q : Wood work),37,0.9 m high SS door handle,No.,120.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0198,Building (Bd-Q : Wood work),40,Rose mortise lock with long body door set,No.,3800.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0199,Building (Bd-Q : Wood work),41,SS Body door's Stopper's,No.,300.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0200,Building (Bd-Q : Wood work),42,Digital key drawer lock,No.,500.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0201,Building (Bd-Q : Wood work),43,SS auto soft closer hinge,No.,350.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0202,Building (Bd-Q : Wood work),44,Zinc concealed door closer,No.,6500.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0203,Building (Bd-Q : Wood work),45,SS door handle 20mm thick 300mm long,No.,1800.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0204,Building (Bd-Q : Wood work),46,Cnc cutting ms jail 4mm thick with powder coating,Sq.mt.,6000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0205,Building (Bd-Q : Wood work),47,Wpc 18mm 0.5 density,Sq.mt.,2600.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0206,Building (Bd-Q : Wood work),48,Bison board 18mm,Sq.mt.,2000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0207,Building (Bd-Q : Wood work),49,12mm bison board,Sq.mt.,1100.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0208,Building (Bd-Q : Wood work),50,Metal keyboard drawer,No.,2700.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0209,Building (Bd-Q : Wood work),51,25*10 mm Beading brama teak,Rft,15.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,r.ft,OK,True
+MAT-0210,Building (Bd-Q : Wood work),52,35*10mm beading brama teak,Rft,40.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,r.ft,OK,True
+MAT-0211,Building (Bd-Q : Wood work),53,50*15mm beading brama teak,Rft,70.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,r.ft,OK,True
+MAT-0212,Building (Bd-Q : Wood work),54,Charcoal 4mm,Sq.mt.,5000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0213,Building (Bd-Q : Wood work),55,4’’ foam sheet 50 density,Sq.mt.,2200.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0214,Building (Bd-Q : Wood work),56,2’’ foam sheet 50 density,Sq.mt.,1400.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0215,Building (Bd-Q : Wood work),57,1’’ foam sheet 50 density,Sq.mt.,900.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0216,Building (Bd-Q : Wood work),58,Sofa clothe leather finish,Per meter,1050.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0217,Building (Bd-Q : Wood work),59,Sofa leg 4’’,No.,250.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0218,Building (Bd-Q : Wood work),60,Window Roller fabric blinds,Sq.mt.,3000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0219,Building (Bd-Q : Wood work),61,"SS Hinges 125mm Ht, 14 Gauge Heavy Duty",No.,280.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0220,Building (Bd-Q : Wood work),62,Veneer melamiane Polishing,Sq.mt.,1900.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0221,Building (Bd-Q : Wood work),63,PU polishing Teak Wood,Sq.mt.,3000.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0222,Building (Bd-Q : Wood work),64,Cement Sheet 4 mm,Sq.mt.,300.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0223,Building (Bd-Q : Wood work),65,Cement Sheet 8 mm,Sq.mt.,500.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0224,Building (Bd-Q : Wood work),66,Cement Sheet 12 mm,Sq.mt.,700.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0225,Building (Bd-R : Rofing and ceiling),1,A.C.Corrugated sheet 6mm thick,Sq.Mt.,149.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0226,Building (Bd-R : Rofing and ceiling),2,A.C.Sheet ridge,Pair,342.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,pair,OK,True
+MAT-0227,Building (Bd-R : Rofing and ceiling),3,A.C.Sheet plain 4mm thick,Sq.Mt.,257.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0228,Building (Bd-R : Rofing and ceiling),4,G.C.I. Sheet (Corrugated) 22 BWG,M.T.,73990.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0229,Building (Bd-R : Rofing and ceiling),5,G.C.I. Sheet (Corrugated) 24 BWG,M.T.,73245.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0230,Building (Bd-R : Rofing and ceiling),6,G.I. Sheet (plain) 22 BWG,Sq.Mt.,560.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0231,Building (Bd-R : Rofing and ceiling),7,G.I. Sheet (plain) 24 BWG,Sq.Mt.,493.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0232,Building (Bd-R : Rofing and ceiling),8,G.I.Washers,Kg.,128.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0233,Building (Bd-R : Rofing and ceiling),9,G.I. J or L hooks 6 mm dia.,No.,11.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0234,Building (Bd-R : Rofing and ceiling),10,Nails iron all size,Kg.,99.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0235,Building (Bd-R : Rofing and ceiling),11,Mangalore tiles class AA,No.,24.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0236,Building (Bd-R : Rofing and ceiling),12,Mangalore Ridge / Hip tiles,No.,42.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0237,Building (Bd-R : Rofing and ceiling),13,Mangalore Glass tiles,No.,406.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0238,Building (Bd-R : Rofing and ceiling),14,Mangalore Pattern cowl Ventilator,No.,261.0,528,535,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0239,Building (Bd-R : Rofing and ceiling),15,G.I. Pre coated trapezoidal 0.50 mm thick roof Metalic Coloured,Sq.Mt.,958.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0240,Building (Bd-R : Rofing and ceiling),16,G.I. Pre coated Ridge Sheet,R.Mt.,715.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0241,Building (Bd-R : Rofing and ceiling),17,Gypsum powder,Kg.,27.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0242,Building (Bd-R : Rofing and ceiling),18,Aluminium Alloy plate 2mm thick,Sq.Mt.,1716.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0243,Building (Bd-R : Rofing and ceiling),19,"Aluminium sheeting fixed with encapsuled lens type reflective sheeting including 2% towards lettering , cost of angle iron, cost of",Kg.,184.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0244,Building (Bd-R : Rofing and ceiling),20,Plaster Of Paris,bags,264.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,bag,OK,True
+MAT-0245,Building (Bd-R : Rofing and ceiling),21,Decorative Board of Fibrous Plaster of Paris 12 to 15 mm,Sq.Mt.,427.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0246,Building (Bd-R : Rofing and ceiling),22,Acoustic Board 12 mm thick,Sq.Mt.,299.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0247,Building (Bd-R : Rofing and ceiling),23,Gypsum Board 12.5 mm thick,Sq.Mt.,238.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0248,Building (Bd-R : Rofing and ceiling),24,UPVC 3 layer trapezoidal 2.00 mm sheet,Sq.Mt.,952.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0249,Building (Bd-R : Rofing and ceiling),25,Light weight calcium silicate tile of size 595 x 595 mm of texture,Sq.Mt.,825.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0250,Building (Bd-R : Rofing and ceiling),26,Bioguard Board 16 mm,Sq.Mt.,1178.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0251,Building (Bd-R : Rofing and ceiling),27,Ultima tile,Sq.Mt.,1454.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0252,Building (Bd-R : Rofing and ceiling),28,Optra tile,Sq.Mt.,1849.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0253,Building (Bd-R : Rofing and ceiling),29,Proflex Sheet 1 mm,Kg.,100.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0254,Building (Bd-R : Rofing and ceiling),30,Sky light 2 mm thick,Kg.,1485.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0255,Building (Bd-R : Rofing and ceiling),31,Hanger rod 4mm thick,No.,15.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0256,Building (Bd-R : Rofing and ceiling),32,level Adjustment clip size 85x30x0.8mm,No.,15.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0257,Building (Bd-R : Rofing and ceiling),33,Dash fastener 12.5mm dia 50mm long,No.,63.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0258,Building (Bd-R : Rofing and ceiling),34,Soffit cleat 25mmx35mmx1.60mm,No.,8.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0259,Building (Bd-R : Rofing and ceiling),35,Wooden Screws with plastic rawl plugs 35mmx8mm,No.,108.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0260,Building (Bd-R : Rofing and ceiling),36,Light weight calcium silicate tiles of size 595x595mm of texture,No.,1342.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0261,Building (Bd-R : Rofing and ceiling),37,Plain Zinc Sheet,Sq.Mt.,270.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0262,Building (Bd-R : Rofing and ceiling),38,UPVC ridge/hip tiles,No.,418.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0263,Building (Bd-R : Rofing and ceiling),39,"Hanger wire (2.68 mm dia), 1.82 m long",No.,27.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0264,Building (Bd-R : Rofing and ceiling),40,Dune edge tiles,Sq.Mt.,1034.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0265,Building (Bd-R : Rofing and ceiling),41,Fine fissured edge tiles,Sq.Mt.,809.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0266,Building (Bd-R : Rofing and ceiling),42,"Turbo ventilator 24""",No.,9702.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0267,Building (Bd-R : Rofing and ceiling),43,"Tarat 36"" width ( Gunny Cloth)",R.Mt.,75.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0268,Building (Bd-R : Rofing and ceiling),44,Wire glass,Sq.Mt.,713.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0269,Building (Bd-R : Rofing and ceiling),45,Fire wood,Quintal,395.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,quintal,OK,True
+MAT-0270,Building (Bd-R : Rofing and ceiling),46,Precoated Galvanised Steel Plain Sheet,Smt,1143.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0271,Building (Bd-R : Rofing and ceiling),47,Connecting clip for supports,No.,11.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0272,Building (Bd-R : Rofing and ceiling),48,Dry wall screws 25 mm,No.,6.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0273,Building (Bd-R : Rofing and ceiling),49,Jointing Compound,Kg.,57.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0274,Building (Bd-R : Rofing and ceiling),50,Jointing Tape,Rmt.,8.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0275,Building (Bd-R : Rofing and ceiling),51,Minaral Fibre board 600 x 600 mm,Sq.Mt.,1062.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0276,Building (Bd-R : Rofing and ceiling),52,Perimeter Channel 80 x 8 mm,Kg.,217.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0277,Building (Bd-R : Rofing and ceiling),53,"Screws 1 12""",No.,2.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0278,Building (Bd-R : Rofing and ceiling),54,"Screws 1/2""",No.,2.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0279,Building (Bd-R : Rofing and ceiling),55,Rawal Plug,No.,3.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,DUPLICATE_SR_IN_SECTION,True
+MAT-0280,Building (Bd-R : Rofing and ceiling),55,Plain Zinc Sheet 0.50 mm thick,Sq.mt.,712.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0281,Building (Bd-T : Doors and windows),1,Aldrop 300*16mm Chromium Plated,No.,212.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0282,Building (Bd-T : Doors and windows),2,Aldrop Iron Oxidise 300*16mm,No.,168.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0283,Building (Bd-T : Doors and windows),3,Aldrop Stainless steel 300*16mm,No.,430.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0284,Building (Bd-T : Doors and windows),4,Handle 125mm M.S. Chromium Plated,No.,85.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0285,Building (Bd-T : Doors and windows),5,Handle 150mm Brass Chromium plated (Rounded Shape),No.,319.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0286,Building (Bd-T : Doors and windows),6,Handle Alluminium 125 mm,No.,77.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0287,Building (Bd-T : Doors and windows),7,Iron hinges chromium plated 125mm,No.,84.0,529,536,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0288,Building (Bd-T : Doors and windows),8,But Hinges Alluminium 125mm,No.,93.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0289,Building (Bd-T : Doors and windows),9,G.I.Screw 50mm,Doz.,34.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,dozen,OK,True
+MAT-0290,Building (Bd-T : Doors and windows),10,G.I.Screw 25mm,Doz.,19.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,dozen,OK,True
+MAT-0291,Building (Bd-T : Doors and windows),11,Stainless Steel Hinges - 125mm 14 gauge (Heavy Duty),No.,87.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0292,Building (Bd-T : Doors and windows),12,Tower bolt Aluminium 10mm dia.length 250mm,No.,100.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0293,Building (Bd-T : Doors and windows),13,Tower bolt Aluminium 10mm dia.length 200mm,No.,84.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0294,Building (Bd-T : Doors and windows),14,"Tower bolt M.S. Chromium plated 10mm dia,length 300mm",No.,94.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0295,Building (Bd-T : Doors and windows),15,"Tower bolt M.S. Chromium plated 10mm dia,length 200mm",No.,89.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0296,Building (Bd-T : Doors and windows),16,Cold Rolled Steel Hollow Section Door frame 1829*610mm,No.,2188.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0297,Building (Bd-T : Doors and windows),18,Aluminium stay 25cm,No.,90.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0298,Building (Bd-T : Doors and windows),19,Aluminium stay 30cm,No.,101.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0299,Building (Bd-T : Doors and windows),20,Jali fly proof,Sq.Mt.,284.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0300,Building (Bd-T : Doors and windows),21,Jali chicken mesh,Sq.Mt.,95.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0301,Building (Bd-T : Doors and windows),22,Jali welded mesh 25*25* 13 Guage,Sq.Mt.,212.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0302,Building (Bd-T : Doors and windows),23,Jali welded mesh 25*25* 11 Guage,Sq.Mt.,356.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0303,Building (Bd-T : Doors and windows),24,Jali welded mesh 50*25 13 Guage,Sq.Mt.,231.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0304,Building (Bd-T : Doors and windows),25,Jali welded mesh 50*25 11 Guage,Sq.Mt.,407.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0305,Building (Bd-T : Doors and windows),26,Hold fast Iron 300*40*5mm,No.,83.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0306,Building (Bd-T : Doors and windows),27,Sliding Door Bolt Stainless Steel 12mm dia. 250mm length,No.,139.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0307,Building (Bd-T : Doors and windows),28,Glass plain 3mm,Sq.Mt.,428.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0308,Building (Bd-T : Doors and windows),29,Glass plain 5mm,Sq.Mt.,618.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0309,Building (Bd-T : Doors and windows),30,Glass obscured (bajara) 5mm,Sq.Mt.,650.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0310,Building (Bd-T : Doors and windows),31,G.I. Nut Bolt,Kg.,134.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0311,Building (Bd-T : Doors and windows),32,Housing box to rolling shutter,Sq.Mt.,1650.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0312,Building (Bd-T : Doors and windows),33,Mechanical Gear For Rolling Shutter,No.,2637.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0313,Building (Bd-T : Doors and windows),34,Mortice lock superior,No.,920.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0314,Building (Bd-T : Doors and windows),35,Solid Core commercial shutter 30mm thick phenol bonded with face,Sq.Mt.,1050.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0315,Building (Bd-T : Doors and windows),36,Iron washer 12mm to 16mm,No.,2.5,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0316,Building (Bd-T : Doors and windows),37,Aluminium Section,Kg.,216.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0317,Building (Bd-T : Doors and windows),38,Nylon / PVC Gasket,R.Mt.,35.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0318,Building (Bd-T : Doors and windows),39,"Alluminium Screw 32 x 6 mm, 25 x 6 mm",Doz.,32.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,dozen,OK,True
+MAT-0319,Building (Bd-T : Doors and windows),40,Concealed locking arrangement of 100 mm length for sliding window,No.,151.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0320,Building (Bd-T : Doors and windows),41,Alluminium Grill 7.50 mm thick,Sq.Mt.,1410.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0321,Building (Bd-T : Doors and windows),42,Hydraulic floor spring heavy duty ( 150 Kg capacity) ISI mark,No.,1350.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0322,Building (Bd-T : Doors and windows),43,"Iron Oxidized sliding door bolt 200 mm length, 12 mm dia",No.,99.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0323,Building (Bd-T : Doors and windows),44,Powder and Chemicals for colour anodizing process of alluminium,Kg.,53.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0324,Building (Bd-T : Doors and windows),45,Lock for Sliding Shutter,No.,162.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0325,Building (Bd-T : Doors and windows),46,All Bearing Roller,No.,124.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0326,Building (Bd-T : Doors and windows),47,All Frame Rail Angle,Kg.,266.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0327,Building (Bd-T : Doors and windows),48,Welding Electrodes,No.,7.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0328,Building (Bd-T : Doors and windows),49,C.R.C. Sheet,Sq.Mt.,851.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0329,Building (Bd-T : Doors and windows),50,Abstrone Butadyne Styrine (ABS) Door Shutter including,No.,847.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0330,Building (Bd-T : Doors and windows),51,Puff Insulation 35-40 Kg/Cumt. Density,Kg.,346.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0331,Building (Bd-T : Doors and windows),52,PVC Door Shutter 34 mm thick Factory Made Shutter,Sq.Mt.,4600.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0332,Building (Bd-T : Doors and windows),53,FRP Door Shutter 30 mm thick Factory Made Shutter,Sq.Mt.,1509.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0333,Building (Bd-T : Doors and windows),54,FRP Door Shutter 35 mm thick Factory Made Shutter,Sq.Mt.,1650.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0334,Building (Bd-T : Doors and windows),55,Bison Pannel,Sq.Mt.,642.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0335,Building (Bd-T : Doors and windows),56,PVC factory made solid panel door shutter with stainless steel,Sq.Mt.,4550.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0336,Building (Bd-T : Doors and windows),57,PVC factory made flush door 30 mm with stainless steel fixutres &,Sq.Mt.,4350.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0337,Building (Bd-T : Doors and windows),58,Sliding door bolt Chromium plated 250mm,No.,94.0,530,537,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0338,Building (Bd-T : Doors and windows),59,Acrylic Plain Sheet 3 mm,Sq.Mt.,1050.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0339,Building (Bd-T : Doors and windows),60,Aldrop Stainless steel 300*16mm,No,412.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0340,Building (Bd-T : Doors and windows),61,Aldrop Stainless steel 250*16 mm,No,400.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0341,Building (Bd-T : Doors and windows),62,Handle 150mm Stainless Steel (Rounded Shape),No,41.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0342,Building (Bd-T : Doors and windows),63,Handle 200mm Stainless Steel (Rounded Shape),No,86.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0343,Building (Bd-T : Doors and windows),64,Stainless Steel Hinges - 100mm 14 gauge (Heavy Duty),No,51.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0344,Building (Bd-T : Doors and windows),65,Stainless Steel Hinges - 125mm 14 gauge (Heavy Duty),No,82.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0345,Building (Bd-T : Doors and windows),66,Housing box to rolling shutter,Smt,1634.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0346,Building (Bd-T : Doors and windows),67,Mechanical Gear For Rolling Shutter,No,2592.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0347,Building (Bd-T : Doors and windows),68,Door Stopper Stainless Steel,No,173.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0348,Building (Bd-T : Doors and windows),69,Tower Bolt Stainless Steel 200 mm,No.,108.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0349,Building (Bd-T : Doors and windows),70,Tower Bolt Stainless Steel 250 mm,No.,212.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0350,Building (Bd-T : Doors and windows),71,Sliding Door Bolt Stainless Steel 250 mm,No.,135.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0351,Building (Bd-T : Doors and windows),72,Handle Stainless Steel 100 mm,No.,54.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0352,Building (Bd-T : Doors and windows),73,Eye Hole Lens,No.,284.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0353,Building (Bd-T : Doors and windows),74,Rolling Shutter,Smt.,2345.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0354,Building (Bd-T : Doors and windows),75,Ply Wood,Smt.,539.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0355,Building (Bd-T : Doors and windows),76,Stainless steel hooks and eyes 200 mm,No.,87.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0356,Building (Bd-T : Doors and windows),77,Steel Window,Kg.,63.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0357,Building (Bd-T : Doors and windows),78,Powder Coating,Sq.Mt.,583.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0358,Building (Bd-T : Doors and windows),79,Rubber Lining,R.Mt.,34.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0359,Building (Bd-T : Doors and windows),80,Ply wood 9 mm thick,Sq.Mt.,566.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0360,Building (Bd-T : Doors and windows),81,Laminated board double 12mm thick,Sq.Mt.,1020.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0361,Building (Bd-T : Doors and windows),82,Alluminium Section anodized,Kg.,316.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0362,Building (Bd-T : Doors and windows),83,Handle iron oxidised 150 mm,No.,74.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0363,Building (Bd-T : Doors and windows),84,Hinges iron oxidised 100 mm,No.,54.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0364,Building (Bd-T : Doors and windows),85,"T. W. Particle board, both face laminated 12 mm",Smt.,547.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0365,Building (Bd-T : Doors and windows),86,Battens T.W. 70 x 45 mm,Cmt.,92734.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0366,Building (Bd-T : Doors and windows),87,Nuts and Bolts,Nos.,140.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0367,Building (Bd-T : Doors and windows),88,Plain FRP Sheet 22 B.W.G.,Smt.,3041.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0368,Building (Bd-T : Doors and windows),89,"TW Runner (6"" x 3"")",Cmt.,98424.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0369,Building (Bd-T : Doors and windows),90,Alluminium Screw,Doz.,11.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,dozen,OK,True
+MAT-0370,Building (Bd-T : Doors and windows),91,F Patti,Kg.,267.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0371,Building (Bd-T : Doors and windows),92,Teak wood planks above 2.5m length,Cu.Mt.,74388.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0372,Building (Bd-T : Doors and windows),93,Vision Panel,No.,260.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0373,Building (Bd-T : Doors and windows),94,Solid core shutter 35 mm thick with commercial veneer facing and,Sq.mt.,1470.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0374,Building (Bd-T : Doors and windows),95,Oil Paint,Ltr.,344.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0375,Building (Bd-T : Doors and windows),96,Acrylic Plain Sheet 2 mm thick,Sq.Mt.,900.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0376,Building (Bd-T : Doors and windows),97,Aluminium Sheet 24 B.W.G,Sq.mt.,522.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0377,Building (Bd-T : Doors and windows),98,Alluminium Section with Powder Coating,Kg.,266.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0378,Building (Bd-T : Doors and windows),99,Concealed lock,No.,170.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0379,Building (Bd-T : Doors and windows),100,Mosquito proof Nylone net,Sq.Mt.,288.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0380,Building (Bd-T : Doors and windows),101,Solid Core commercial shutter 30mm thick phenol bonded with face,Sq.Mt.,1120.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0381,Building (Bd-T : Doors and windows),101,Toughned Glass 12mm,Sq.Mt.,5500.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0382,Building (Bd-T : Doors and windows),102,Toughned Glass 8mm,Sq.Mt.,4000.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0383,Building (Bd-T : Doors and windows),103,Toughned Glass 6mm,Sq.Mt.,2500.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0384,Building (Bd-T : Doors and windows),104,Plain Glass 6mm,Sq.Mt.,1200.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0385,Building (Bd-T : Doors and windows),105,Alluminium SECTION WITH COATING,Kg,400.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0386,Building (Bd-T : Doors and windows),106,6mm one way glass ST 1,Sq.Mt.,1500.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0387,Building (Bd-T : Doors and windows),107,silicone sealant 789,No.,450.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0388,Building (Bd-T : Doors and windows),108,polycarbonate 10mm,Sq.Mt.,1500.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0389,Building (Bd-T : Doors and windows),109,polycarbonate 16mm,Sq.Mt.,2500.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0390,Building (Bd-T : Doors and windows),110,polycarbonate 6mm,Sq.Mt.,1100.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0391,Building (Bd-V : Water supply and sanitory fittings),1,G.I. Pipe 100mm dia. Medium type,R.Mt.,1040.0,531,538,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0392,Building (Bd-V : Water supply and sanitory fittings),2,G.I. Pipe 100mm dia. Heavy type,R.Mt.,1275.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0393,Building (Bd-V : Water supply and sanitory fittings),3,G.I. Pipe 15mm dia. Medium type,R.Mt.,175.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0394,Building (Bd-V : Water supply and sanitory fittings),4,G.I. Pipe 15mm dia. Heavy type,R.Mt.,218.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0395,Building (Bd-V : Water supply and sanitory fittings),5,G.I. Pipe 20mm dia. Medium type,R.Mt.,202.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0396,Building (Bd-V : Water supply and sanitory fittings),6,G.I. Pipe 20mm dia.Heavy type,R.Mt.,244.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0397,Building (Bd-V : Water supply and sanitory fittings),7,G.I. Pipe 25mm dia. Medium type,R.Mt.,248.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0398,Building (Bd-V : Water supply and sanitory fittings),8,G.I. Pipe 25mm dia. Heavy type,R.Mt.,335.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0399,Building (Bd-V : Water supply and sanitory fittings),9,G.I. Pipe 32mm dia. Medium type,R.Mt.,306.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0400,Building (Bd-V : Water supply and sanitory fittings),10,G.I. Pipe 32mm dia.Heavy type,R.Mt.,364.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0401,Building (Bd-V : Water supply and sanitory fittings),11,G.I. Pipe 40mm dia. Medium type,R.Mt.,363.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0402,Building (Bd-V : Water supply and sanitory fittings),12,G.I. Pipe 40mm dia. Heavy type,R.Mt.,419.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0403,Building (Bd-V : Water supply and sanitory fittings),13,G.I. Pipe 50mm dia. Medium type,R.Mt.,487.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0404,Building (Bd-V : Water supply and sanitory fittings),14,G.I. Pipe 50mm dia. Heavy type,R.Mt.,565.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0405,Building (Bd-V : Water supply and sanitory fittings),15,G.I. Pipe 65mm dia. Medium type,R.Mt.,615.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0406,Building (Bd-V : Water supply and sanitory fittings),16,G.I. Pipe 65mm dia. Heavy type,R.Mt.,721.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0407,Building (Bd-V : Water supply and sanitory fittings),17,G.I. Pipe 80mm dia. Medium type,R.Mt.,752.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0408,Building (Bd-V : Water supply and sanitory fittings),18,G.I. Pipe 80mm dia. Heavy type,R.Mt.,968.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0409,Building (Bd-V : Water supply and sanitory fittings),19,PVC Nahani Trap 75 mm,No.,131.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0410,Building (Bd-V : Water supply and sanitory fittings),20,G.I.Clamps 100mm to 150mm,No.,30.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0411,Building (Bd-V : Water supply and sanitory fittings),21,PVC Nahani Trap 150 mm,No.,167.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0412,Building (Bd-V : Water supply and sanitory fittings),22,G.I.Clamps 12mm to 32mm,No.,29.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0413,Building (Bd-V : Water supply and sanitory fittings),23,G.I.Clamps 40mm to 80mm,No.,21.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0414,Building (Bd-V : Water supply and sanitory fittings),24,Anglo Indian W.C. Pan Colour,No.,1286.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0415,Building (Bd-V : Water supply and sanitory fittings),25,G.I.Fixtures,Kg.,108.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0416,Building (Bd-V : Water supply and sanitory fittings),26,P.V.C. Cowl 100 mm,No.,75.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0417,Building (Bd-V : Water supply and sanitory fittings),27,G.I.Screws 30mm,No.,7.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0418,Building (Bd-V : Water supply and sanitory fittings),28,G.I.Screws 40mm,No.,8.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0419,Building (Bd-V : Water supply and sanitory fittings),29,G.I.Union 25mm dia.,No.,110.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0420,Building (Bd-V : Water supply and sanitory fittings),30,Gully trap cover with frame,No.,684.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0421,Building (Bd-V : Water supply and sanitory fittings),31,Gun Metal stop tap with crutch wheel 20mm,No.,394.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0422,Building (Bd-V : Water supply and sanitory fittings),32,Gun metal stop tap with crutch wheel 25mm,No.,903.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0423,Building (Bd-V : Water supply and sanitory fittings),33,Gun metal stop tap with crutch wheel 15mm,No.,418.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0424,Building (Bd-V : Water supply and sanitory fittings),34,Gun metal stop tap with crutch wheel 20mm,No.,684.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0425,Building (Bd-V : Water supply and sanitory fittings),35,C.I.Bend 75mm dia.,No.,323.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0426,Building (Bd-V : Water supply and sanitory fittings),36,C.I.Bend 100mm dia.,No.,382.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0427,Building (Bd-V : Water supply and sanitory fittings),37,C.I.Bip tap 12mm,No.,113.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0428,Building (Bd-V : Water supply and sanitory fittings),38,C.I.Grating 150mm dia.,No.,142.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0429,Building (Bd-V : Water supply and sanitory fittings),39,C.I.Grating 100mm dia.,No.,80.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0430,Building (Bd-V : Water supply and sanitory fittings),40,C.I.Grating 75mm dia.,No.,51.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0431,Building (Bd-V : Water supply and sanitory fittings),41,C.I.Brackets,Pair,139.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,pair,OK,True
+MAT-0432,Building (Bd-V : Water supply and sanitory fittings),42,C.I.Collers 100mm dia.,No.,318.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0433,Building (Bd-V : Water supply and sanitory fittings),43,C.I.Copllers 75mm dia.,No.,259.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0434,Building (Bd-V : Water supply and sanitory fittings),44,C.I.Cover 45*30 cm with frame,No.,595.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0435,Building (Bd-V : Water supply and sanitory fittings),45,C.I.Cowl / Vent 100mm dia.,No.,385.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0436,Building (Bd-V : Water supply and sanitory fittings),46,C.I.Cowl / Vent 150mm dia.,No.,735.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0437,Building (Bd-V : Water supply and sanitory fittings),47,C.I.Cowl / Vent 75mm dia.,No.,299.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0438,Building (Bd-V : Water supply and sanitory fittings),48,C.I.Hinged Cover with frame,No.,615.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0439,Building (Bd-V : Water supply and sanitory fittings),49,C.I.Man hole cover 50 kg.,No.,4040.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0440,Building (Bd-V : Water supply and sanitory fittings),50,C.I.Man hole cover 75 kg.,No.,5831.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0441,Building (Bd-V : Water supply and sanitory fittings),51,C.I.Man hole cover 100 kg.,No.,7735.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0442,Building (Bd-V : Water supply and sanitory fittings),52,C.I.Man hole cover 175 kg.Heavy (0.9*0.45m),No.,14820.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0443,Building (Bd-V : Water supply and sanitory fittings),53,C.I.Nahani trap 100mm dia.(375mm long),No.,484.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0444,Building (Bd-V : Water supply and sanitory fittings),54,C.I.Nahani trap 75 to 80mm dia.(375mm long),No.,365.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0445,Building (Bd-V : Water supply and sanitory fittings),55,C.I.100*75*300 long arm (wt. 6kg)nahani trap,No.,1175.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0446,Building (Bd-V : Water supply and sanitory fittings),56,C.I.Soil pipe 100mm dia.,R.Mt.,1035.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0447,Building (Bd-V : Water supply and sanitory fittings),57,C.I.Soil pipe 150mm dia.,R.Mt.,1900.0,532,539,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0448,Building (Bd-V : Water supply and sanitory fittings),58,"C.I,Soil pipe 75 to 80mm dia.",R.Mt.,820.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0449,Building (Bd-V : Water supply and sanitory fittings),59,C.I.Shoe 75 mm dia.,No.,304.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0450,Building (Bd-V : Water supply and sanitory fittings),60,C.I. Shoe 100 mm dia.,No.,439.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0451,Building (Bd-V : Water supply and sanitory fittings),61,C.I.Shoe 150mm,No.,559.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0452,Building (Bd-V : Water supply and sanitory fittings),62,Ball cock 15mm dia.P.V.C.FLOAT,No.,335.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0453,Building (Bd-V : Water supply and sanitory fittings),63,Ball cock 25mm dia.P.V.C.FLOAT,No.,650.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0454,Building (Bd-V : Water supply and sanitory fittings),64,Ball cock 40mm dia.P.V.C.FLOAT,No.,783.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0455,Building (Bd-V : Water supply and sanitory fittings),65,Ball cock 50mm dia.P.V.C.FLOAT,No.,2249.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0456,Building (Bd-V : Water supply and sanitory fittings),66,Bib cock stop tap brass heavy 15mm,No.,441.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0457,Building (Bd-V : Water supply and sanitory fittings),67,Bib cock stop tap brass heavy 20mm,No.,678.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0458,Building (Bd-V : Water supply and sanitory fittings),68,Bib cock stop tap brass heavy 25mm,No.,995.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0459,Building (Bd-V : Water supply and sanitory fittings),69,Bib tap 12mm brass medium,No.,285.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0460,Building (Bd-V : Water supply and sanitory fittings),70,Colour wash hand basin 55*40cm,No.,1511.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0461,Building (Bd-V : Water supply and sanitory fittings),71,Colour wash hand basin 63*45cm,No.,1569.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0462,Building (Bd-V : Water supply and sanitory fittings),72,White glazed wash basin 45*30cm,No.,1316.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0463,Building (Bd-V : Water supply and sanitory fittings),73,White glazed wash hand basin 55*50cm,No.,1809.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0464,Building (Bd-V : Water supply and sanitory fittings),74,P.V.C. flexible Waste Pipe 32 mm dia,No.,59.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0465,Building (Bd-V : Water supply and sanitory fittings),75,White Glazed Wash Hand Basin 63 x 45 cm,No.,2415.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0466,Building (Bd-V : Water supply and sanitory fittings),76,Sink white glazed 45*20*30cm,No.,913.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0467,Building (Bd-V : Water supply and sanitory fittings),77,Pedestal for wash basin (standard size),No.,2318.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0468,Building (Bd-V : Water supply and sanitory fittings),78,C.C.Septic tank 0.9m dia.(2.5m long),No.,9250.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0469,Building (Bd-V : Water supply and sanitory fittings),79,C.C.Septic tank 1.20m dia.(2.5m long),No.,12729.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0470,Building (Bd-V : Water supply and sanitory fittings),80,C.I.Steps for manhole,No.,633.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0471,Building (Bd-V : Water supply and sanitory fittings),81,C.I.Cover with frame (Gully trap),No.,254.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0472,Building (Bd-V : Water supply and sanitory fittings),82,C.I.Plug Bend 150MM dia.,No.,1308.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0473,Building (Bd-V : Water supply and sanitory fittings),83,Clamp for G.I.pipe 25mm,No.,17.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0474,Building (Bd-V : Water supply and sanitory fittings),84,Colour European type W.C.Pan,No.,5064.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0475,Building (Bd-V : Water supply and sanitory fittings),85,European type glazed W.C.pan,No.,5080.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0476,Building (Bd-V : Water supply and sanitory fittings),86,W.C.PAN Coloured glazed 64CM.(Orissa),No.,2800.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0477,Building (Bd-V : Water supply and sanitory fittings),87,W.C.PAN White glazed 58 CM.Indian,No.,2663.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0478,Building (Bd-V : Water supply and sanitory fittings),88,W.C.PAN White glazed 57.50 CM (Orissa),No.,1072.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0479,Building (Bd-V : Water supply and sanitory fittings),89,Fibre flushing tank for W.C.,No.,792.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0480,Building (Bd-V : Water supply and sanitory fittings),90,Flushing tank automatic Urinal 10ltr. C.I.,No.,1052.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0481,Building (Bd-V : Water supply and sanitory fittings),91,Flushing tank automatic Urinal 5ltr. (P.V.C.),No.,772.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0482,Building (Bd-V : Water supply and sanitory fittings),92,Low level flush pr. St. 10ltr.,No.,1396.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0483,Building (Bd-V : Water supply and sanitory fittings),93,Flat back Urinal,No.,1625.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0484,Building (Bd-V : Water supply and sanitory fittings),94,Stall Type Urinal,No.,4919.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0485,Building (Bd-V : Water supply and sanitory fittings),95,Lipped type Urinal,No.,659.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0486,Building (Bd-V : Water supply and sanitory fittings),96,Coloured glazed full stall Urinal,No.,4746.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0487,Building (Bd-V : Water supply and sanitory fittings),97,Bleaching Powder,Kg.,84.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0488,Building (Bd-V : Water supply and sanitory fittings),98,Potassium Permanganate,Kg.,420.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0489,Building (Bd-V : Water supply and sanitory fittings),99,Nylon Brush,No.,78.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0490,Building (Bd-V : Water supply and sanitory fittings),100,Duster,No.,93.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0491,Building (Bd-V : Water supply and sanitory fittings),101,Plastic Bucket,No.,137.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0492,Building (Bd-V : Water supply and sanitory fittings),102,Coir,Kg.,73.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0493,Building (Bd-V : Water supply and sanitory fittings),103,Gunny Cloth,R.Mt.,48.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0494,Building (Bd-V : Water supply and sanitory fittings),104,Kharata,No.,51.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0495,Building (Bd-V : Water supply and sanitory fittings),105,Wheel stop tap brass 15mm,No.,313.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0496,Building (Bd-V : Water supply and sanitory fittings),106,Wheel stop tap brass 20mm,No.,405.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0497,Building (Bd-V : Water supply and sanitory fittings),107,Wheel stop tap brass 25mm,No.,592.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0498,Building (Bd-V : Water supply and sanitory fittings),108,Socket brass for 32mm tap,No.,67.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0499,Building (Bd-V : Water supply and sanitory fittings),109,Socket brass for 40mm tap,No.,80.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0500,Building (Bd-V : Water supply and sanitory fittings),110,Socket brass for 50mm tap,No.,133.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0501,Building (Bd-V : Water supply and sanitory fittings),111,Socket brass for 65mm tap,No.,195.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0502,Building (Bd-V : Water supply and sanitory fittings),112,Socket for 100mm tap,No.,494.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0503,Building (Bd-V : Water supply and sanitory fittings),113,Socket for 15mm tap,No.,27.0,533,540,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0504,Building (Bd-V : Water supply and sanitory fittings),114,Socket for 20mm tap,No.,37.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0505,Building (Bd-V : Water supply and sanitory fittings),115,Socket for 25mm tap,No.,47.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0506,Building (Bd-V : Water supply and sanitory fittings),116,Socket for 32mm tap,No.,78.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0507,Building (Bd-V : Water supply and sanitory fittings),117,Socket for 40mm tap,No.,88.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0508,Building (Bd-V : Water supply and sanitory fittings),118,Socket for 50mm tap,No.,142.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0509,Building (Bd-V : Water supply and sanitory fittings),119,Socket for 65mm tap,No.,215.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0510,Building (Bd-V : Water supply and sanitory fittings),120,Socket for 80mm tap,No.,323.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0511,Building (Bd-V : Water supply and sanitory fittings),121,Span Yarn,No.,174.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0512,Building (Bd-V : Water supply and sanitory fittings),122,Strainer for 100mm,No.,2970.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0513,Building (Bd-V : Water supply and sanitory fittings),123,Strainer for 40mm,No.,585.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0514,Building (Bd-V : Water supply and sanitory fittings),124,Strainer for 50mm,No.,882.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0515,Building (Bd-V : Water supply and sanitory fittings),125,Strainer for 80mm,No.,1978.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0516,Building (Bd-V : Water supply and sanitory fittings),126,Strainer for 15mm,No.,179.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0517,Building (Bd-V : Water supply and sanitory fittings),127,Strainer for 20mm,No.,188.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0518,Building (Bd-V : Water supply and sanitory fittings),128,Strainer for 25mm,No.,310.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0519,Building (Bd-V : Water supply and sanitory fittings),129,Stone ware pipe 100mm dia.,R.Mt.,126.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0520,Building (Bd-V : Water supply and sanitory fittings),130,Stone ware pipe 150mm dia.,R.Mt.,171.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0521,Building (Bd-V : Water supply and sanitory fittings),131,Stone ware pipe 225mm dia.,R.Mt.,239.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0522,Building (Bd-V : Water supply and sanitory fittings),132,Stone ware glazed pipe half round 100mm dia.,R.Mt.,173.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0523,Building (Bd-V : Water supply and sanitory fittings),133,Stop tap brass with crunch wheel 15mm dia.,No.,130.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0524,Building (Bd-V : Water supply and sanitory fittings),134,Towel rod with clamps 16mm dia.,No.,219.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0525,Building (Bd-V : Water supply and sanitory fittings),135,Mirror 40*50cm. With plastic frame,No.,337.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0526,Building (Bd-V : Water supply and sanitory fittings),136,Brass T Thimble Socket 32mm dia.,Pair,137.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,pair,OK,True
+MAT-0527,Building (Bd-V : Water supply and sanitory fittings),137,Brass wheel stop tap 32mm dia.,No.,636.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0528,Building (Bd-V : Water supply and sanitory fittings),138,Brass wheel stop tap 40mm dia.,No.,783.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0529,Building (Bd-V : Water supply and sanitory fittings),139,Brass wheel stop tap 50mm dia.,No.,1389.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0530,Building (Bd-V : Water supply and sanitory fittings),140,Brass wheel stop tap 65mm dia.,No.,1911.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0531,Building (Bd-V : Water supply and sanitory fittings),141,Brass wheel stop tap 80mm dia.,No.,3106.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0532,Building (Bd-V : Water supply and sanitory fittings),142,Half turn flush cock 25mm dia.,No.,712.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0533,Building (Bd-V : Water supply and sanitory fittings),143,12mm flexible inlet pipe connection,No.,331.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0534,Building (Bd-V : Water supply and sanitory fittings),144,Bell mouth cover 100mm dia.,No.,98.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0535,Building (Bd-V : Water supply and sanitory fittings),145,Box chamber with lock 0.6*0.45m,No.,695.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0536,Building (Bd-V : Water supply and sanitory fittings),146,Brass nozzle pillar tap 12mm,No.,292.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0537,Building (Bd-V : Water supply and sanitory fittings),147,Black bakelite seat to european closer,No.,430.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0538,Building (Bd-V : Water supply and sanitory fittings),148,Concussion push button type gun metal tap 15 to 25mm dia.,No.,197.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0539,Building (Bd-V : Water supply and sanitory fittings),149,Coupling cast Iron 100mm dia.,No.,417.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0540,Building (Bd-V : Water supply and sanitory fittings),150,Coupling cast Iron 80mm dia.,No.,376.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0541,Building (Bd-V : Water supply and sanitory fittings),151,Chromium plated 12mm dia.bib cock,No.,92.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0542,Building (Bd-V : Water supply and sanitory fittings),152,C.I.Trap grating 15*10 cm,No.,98.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0543,Building (Bd-V : Water supply and sanitory fittings),153,C.I.Y junction 100mm dia.,No.,959.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0544,Building (Bd-V : Water supply and sanitory fittings),154,C.I.Y junction 150mm dia.,No.,2131.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0545,Building (Bd-V : Water supply and sanitory fittings),155,C.I.Y junction 75mm dia.,No.,661.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0546,Building (Bd-V : Water supply and sanitory fittings),156,Enameled bend 40mm dia.,No.,245.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0547,Building (Bd-V : Water supply and sanitory fittings),157,Ferrul for C.I.pipr 100mm,No.,190.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0548,Building (Bd-V : Water supply and sanitory fittings),158,White glazed foot rest chequred 25*10 cm,Pair,199.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,pair,OK,True
+MAT-0549,Building (Bd-V : Water supply and sanitory fittings),159,Half round earthware pipe 100mm(60cm long),No.,124.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0550,Building (Bd-V : Water supply and sanitory fittings),160,Half round earthware pipe 150mm(60cm long),No.,371.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0551,Building (Bd-V : Water supply and sanitory fittings),161,Jute Rope,Kg.,120.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0552,Building (Bd-V : Water supply and sanitory fittings),162,Half round chaina ware pipe 100mm(60cm long),No.,119.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0553,Building (Bd-V : Water supply and sanitory fittings),163,Lead pipe 32mm dia.,R.Mt.,385.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0554,Building (Bd-V : Water supply and sanitory fittings),164,Mohagani seat with lid,No.,371.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0555,Building (Bd-V : Water supply and sanitory fittings),165,Mosquito proof coupling,No.,56.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0556,Building (Bd-V : Water supply and sanitory fittings),166,Non-return valve 15mm for water meter,No.,210.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0557,Building (Bd-V : Water supply and sanitory fittings),167,Non-return valve 25mm for water meter,No.,391.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0558,Building (Bd-V : Water supply and sanitory fittings),168,Non-return valve 20mm for water meter,No.,280.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0559,Building (Bd-V : Water supply and sanitory fittings),169,Piller tap 12mm dia.chromium plated heavy,No.,552.0,534,541,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0560,Building (Bd-V : Water supply and sanitory fittings),170,P.Trap and lead pipe upto 40mm dia.,No.,346.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0561,Building (Bd-V : Water supply and sanitory fittings),171,"Rubber gasket (25, 28 and 20 cm)",R.Mt.,195.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0562,Building (Bd-V : Water supply and sanitory fittings),172,Rubber Incertion,Kg.,353.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0563,Building (Bd-V : Water supply and sanitory fittings),173,Rubberised adhesive,Ltr.,375.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0564,Building (Bd-V : Water supply and sanitory fittings),174,Salt glazed stone ware gully trap (150*150mm),No.,153.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0565,Building (Bd-V : Water supply and sanitory fittings),175,Self project tap brass chromium plated 15mm,No.,160.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0566,Building (Bd-V : Water supply and sanitory fittings),176,Sewer trap,No.,782.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0567,Building (Bd-V : Water supply and sanitory fittings),177,Shower rose chromium plated brass 10cm,No.,323.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0568,Building (Bd-V : Water supply and sanitory fittings),178,P.V.C. pipe 15mm dia.10kg/cm2 pressure(class IV),R.Mt.,32.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0569,Building (Bd-V : Water supply and sanitory fittings),179,P.V.C. pipe 20mm dia.10kg/cm2 pressure(class IV),R.Mt.,60.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0570,Building (Bd-V : Water supply and sanitory fittings),180,P.V.C. pipe 25mm dia.10kg/cm2 pressure(class IV),R.Mt.,80.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0571,Building (Bd-V : Water supply and sanitory fittings),181,P.V.C. pipe 32mm dia.10kg/cm2 pressure(class IV),R.Mt.,124.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0572,Building (Bd-V : Water supply and sanitory fittings),182,P.V.C. pipe 40mm dia.10kg/cm2 pressure(class IV),R.Mt.,166.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0573,Building (Bd-V : Water supply and sanitory fittings),183,P.V.C. pipe 50mm dia.10kg/cm2 pressure(class IV),R.Mt.,282.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0574,Building (Bd-V : Water supply and sanitory fittings),184,P.V.C. pipe 60mm dia.10kg/cm2 pressure(class IV),R.Mt.,366.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0575,Building (Bd-V : Water supply and sanitory fittings),185,P.V.C. pipe 75mm dia.4 kg/cm2 pressure(class II),R.Mt.,244.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0576,Building (Bd-V : Water supply and sanitory fittings),186,P.V.C. 75 mm Soil Pipe 6 Kg/cm2 Pressure,R.Mt.,279.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0577,Building (Bd-V : Water supply and sanitory fittings),187,P.V.C. pipe 90mm dia.4 kg/cm2 pressure(class II),R.Mt.,252.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0578,Building (Bd-V : Water supply and sanitory fittings),188,P.V.C.pipe 110mm dia.4kg/cm2 pressure (class II),R.Mt.,348.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0579,Building (Bd-V : Water supply and sanitory fittings),189,P.V.C. 110 mm Rain Water Pipe 6Kg/cm2 Pressure,R.Mt.,255.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0580,Building (Bd-V : Water supply and sanitory fittings),190,P.V.C. 110 mm Soil Pipe 6 Kg/cm2 Pressure,R.Mt.,392.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0581,Building (Bd-V : Water supply and sanitory fittings),191,P.V.C.pipe 140mm dia.4kg/cm2 pressure (class II),R.Mt.,566.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0582,Building (Bd-V : Water supply and sanitory fittings),192,P.V.C.pipe 160mm dia.4kg/cm2 pressure (class II),No.,738.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0583,Building (Bd-V : Water supply and sanitory fittings),193,P.V.C.pipe 160mm dia.Soil Pipe,R.Mt.,770.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0584,Building (Bd-V : Water supply and sanitory fittings),194,P.V.C.pipe 160mm dia. Rain Water Pipe,R.Mt.,774.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0585,Building (Bd-V : Water supply and sanitory fittings),195,P.V.C.Socket 15mm dia.,No.,9.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0586,Building (Bd-V : Water supply and sanitory fittings),196,P.V.C.Socket 20mm dia.,No.,11.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0587,Building (Bd-V : Water supply and sanitory fittings),197,P.V.C.Socket 25mm dia.,No.,15.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0588,Building (Bd-V : Water supply and sanitory fittings),198,P.V.C.Socket 32mm dia.,No.,17.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0589,Building (Bd-V : Water supply and sanitory fittings),199,P.V.C.Socket 40mm dia.,No.,25.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0590,Building (Bd-V : Water supply and sanitory fittings),200,P.V.C.Socket 50mm dia.,No.,41.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0591,Building (Bd-V : Water supply and sanitory fittings),201,P.V.C.Socket 60mm dia.,No.,61.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0592,Building (Bd-V : Water supply and sanitory fittings),202,P.V.C.Flushing tank (12 ltr. Capacity),No.,1073.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0593,Building (Bd-V : Water supply and sanitory fittings),203,Flush valve 32mm dia.,No.,1653.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0594,Building (Bd-V : Water supply and sanitory fittings),204,Ferocret tank,Ltr.,14.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0595,Building (Bd-V : Water supply and sanitory fittings),205,Stainless Steel sink of size 600*510*200mm of nirali or equivalent,No.,7322.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0596,Building (Bd-V : Water supply and sanitory fittings),206,C.P.pillar cock jaquar make continental (Cat.No. CON-011),No.,874.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0597,Building (Bd-V : Water supply and sanitory fittings),207,C.P.pillar cock (ISI) jaquar make continental,No.,894.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0598,Building (Bd-V : Water supply and sanitory fittings),208,C.P.pillar cock long neck with aerator jaquar make continental,No.,1119.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0599,Building (Bd-V : Water supply and sanitory fittings),209,C.P.Bib cock (ISI) jaquar make continental (Cat.No. CON-037),No.,778.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0600,Building (Bd-V : Water supply and sanitory fittings),210,C.P.Bib Cock long thread jaquar make continental (Cat.No. CON-,No.,658.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0601,Building (Bd-V : Water supply and sanitory fittings),211,C.P.2-way bib cock jaquar make continental (Cat.No. CON-041),No.,982.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0602,Building (Bd-V : Water supply and sanitory fittings),212,C.P.bib cock with wall flange long thread jaquar make continental,No.,795.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0603,Building (Bd-V : Water supply and sanitory fittings),213,C.P.Bib cock with nozzle jaquar make continental (Cat.No. CON-,No.,799.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0604,Building (Bd-V : Water supply and sanitory fittings),214,C.P.Angular stop cock jaquar make continental (Cat.No. CON-053),No.,794.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0605,Building (Bd-V : Water supply and sanitory fittings),215,C.P.Angular stop cock long thread jaquar make continental (Cat.No.,No.,1997.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0606,Building (Bd-V : Water supply and sanitory fittings),216,C.P.angular stop cock with wall flange jaquar make continental,No.,686.0,535,542,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0607,Building (Bd-V : Water supply and sanitory fittings),217,C.P.central hole basin mixer without popup waste system with 450mm long braided hoses jaquar make continental (Cat.No. CON-,No.,2511.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0608,Building (Bd-V : Water supply and sanitory fittings),218,C.P.wall mixer with telephone shower arragnement only but without teltphone shower crutch jaquar make continental (Cat.No. CON-,No.,3036.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0609,Building (Bd-V : Water supply and sanitory fittings),219,C.p.wall mixer non-telephonic shower arrangement jaquar make,No.,2608.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0610,Building (Bd-V : Water supply and sanitory fittings),220,C.P.wall mixer(wall mounted model) with telephone shower arrangement only and with telephone shower crutch jaquar make,No.,3428.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0611,Building (Bd-V : Water supply and sanitory fittings),221,C.P.wall mixer with provision for overhead shower with 115mm long bend pipe and wall flange jaquar make continental (Cat.No.,No.,3495.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0612,Building (Bd-V : Water supply and sanitory fittings),222,C.P.sink mixer with swinging casted spout (wall mounted) jaquar,No.,2318.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0613,Building (Bd-V : Water supply and sanitory fittings),223,C.P.sink mixer swinging spout (table mounted model) 450mm long braided hoses jaquar make continental (Cat.No. CON-309B),No.,3237.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0614,Building (Bd-V : Water supply and sanitory fittings),224,C.P.sink cock with swinging casted spout jaquar make continental,No.,1188.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0615,Building (Bd-V : Water supply and sanitory fittings),225,C.P.sink cock with raised 'J' shaped swinging casted spout (table,No.,1529.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0616,Building (Bd-V : Water supply and sanitory fittings),226,C.p.shower arm 190mm long light body with wall flange jaquar,No.,484.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0617,Building (Bd-V : Water supply and sanitory fittings),227,C.P.Flush cock with wall flange 25mm with plain knob jaquar make,No.,1553.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0618,Building (Bd-V : Water supply and sanitory fittings),228,"C.P.Towel rail 24"" jaquar make continental (Cat. No. ACN 1111N )",No.,974.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0619,Building (Bd-V : Water supply and sanitory fittings),229,C.P.Towel ring square jaquar make continental (Cat. No. ACN,No.,898.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0620,Building (Bd-V : Water supply and sanitory fittings),230,C.P.Soap dish hooker jaquar make continental (Cat. No. AKB 35731,No.,758.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0621,Building (Bd-V : Water supply and sanitory fittings),231,C.P.soap dish (polyurethane) jaquar make continental (Cat. No.,No.,977.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0622,Building (Bd-V : Water supply and sanitory fittings),232,C.P.Toilet paper holder jaquar make continental (Cat. No. AQ 7751 ),No.,999.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0623,Building (Bd-V : Water supply and sanitory fittings),233,"C.P.Toilet rack 24""with lower hanger jaquar make continental (Cat.",No.,2238.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0624,Building (Bd-V : Water supply and sanitory fittings),234,C.P.Handshower (health faucet) 1m.PVC tube with wall hook jaquar,No.,900.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0625,Building (Bd-V : Water supply and sanitory fittings),235,C.P.Pillar cock jaquar make queen's collection (quarter turn fitting),No.,1792.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0626,Building (Bd-V : Water supply and sanitory fittings),236,C.P.Bib cock with wall flange aqua make queen's collection (quarter,No.,1553.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0627,Building (Bd-V : Water supply and sanitory fittings),237,C.P.2-way bib cock with wall flange aqua make queen's collection,No.,1883.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0628,Building (Bd-V : Water supply and sanitory fittings),238,C.P.Angular stop cock with wall flange aqua make queen's collection,No.,1189.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0629,Building (Bd-V : Water supply and sanitory fittings),239,C.P.central hole basin mixer with regular spout without popup waste system with 450mm long braided hoses jaquar make queen's,No.,3564.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0630,Building (Bd-V : Water supply and sanitory fittings),240,C.P.central hole basin mixer with regular spout with popup waste system with 450mm long braided hoses jaquar make queen's,No.,3991.0,536,543,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0631,Building (Bd-V : Water supply and sanitory fittings),241,C.P.central hole basin mixer with small spout without popup waste system with 450mm long braided hoses jaquar make queen's,No.,3250.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0632,Building (Bd-V : Water supply and sanitory fittings),242,C.P.wall mixer (wall mounted model) with telephonic shower arrangement only but without crutch jaquar make queen's collection,No.,4128.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0633,Building (Bd-V : Water supply and sanitory fittings),243,C.P.wall mixer non-telephonic shower system jaquar make queen's,No.,4165.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0634,Building (Bd-V : Water supply and sanitory fittings),244,C.P.wall mixer (wall mounted model) with telephonic shower arrangement only and with telephone shower crutch jaquar make,No.,4975.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0635,Building (Bd-V : Water supply and sanitory fittings),245,Hydraulic door closer,No.,1443.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0636,Building (Bd-V : Water supply and sanitory fittings),246,cPVC pipe 15mm dia.,R.Mt.,62.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0637,Building (Bd-V : Water supply and sanitory fittings),247,cPVC pipe 20mm dia.,R.Mt.,88.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0638,Building (Bd-V : Water supply and sanitory fittings),248,cPVC pipe 25mm dia.,R.Mt.,140.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0639,Building (Bd-V : Water supply and sanitory fittings),249,cPVC pipe 32mm dia.,R.Mt.,194.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0640,Building (Bd-V : Water supply and sanitory fittings),250,cPVC pipe 40mm dia.,R.Mt.,280.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0641,Building (Bd-V : Water supply and sanitory fittings),251,cPVC pipe 50mm dia.,R.Mt.,442.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0642,Building (Bd-V : Water supply and sanitory fittings),252,cPVC Coupling for 15mm dia.,No.,15.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0643,Building (Bd-V : Water supply and sanitory fittings),253,cPVC Coupling for 20mm dia.,No.,17.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0644,Building (Bd-V : Water supply and sanitory fittings),254,cPVC Coupling for 25mm dia.,No.,29.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0645,Building (Bd-V : Water supply and sanitory fittings),255,cPVC Coupling for 32mm dia.,No.,57.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0646,Building (Bd-V : Water supply and sanitory fittings),256,cPVC Coupling for 40mm dia.,No.,105.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0647,Building (Bd-V : Water supply and sanitory fittings),257,cPVC Coupling for 50mm dia.,No.,198.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0648,Building (Bd-V : Water supply and sanitory fittings),258,uPVC pipe 15mm dia.,R.Mt.,47.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0649,Building (Bd-V : Water supply and sanitory fittings),259,uPVC pipe 20mm dia.,R.Mt.,73.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0650,Building (Bd-V : Water supply and sanitory fittings),260,uPVC pipe 25mm dia.,R.Mt.,125.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0651,Building (Bd-V : Water supply and sanitory fittings),261,uPVC pipe 32mm dia.,R.Mt.,179.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0652,Building (Bd-V : Water supply and sanitory fittings),262,uPVC pipe 40mm dia.,R.Mt.,265.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0653,Building (Bd-V : Water supply and sanitory fittings),263,uPVC pipe 50mm dia.,R.Mt.,427.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0654,Building (Bd-V : Water supply and sanitory fittings),264,uPVC Coupling for 15mm dia.,No.,14.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0655,Building (Bd-V : Water supply and sanitory fittings),265,uPVC Coupling for 20mm dia.,No.,16.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0656,Building (Bd-V : Water supply and sanitory fittings),266,uPVC Coupling for 25mm dia.,No.,27.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0657,Building (Bd-V : Water supply and sanitory fittings),267,uPVC Coupling for 32mm dia.,No.,54.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0658,Building (Bd-V : Water supply and sanitory fittings),268,uPVC Coupling for 40mm dia.,No.,102.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0659,Building (Bd-V : Water supply and sanitory fittings),269,uPVC Coupling for 50mm dia.,No.,192.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0660,Building (Bd-V : Water supply and sanitory fittings),270,Elbow 90 Degree for 15mm dia.,No.,22.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0661,Building (Bd-V : Water supply and sanitory fittings),271,Elbow 90 Degree for 20mm dia.,No.,27.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0662,Building (Bd-V : Water supply and sanitory fittings),272,Elbow 90 Degree for 25mm dia.,No.,41.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0663,Building (Bd-V : Water supply and sanitory fittings),273,Elbow 90 Degree for 32mm dia.,No.,89.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0664,Building (Bd-V : Water supply and sanitory fittings),274,Elbow 90 Degree for 40mm dia.,No.,161.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0665,Building (Bd-V : Water supply and sanitory fittings),275,Elbow 90 Degree for 50mm dia.,No.,207.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0666,Building (Bd-V : Water supply and sanitory fittings),276,Tee for 15mm dia.,No.,27.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0667,Building (Bd-V : Water supply and sanitory fittings),277,Tee for 20mm dia.,No.,36.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0668,Building (Bd-V : Water supply and sanitory fittings),278,Tee for 25mm dia.,No.,52.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0669,Building (Bd-V : Water supply and sanitory fittings),279,Tee for 32mm dia.,No.,119.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0670,Building (Bd-V : Water supply and sanitory fittings),280,Tee for 40mm dia.,No.,197.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0671,Building (Bd-V : Water supply and sanitory fittings),281,Tee for 50mm dia.,No.,410.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0672,Building (Bd-V : Water supply and sanitory fittings),282,End cap for 15mm dia.,No.,13.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0673,Building (Bd-V : Water supply and sanitory fittings),283,End cap for 20mm dia.,No.,17.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0674,Building (Bd-V : Water supply and sanitory fittings),284,End cap for 25mm dia.,No.,23.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0675,Building (Bd-V : Water supply and sanitory fittings),285,End cap for 32mm dia.,No.,47.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0676,Building (Bd-V : Water supply and sanitory fittings),286,End cap for 40mm dia.,No.,69.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0677,Building (Bd-V : Water supply and sanitory fittings),287,End cap for 50mm dia.,No.,141.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0678,Building (Bd-V : Water supply and sanitory fittings),288,Ball cock for 15mm dia.,No.,122.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0679,Building (Bd-V : Water supply and sanitory fittings),289,Ball cock for 12mm dia.,No.,177.0,537,544,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0680,Building (Bd-V : Water supply and sanitory fittings),290,Ball cock for 25mm dia.,No.,333.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0681,Building (Bd-V : Water supply and sanitory fittings),291,Ball cock for 32mm dia.,No.,581.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0682,Building (Bd-V : Water supply and sanitory fittings),292,Ball cock for 40mm dia.,No.,932.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0683,Building (Bd-V : Water supply and sanitory fittings),293,Araldite adhesive,Kg,1502.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0684,Building (Bd-V : Water supply and sanitory fittings),294,Ball valves for 50mm dia.,No.,1597.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0685,Building (Bd-V : Water supply and sanitory fittings),295,Male adapter (Brass Threads) for 15mm dia.,No.,173.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0686,Building (Bd-V : Water supply and sanitory fittings),296,Male adapter (Brass Threads) for 20mm dia.,No.,223.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0687,Building (Bd-V : Water supply and sanitory fittings),297,Male adapter (Brass Threads) for 25mm dia.,No.,328.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0688,Building (Bd-V : Water supply and sanitory fittings),298,Male adapter (Brass Threads) for 32mm dia.,No.,667.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0689,Building (Bd-V : Water supply and sanitory fittings),299,Male adapter (Brass Threads) for 40mm dia.,No.,826.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0690,Building (Bd-V : Water supply and sanitory fittings),300,Male adapter (Brass Threads) for 50mm dia.,No.,1513.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0691,Building (Bd-V : Water supply and sanitory fittings),301,Male adapter (Plastic Threads) for 15mm dia.,No.,18.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0692,Building (Bd-V : Water supply and sanitory fittings),302,Male adapter (Plastic Threads) for 20mm dia.,No.,26.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0693,Building (Bd-V : Water supply and sanitory fittings),303,Male adapter (Plastic Threads) for 25mm dia.,No.,36.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0694,Building (Bd-V : Water supply and sanitory fittings),304,Male adapter (Plastic Threads) for 32mm dia.,No.,63.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0695,Building (Bd-V : Water supply and sanitory fittings),305,Male adapter (Plastic Threads) for 40mm dia.,No.,94.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0696,Building (Bd-V : Water supply and sanitory fittings),306,Male adapter (Plastic Threads) for 50mm dia.,No.,174.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0697,Building (Bd-V : Water supply and sanitory fittings),307,Female adapter (Brass Threads) for 15mm dia.,No.,166.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0698,Building (Bd-V : Water supply and sanitory fittings),308,Female adapter (Brass Threads) for 20mm dia.,No.,204.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0699,Building (Bd-V : Water supply and sanitory fittings),309,Female adapter (Brass Threads) for 25mm dia.,No.,323.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0700,Building (Bd-V : Water supply and sanitory fittings),310,Female adapter (Brass Threads) for 32mm dia.,No.,651.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0701,Building (Bd-V : Water supply and sanitory fittings),311,Female adapter (Brass Threads) for 40mm dia.,No.,763.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0702,Building (Bd-V : Water supply and sanitory fittings),312,Female adapter (Brass Threads) for 50mm dia.,No.,1439.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0703,Building (Bd-V : Water supply and sanitory fittings),313,Female adapter (Plastic Threads) for 15mm dia.,No.,25.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0704,Building (Bd-V : Water supply and sanitory fittings),314,Female adapter (Plastic Threads) for 20mm dia.,No.,34.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0705,Building (Bd-V : Water supply and sanitory fittings),315,Female adapter (Plastic Threads) for 25mm dia.,No.,48.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0706,Building (Bd-V : Water supply and sanitory fittings),316,Union for 15mm dia.,No.,93.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0707,Building (Bd-V : Water supply and sanitory fittings),317,Union for 20mm dia.,No.,117.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0708,Building (Bd-V : Water supply and sanitory fittings),318,Union for 25mm dia.,No.,131.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0709,Building (Bd-V : Water supply and sanitory fittings),319,Union for 32mm dia.,No.,181.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0710,Building (Bd-V : Water supply and sanitory fittings),320,Union for 40mm dia.,No.,295.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0711,Building (Bd-V : Water supply and sanitory fittings),321,Union for 50mm dia.,No.,535.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0712,Building (Bd-V : Water supply and sanitory fittings),322,Cross for 15mm dia.,No.,36.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0713,Building (Bd-V : Water supply and sanitory fittings),323,Cross for 20mm dia.,No.,70.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0714,Building (Bd-V : Water supply and sanitory fittings),324,Step over Bend 15mm dia.,No.,70.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0715,Building (Bd-V : Water supply and sanitory fittings),325,Step over Bend 20mm dia.,No.,115.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0716,Building (Bd-V : Water supply and sanitory fittings),326,Tee holder for 15mm dia.,No.,36.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0717,Building (Bd-V : Water supply and sanitory fittings),327,Tee holder for 32mm dia.,No.,103.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0718,Building (Bd-V : Water supply and sanitory fittings),328,End plug threaded for 15mm dia.,No.,18.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0719,Building (Bd-V : Water supply and sanitory fittings),329,R.C.C.Chamber cover with frame 90cm*45cm Heavy Duty 225kg,No.,4185.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0720,Building (Bd-V : Water supply and sanitory fittings),330,R.C.C.Chamber cover with frame 90cm*45cm Medium Duty 140kg,No.,2698.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0721,Building (Bd-V : Water supply and sanitory fittings),331,R.C.C.Chamber cover with frame 60cm*45cm Heavy Duty 160kg,No.,3778.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0722,Building (Bd-V : Water supply and sanitory fittings),332,R.C.C.Chamber cover with frame 60cm*45cm Medium Duty 100kg,No.,2337.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0723,Building (Bd-V : Water supply and sanitory fittings),333,I.S.I.Ferrul Connection15mm dia.,No.,614.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0724,Building (Bd-V : Water supply and sanitory fittings),334,I.S.I.Ferrul Connection 20mm dia.,No.,989.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0725,Building (Bd-V : Water supply and sanitory fittings),335,I.S.I.Ferrul Connection 25mm dia.,No.,1663.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0726,Building (Bd-V : Water supply and sanitory fittings),336,I.S.I.Ferrul Connection 32mm dia.,No.,2851.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0727,Building (Bd-V : Water supply and sanitory fittings),337,I.S.I.Ferrul Connection 40mm dia.,No.,4078.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0728,Building (Bd-V : Water supply and sanitory fittings),338,I.S.I.Ferrul Connection 50mm dia.,No.,6974.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0729,Building (Bd-V : Water supply and sanitory fittings),339,Water meter 15 mm diameter,No.,1655.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0730,Building (Bd-V : Water supply and sanitory fittings),340,Water meter 20 mm diameter,No.,2600.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0731,Building (Bd-V : Water supply and sanitory fittings),341,Water meter 25 mm diameter,No.,4079.0,538,545,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0732,Building (Bd-V : Water supply and sanitory fittings),342,Water meter 40 mm diameter,No.,6768.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0733,Building (Bd-V : Water supply and sanitory fittings),343,Water meter 50 mm diameter,No.,9140.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0734,Building (Bd-V : Water supply and sanitory fittings),344,Water meter 80 mm diameter,No.,14638.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0735,Building (Bd-V : Water supply and sanitory fittings),345,Water meter 100 mm diameter,No.,21282.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0736,Building (Bd-V : Water supply and sanitory fittings),346,Non return Valve 40 mm diameter,No.,1837.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0737,Building (Bd-V : Water supply and sanitory fittings),347,Non return Valve 50 mm diameter,No.,2653.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0738,Building (Bd-V : Water supply and sanitory fittings),348,Non return Valve 80 mm diameter,No.,7400.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0739,Building (Bd-V : Water supply and sanitory fittings),349,Non return Valve 100 mm diameter,No.,14112.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0740,Building (Bd-V : Water supply and sanitory fittings),350,Colour Wash Hand Basin 0.45 x 0.30,No.,889.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0741,Building (Bd-V : Water supply and sanitory fittings),351,White Glaze Earth Sink 0.6 x 0.2 x 0.45,No.,2088.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0742,Building (Bd-V : Water supply and sanitory fittings),352,Clamp for G.I.pipe 200mm,No.,44.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0743,Building (Bd-V : Water supply and sanitory fittings),353,Earopean type glazed W.C.pan 68cm,No.,3018.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0744,Building (Bd-V : Water supply and sanitory fittings),354,Earopean white glazed earthen ware closet pan,No.,2978.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0745,Building (Bd-V : Water supply and sanitory fittings),355,P.V.C. Nahni Trap,R.Mt.,187.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0746,Building (Bd-V : Water supply and sanitory fittings),356,P.V.C. Connector. 15 mm dia,No.,75.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0747,Building (Bd-V : Water supply and sanitory fittings),357,Low level flushing cistern,No.,1299.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0748,Building (Bd-V : Water supply and sanitory fittings),358,Upvc sanitary pipes all 20 mm dia.,R.Mt.,107.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0749,Building (Bd-V : Water supply and sanitory fittings),359,Upvc sanitary pipes all 75 mm dia.,R.Mt.,246.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0750,Building (Bd-V : Water supply and sanitory fittings),360,Bib cock stop tap brass heavy 15mm,No.,962.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0751,Building (Bd-V : Water supply and sanitory fittings),361,Stainless Steel sink of size 610 x 460 x 200 mm of nirali or,No.,11813.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0752,Building (Bd-V : Water supply and sanitory fittings),362,Upvc sanitary pipes all 63 mm dia.,R.Mt.,1724.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0753,Building (Bd-V : Water supply and sanitory fittings),363,W.C.PAN Colour glazed 57.50 CM (Orissa),No.,1716.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0754,Building (Bd-V : Water supply and sanitory fittings),364,Piller cock mixer & Angle cock,No.,937.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0755,Building (Bd-V : Water supply and sanitory fittings),365,Upvc sanitary pipes all 25 mm dia.,R.Mt.,468.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0756,Building (Bd-V : Water supply and sanitory fittings),366,Upvc sanitary pipes all 15 mm dia.,R.Mt.,218.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0757,Building (Bd-V : Water supply and sanitory fittings),367,Cement,bags,300.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,bag,OK,True
+MAT-0758,Building (Bd-V : Water supply and sanitory fittings),368,Upvc sanitary pipes all 40 mm dia.,R.Mt.,739.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0759,Building (Bd-V : Water supply and sanitory fittings),369,Upvc sanitary pipes all 50 mm dia.,R.Mt.,1052.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0760,Building (Bd-V : Water supply and sanitory fittings),370,Stainless Steel sink of size 470 x 420 x 178 mm of nirali or,No.,5913.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0761,Building (Bd-V : Water supply and sanitory fittings),371,Bib cock Long Arm,No.,347.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0762,Building (Bd-V : Water supply and sanitory fittings),372,Bottletrap wash basin 32 mm Cromium Plated,No.,1696.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0763,Building (Bd-V : Water supply and sanitory fittings),373,Upvc sanitary pipes all 32 mm dia.,R.Mt.,598.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0764,Building (Bd-V : Water supply and sanitory fittings),374,Hamp rope,Kg.,111.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0765,Building (Bd-V : Water supply and sanitory fittings),375,Bib cock cock stop tap brass heavy 15 mm,No.,486.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0766,Building (Bd-V : Water supply and sanitory fittings),376,Colour wash hand basin 45*30cm,No.,888.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0767,Building (Bd-V : Water supply and sanitory fittings),377,Ultra 250 mm. dia. uPVC 90 degree junction chamber base with U,No.,1157.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0768,Building (Bd-V : Water supply and sanitory fittings),378,Ultra 250 mm.dia. uPVC Cover & Frame,No.,497.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0769,Building (Bd-V : Water supply and sanitory fittings),379,uPVC Blanking Plug 110 mm,No.,317.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0770,Building (Bd-V : Water supply and sanitory fittings),380,uPVC 90 degree bend,No.,298.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0771,Building (Bd-V : Water supply and sanitory fittings),381,Ultra Shaft 250x470mm,No.,415.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0772,Building (Bd-V : Water supply and sanitory fittings),382,Water jet with accessories,No.,419.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0773,Building (Bd-V : Water supply and sanitory fittings),383,White glazed full stall urinal,No.,5187.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0774,Building (Bd-V : Water supply and sanitory fittings),384,Glass plain 6mm thick,Sq.Mt.,1101.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0775,Building (Bd-V : Water supply and sanitory fittings),385,White Glazed Earthenware Squatting plate (Ladies Urinal),No.,777.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0776,Building (Bd-V : Water supply and sanitory fittings),386,Autoclosing pillar cock of pressmatic tap,No.,1818.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0777,Building (Bd-V : Water supply and sanitory fittings),387,PVC Aqua kraft type super bib tap 15 mm,No.,240.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0778,Building (Bd-V : Water supply and sanitory fittings),388,PVC Aqua kraft type super Two Way bib tap 15 mm,No.,467.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0779,Building (Bd-V : Water supply and sanitory fittings),389,Super push button type cock / tap with flange 15 mm,No.,261.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0780,Building (Bd-V : Water supply and sanitory fittings),390,PVC Aqua kraft type super jet spray 15 mm,No.,510.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0781,Building (Bd-V : Water supply and sanitory fittings),391,PVC Aqua kraft type super right angle stop tap,No.,266.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0782,Building (Bd-V : Water supply and sanitory fittings),392,PVC Aqua kraft type super Pillar tap 15 mm,No.,400.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0783,Building (Bd-V : Water supply and sanitory fittings),393,"Fixing in CC BK Clamp, Battan",No.,30.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0784,Building (Bd-V : Water supply and sanitory fittings),394,Wall Mounted European type glazed W.C.pan,No.,8547.0,539,546,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0785,Building (Bd-V : Water supply and sanitory fittings),395,Super wall sink type tap with flange 15 mm,No.,713.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0786,Building (Bd-V : Water supply and sanitory fittings),396,Two Way bib tap with flange,No.,466.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0787,Building (Bd-V : Water supply and sanitory fittings),397,super jet spray with flange 2 in 1 faucet 1.50 metre long,No.,511.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0788,Building (Bd-W : Water supply and sanitory fittings),1,Chloryphyriphos,Liter,320.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0789,Building (Bd-W : Water supply and sanitory fittings),2,Solvent,Ltr,428.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0790,Building (Bd-W : Water supply and sanitory fittings),3,D.D.V.P.,Ltr,566.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0791,Building (Bd-W : Water supply and sanitory fittings),4,Malathion,Ltr,344.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0792,Building (Bd-W : Water supply and sanitory fittings),5,Pine Oil,Ltr,501.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0793,Building (Bd-W : Water supply and sanitory fittings),6,S.S. Pipe 40 mm dia,Rmt,184.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0794,Building (Bd-W : Water supply and sanitory fittings),7,Mild Steel,M.T.,58245.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0795,Building (Bd-W : Water supply and sanitory fittings),8,Barbed Wire,Kg.,96.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,DUPLICATE_SR_IN_SECTION,True
+MAT-0796,Building (Bd-W : Water supply and sanitory fittings),9,Concentina Coil Wire,Rmt,225.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0797,Building (Bd-W : Water supply and sanitory fittings),10,M.S. Steel,Kg,58.25,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0798,Building (Bd-W : Water supply and sanitory fittings),12,RCC Pole,No,368.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0799,Building (Bd-W : Water supply and sanitory fittings),14,Green marble,Sq.Mt,1308.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0800,Building (Bd-W : Water supply and sanitory fittings),15,Telephone black granite,Sq.Mt,2733.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0801,Building (Bd-W : Water supply and sanitory fittings),16,Karva (for roof and sides 10kg bundle),Bundle,34.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,bundle,OK,True
+MAT-0802,Building (Bd-W : Water supply and sanitory fittings),17,Tatti,Sq.Mt,29.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0803,Building (Bd-W : Water supply and sanitory fittings),18,Bamboo 25mm dia.,R.Mt,28.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0804,Building (Bd-W : Water supply and sanitory fittings),20,Lightening Conductor,No.,9719.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0805,Building (Bd-W : Water supply and sanitory fittings),21,Salt,Kg.,27.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0806,Building (Bd-W : Water supply and sanitory fittings),22,Copper Tape width 25mm*3mm thick,Kg,500.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0807,Building (Bd-W : Water supply and sanitory fittings),23,Aluminium Strips 50 mm x 3 mm,R.Mt,80.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0808,Building (Bd-W : Water supply and sanitory fittings),24,"Cripped wire 3' - 0"" , 4' - 0"" and 5' - 0"" wide",Sq.mt,264.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0809,Building (Bd-W : Water supply and sanitory fittings),25,Welding Electrodes,No,8.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0810,Building (Bd-W : Water supply and sanitory fittings),26,Welded Mesh 75 X 75 mm,Sqm,267.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0811,Building (Bd-W : Water supply and sanitory fittings),27,Welded Mesh 150 X 150 mm,Sqm,218.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,True
+MAT-0812,Building (Bd-W : Water supply and sanitory fittings),28,"Tarat 36"" width (Gunny cloth)",R.Mt,41.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0813,Building (Bd-W : Water supply and sanitory fittings),29,"Chain link 3' - 0"" , 4' - 0"" and 5' - 0"" wide",Sq.Mt,264.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0814,Building (Bd-W : Water supply and sanitory fittings),30,Bamboo 50mm dia.,R.Mt,27.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0815,Building (Bd-W : Water supply and sanitory fittings),31,Hold Fast for Steel Gate,No.,84.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0816,Building (Bd-W : Water supply and sanitory fittings),32,Nut Boldts 12 mm dia. /Nails all size,No.,108.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0817,Building (Bd-W : Water supply and sanitory fittings),816,M.S. Pipe 40 mm dia,Rmt,203.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0818,Building (Bd-W : Water supply and sanitory fittings),817,Welding Rod,Box,510.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,box,OK,True
+MAT-0819,Building (Bd-W : Water supply and sanitory fittings),818,PVC hand rail cover,Rmt.,315.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0820,Building (Bd-W : Water supply and sanitory fittings),819,Antitermite Liquid,Kg.,375.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0821,Building (Bd-W : Water supply and sanitory fittings),820,Lock for Drawer/Cupboard,No.,169.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0822,Building (Bd-W : Water supply and sanitory fittings),821,Glycel,Ltr.,354.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0823,Building (Bd-W : Water supply and sanitory fittings),822,Hing,Kg.,3671.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0824,Building (Bd-W : Water supply and sanitory fittings),823,Hot lime,Kg.,10.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0825,Building (Bd-W : Water supply and sanitory fittings),824,Ladder,No.,1650.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0826,Building (Bd-W : Water supply and sanitory fittings),825,Fine tooth chisel,No.,80.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0827,Building (Bd-W : Water supply and sanitory fittings),826,Saw,No.,40.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0828,Building (Bd-W : Water supply and sanitory fittings),44,Gloves,No.,15.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0829,Building (Bd-W : Water supply and sanitory fittings),829,R.C.C.Pipe 1200mm dia.(Np3)2.5m long,R.Mt.,8815.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0830,Building (Bd-W : Water supply and sanitory fittings),830,R.C.C.Pipe 1100mm dia.(Np3)2.5m long,R.Mt.,8658.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0831,Building (Bd-W : Water supply and sanitory fittings),831,R.C.C.Pipe 1000mm dia.(Np3)2.5m long,R.Mt.,6626.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0832,Building (Bd-W : Water supply and sanitory fittings),832,R.C.C.Pipe 900mm dia.(Np3)2.5m long,R.Mt.,5963.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0833,Building (Bd-W : Water supply and sanitory fittings),833,R.C.C.Pipe 800mm dia.(Np3)2.5m long,R.Mt.,5294.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0834,Building (Bd-W : Water supply and sanitory fittings),834,R.C.C.Pipe 700mm dia.(Np3)2.5m long,R.Mt.,4150.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0835,Building (Bd-W : Water supply and sanitory fittings),835,R.C.C.Pipe 600mm dia.(Np3)2.5m long,R.Mt.,3120.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0836,Building (Bd-W : Water supply and sanitory fittings),8,R.C.C.Pipe 500mm dia.(Np3)2.5m long,R.Mt.,2353.0,540,547,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0837,Building (Bd-W : Water supply and sanitory fittings),836,R.C.C.Pipe 450mm dia.(Np3)2.5m long,R.Mt.,2085.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0838,Building (Bd-W : Water supply and sanitory fittings),837,R.C.C.pipe Np2 class 1000mm dia. 2.5m long,R.Mt.,3763.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0839,Building (Bd-W : Water supply and sanitory fittings),838,R.C.C.Np2 Pipe Collar 1000 mm Dia.,No.,575.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0840,Building (Bd-W : Water supply and sanitory fittings),839,R.C.C.pipe Np2 class 1200mm dia. 2.5m long,R.Mt.,5497.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0841,Building (Bd-W : Water supply and sanitory fittings),840,R.C.C.Np2 Pipe Collar 1200 mm Dia.,No.,803.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0842,Building (Bd-W : Water supply and sanitory fittings),841,R.C.C.pipe Np2 class 1800mm dia. 2.5m long,R.Mt.,9170.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0843,Building (Bd-W : Water supply and sanitory fittings),842,R.C.C.pipe Np2 class 900mm dia. 2.5m long,R.Mt.,3299.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0844,Building (Bd-W : Water supply and sanitory fittings),843,R.C.C.Np2 Pipe Collar 900 mm Dia.,No.,465.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0845,Building (Bd-W : Water supply and sanitory fittings),844,R.C.C.pipe Np2 class 800mm dia. 2.5m long,R.Mt.,2758.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0846,Building (Bd-W : Water supply and sanitory fittings),845,R.C.C.Np2 Pipe Collar 800 mm Dia.,No.,282.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0847,Building (Bd-W : Water supply and sanitory fittings),846,R.C.C.pipe Np2 class 700mm dia. 2.5m long,R.Mt.,2332.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0848,Building (Bd-W : Water supply and sanitory fittings),847,R.C.C.pipe Np2 class 600mm dia. 2.5m long,R.Mt.,1655.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0849,Building (Bd-W : Water supply and sanitory fittings),848,R.C.C.Np2 Pipe Collar 600 mm Dia.,No.,261.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0850,Building (Bd-W : Water supply and sanitory fittings),849,R.C.C.pipe Np2 class 500mm dia. 2.5m long,R.Mt.,1318.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0851,Building (Bd-W : Water supply and sanitory fittings),850,R.C.C.pipe Np2 class 450mm dia. 2.5m long,R.Mt.,1074.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0852,Building (Bd-W : Water supply and sanitory fittings),851,R.C.C.Np2 Pipe Collar 450 mm Dia.,No.,107.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0853,Building (Bd-W : Water supply and sanitory fittings),852,R.C.C.pipe Np2 class 100mm dia. 2m long,R.Mt.,327.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0854,Building (Bd-W : Water supply and sanitory fittings),853,R.C.C.pipe Np2 class 150mm dia. 2m long,R.Mt.,346.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0855,Building (Bd-W : Water supply and sanitory fittings),854,R.C.C.pipe Np2 class 225mm dia. 2m long,R.Mt.,392.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0856,Building (Bd-W : Water supply and sanitory fittings),855,R.C.C.pipe Np2 class 300mm dia. 2m long,R.Mt.,642.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0857,Building (Bd-W : Water supply and sanitory fittings),29,RCC Pipe Np 4 heavy duty non presure pipe 1000 mm diameter,R.Mt.,8266.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,DUPLICATE_SR_IN_SECTION,True
+MAT-0858,Building (Bd-W : Water supply and sanitory fittings),856,RCC Pipe Np4 heavy duty non presure pipe 1200 mm diameter,R.Mt.,9824.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0859,Building (Bd-W : Water supply and sanitory fittings),857,RCC Pipe Np4 heavy duty non presure pipe 900 mm diameter,R.Mt.,6629.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,True
+MAT-0860,General Rates,1,Cement,M.T.,6000.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0861,General Rates,2,Structural Steel,M.T.,62575.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0862,General Rates,3,TMT FE - 500,M.T.,61000.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0863,General Rates,4,HCRM/CRS Reinforcement,M.T.,63755.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0864,General Rates,5,Tubular steel,M.T.,65720.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0865,General Rates,6,Bitumen VG 10 (Bulk) (80/100),M.T.,49488.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0866,General Rates,7,Bitumen VG 30 (Bulk) (60/70),M.T.,49862.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0867,General Rates,8,Bitumen VG 40 (Bulk) (30/40),M.T.,52764.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0868,General Rates,9,Bitumen VG 30 (Packed) (60/70),M.T.,59411.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0869,General Rates,10,Bitumen VG 40 (Packed) (30/40),M.T.,64748.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0870,General Rates,11a,Bitumen VG 10 (Packed) (80/100),M.T.,57913.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0871,General Rates,12,Sand - Natural/V.S.I.(Vertical Shaft Impact Crusher)Quality,Cu.Mt.,1670.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0872,General Rates,13,Sand - Crushed,Cu.Mt.,1200.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0873,General Rates,14,Natural Sand - Screened (for plaster work only),Cu.Mt.,1781.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0874,General Rates,15,Bricks II Class,No.,8.5,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,True
+MAT-0875,General Rates,16,Rubble stone excluding royalty,Cu.Mt.,653.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0876,General Rates,17,Aggregate 40 mm (Hand Broken) Blasted excluding royalty,Cu.Mt.,900.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0877,General Rates,18,Aggregate 25 mm,Cu.Mt.,1050.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0878,General Rates,19,Aggregate 20 mm,Cu.Mt.,1050.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0879,General Rates,20,Aggregate 12 mm,Cu.Mt.,1050.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0880,General Rates,21,Aggregate 10 mm,Cu.Mt.,1050.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0881,General Rates,22,Aggregate 6 mm,Cu.Mt.,1050.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0882,General Rates,23,Stone Dust,Cu.Mt.,835.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0883,General Rates,24,Soft Murum,Cu.Mt.,313.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0884,General Rates,25,Hard Murum,Cu.Mt.,316.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,True
+MAT-0885,General Rates,26,Water,1000 lit.,213.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,1000 L,OK,True
+MAT-0886,General Rates,27,White Cement,Kg.,36.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0887,General Rates,28,Plasticizer,Ltr.,193.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,True
+MAT-0888,General Rates,29,Stainless Steel Plate,Kg.,218.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,True
+MAT-0889,General Rates,30,EMULSION RS1 ( Hincol) BULK,M.T.,40000.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0890,General Rates,31,EMULSION RS1 ( Hincol) Packed,M.T.,42500.0,541,548,SRC-01,"ex-GST, SSR 2022-23",READ,MT,DUPLICATE_SR_IN_SECTION,True
+MAT-0891,General Rates,31,WASTE PLASTIC to be used in bituminous treatment as per IRC,Kg.,65.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,kg,DUPLICATE_SR_IN_SECTION,True
+MAT-0892,General Rates,32,Portland Slag Cement (PSC),Bag,364.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,bag,OK,True
+MAT-0893,General Rates,34,Ground Granulated Blast Furnance Slag (GGBS),M.T.,4300.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,True
+MAT-0894,General (MORTH: Roads),1,Bitumen VG-40 (bulk (30-40 grade)),M.T.,52764.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0895,General (MORTH: Roads),2,Stone Boulder of size 150 mm and below at Cruser Plant,Cu.Mt.,928.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0896,General (MORTH: Roads),3,Supply of quarried stone 150 - 200 mm size for Hand Broken at site,Cu.Mt.,943.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0897,General (MORTH: Roads),4,Boulder with minimum size of 300 mm for Pitching at Site,Cu.Mt.,840.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0898,General (MORTH: Roads),5,Coarse sand at Mixing Plant,Cu.Mt.,1600.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0899,General (MORTH: Roads),6,Coarse sand at Site,Cu.Mt.,1600.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0900,General (MORTH: Roads),7,Murum at Site,Cu.Mt.,316.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0901,General (MORTH: Roads),8,Fly ash conforming to IS: 3812 ( Part II &,Cu.Mt.,1745.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0902,General (MORTH: Roads),9,Filter media/Filter Material as per Table 300-3 (MoRT&H,Cu.Mt.,738.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0903,General (MORTH: Roads),10,Close graded Granular sub-base Material 53 mm to 9.5 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0904,General (MORTH: Roads),11,Close graded Granular sub-base Material,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0905,General (MORTH: Roads),11,Close graded Granular sub-base Material,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0906,General (MORTH: Roads),12,Close graded Granular sub-base Material,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0907,General (MORTH: Roads),13,Close graded Granular sub-base Material,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0908,General (MORTH: Roads),14,Close graded Granular sub-base Material 4.75mm to 2.36 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0909,General (MORTH: Roads),15,Close graded Granular sub-base Material 4.75mm to 75 micron mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0910,General (MORTH: Roads),16,Close graded Granular sub-base Material,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0911,General (MORTH: Roads),17,Stone crusher dust finer than 3mm with not more than 10% passing,Cu.Mt.,918.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0912,General (MORTH: Roads),18,Coarse graded Granular sub-base Material 2.36 mm & below,Cu.Mt.,918.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0913,General (MORTH: Roads),19,Coarse graded Granular sub-base Material 4.75mm to 75 micron mm,Cu.Mt.,918.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0914,General (MORTH: Roads),20,Coarse graded Granular sub-base Material 4.75 mm to 2.36 mm,Cu.Mt.,918.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0915,General (MORTH: Roads),21,Coarse graded Granular sub-base Material 9.5 mm to 4.75 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0916,General (MORTH: Roads),22,Coarse graded Granular sub-base Material 26.5 mm to 4.75 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0917,General (MORTH: Roads),23,Coarse graded Granular sub-base Material 26.5 mm to 9.5 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0918,General (MORTH: Roads),25,Coarse graded Granular sub-base Material 37.5 mm to 9.5 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0919,General (MORTH: Roads),24,Coarse graded Granular sub-base Material 53 mm to 26 .5mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0920,General (MORTH: Roads),25,Aggregates below 5.6 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0921,General (MORTH: Roads),26,Aggregates 22.4 mm to 2.36 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0922,General (MORTH: Roads),27,Aggregates 22.4 mm to 5.6 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0923,General (MORTH: Roads),28,Aggregates 45 mm to 2.8 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0924,General (MORTH: Roads),29,Aggregates 45 mm to 22.4 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0925,General (MORTH: Roads),30,Aggregates 53 mm to 2.8 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0926,General (MORTH: Roads),31,Aggregates 53 mm to 22.4 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0927,General (MORTH: Roads),32,Aggregates 63 mm to 2.8 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0928,General (MORTH: Roads),35,Aggregates 63 mm to 45 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0929,General (MORTH: Roads),33,Aggregates 90 mm to 45 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0930,General (MORTH: Roads),34,Aggregates 10 mm to 5 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0931,General (MORTH: Roads),35,Aggregates 11.2 mm to 0.09 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0932,General (MORTH: Roads),36,Aggregates 13.2 mm to 0.09 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0933,General (MORTH: Roads),37,Aggregates 13.2 mm to 5.6 mm,Cu.Mt.,1050.0,542,549,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0934,General (MORTH: Roads),38,Aggregates 13.2 mm to 10 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0935,General (MORTH: Roads),39,Aggregates 20 mm to 10 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0936,General (MORTH: Roads),40,Aggregates 25 mm to 10 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0937,General (MORTH: Roads),41,Aggregates 19 mm to 6 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0938,General (MORTH: Roads),42,Aggregates 37.5 mm to 19 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0939,General (MORTH: Roads),43,Aggregates 37.5 mm to 25 mm,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0940,General (MORTH: Roads),47,Aggregates 6 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0941,General (MORTH: Roads),44,Aggregates 10 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0942,General (MORTH: Roads),45,Aggregates 13.2/12.5 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0943,General (MORTH: Roads),46,Aggregates 20 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0944,General (MORTH: Roads),47,Aggregates 25 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0945,General (MORTH: Roads),48,Aggregates 40 mm nominal size,Cu.Mt.,1050.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0946,General (MORTH: Roads),49,Binding wire,Kg.,74.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,False
+MAT-0947,General (MORTH: Roads),50,Bitumen ( Cationic Emulsion ),M.T.,40000.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0948,General (MORTH: Roads),51,Bitumen VG-30 (bulk (60-70 grade)),M.T.,49862.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0949,General (MORTH: Roads),52,Bitumen VG -10 (bulk (80-100 grade )),M.T.,49488.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0950,General (MORTH: Roads),53,Bitumen (Cutback ),M.T.,49000.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0951,General (MORTH: Roads),54,Bitumen (emulsion),M.T.,40000.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0952,General (MORTH: Roads),55,Bitumen (modified graded) (bulk Cr-60),M.T.,55580.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,MT,OK,False
+MAT-0953,General (MORTH: Roads),56,Geo grids,Sq.Mt.,75.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,False
+MAT-0954,General (MORTH: Roads),57,Geomembrane,Sq.Mt.,103.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,False
+MAT-0955,General (MORTH: Roads),58,Geonets,Sq.Mt.,78.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,False
+MAT-0956,General (MORTH: Roads),59,Geotextile,Sq.Mt.,68.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,False
+MAT-0957,General (MORTH: Roads),60,Geotextile filter fabric,Sq.Mt.,63.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,sq.m,OK,False
+MAT-0958,General (MORTH: Roads),61,LDO,Ltr.,70.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,False
+MAT-0959,General (MORTH: Roads),66,Pavement Marking Paint,Ltr.,248.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,False
+MAT-0960,General (MORTH: Roads),62,"RCC Pipes 200 mm dia, 2.5 m long for drainage",R.Mt.,414.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,r.m,OK,False
+MAT-0961,General (MORTH: Roads),63,Quarry spall,Cum,660.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False
+MAT-0962,General (MORTH: Roads),64,Road Barricade Perforated fench,No.,4035.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0963,General (MORTH: Roads),65,Road Barricade Sand Fillable only 1 mtr.,No.,3378.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0964,Road Furniture,1,Primer for Base,Per liter,118.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,False
+MAT-0965,Road Furniture,2,Road marking Paint as per IS 164,Per liter,160.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,DUPLICATE_SR_IN_SECTION,False
+MAT-0966,Road Furniture,3,Moulded Shank Raised,Per No,158.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,No.,DUPLICATE_SR_IN_SECTION,False
+MAT-0967,Road Furniture,4,Epoxy for Fixing stud,Per liter,260.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,DUPLICATE_SR_IN_SECTION,False
+MAT-0968,Road Furniture,5,Median Marker,Per No,250.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,No.,DUPLICATE_SR_IN_SECTION,False
+MAT-0969,Road Furniture,6,"Epoxy Adhesive Kit (Hardner, Epoxy, Quartz sand in 1:2:4)",Per kit,962.5,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,kit,DUPLICATE_SR_IN_SECTION,False
+MAT-0970,Road Furniture,7,Stoving paint,Per liter,245.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,DUPLICATE_SR_IN_SECTION,False
+MAT-0971,Road Furniture,8,Protective Transperent Coat,Per liter,748.25,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,L,DUPLICATE_SR_IN_SECTION,False
+MAT-0973,Road Furniture,11,Reflectorising glass beads,Per kg,90.2,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,False
+MAT-0974,Road Furniture,13,Delineator having wide angle cube corner micro prismatic 13 non,Per Number,2200.0,543,550,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0975,Road Furniture,14,Cost of approved type of delineators from ISI certified 14 firm as per,Per Number,577.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0976,Road Furniture,15,Solar Raised Pavement Markers made of polycarbonate molded body,Per Number,2650.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0982,Road Furniture,26,Plastitrak Roll on,Per kg,307.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,False
+MAT-0983,Road Furniture,27,Hardener,Per kg,60.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,kg,OK,False
+MAT-0984,Road Furniture,28,Thinner,Per liter,95.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,L,OK,False
+MAT-0985,Road Furniture,29,Amsking Tape rolls,Per Number,40.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,No.,OK,False
+MAT-0988,Road Furniture,2,Laterite stone weighing 20 to 50 Kilogram ( Excluding Royalty),Per Cum,400.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0989,Road Furniture,3,Laterite stone weighing 50 to 100 Kilogram ( Excluding Royalty),Per Cum,405.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0990,Road Furniture,4,Trap stone weighing 50 to 100 Kilogram ( Excluding Royalty),Per Cum,655.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0991,Road Furniture,5,Trap stone weighing 100 to 200 Kilogram ( Excluding Royalty),Per Cum,657.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0992,Road Furniture,6,Trap stone weighing 200 to 300 Kilogram ( Excluding Royalty),Per Cum,660.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0993,Road Furniture,7,Trap stone weighing 300 to 500 Kilogram ( Excluding Royalty),Per Cum,662.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0994,Road Furniture,8,Trap stone weighing 500 to 1000 Kilogram (Excluding Royalty),Per Cum,665.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,DUPLICATE_SR_IN_SECTION,False
+MAT-0995,Road Furniture,9,Trap stone weighing above 1000 Kilogram (Excluding Royalty),Per Cum,670.0,544,551,SRC-01,"ex-GST, SSR 2022-23",READ,cu.m,OK,False

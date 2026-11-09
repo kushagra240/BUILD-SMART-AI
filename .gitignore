@@ -29,3 +29,10 @@ venv/
 *.sqlite
 *.sqlite3
 
+# Temporary extraction and data assets
+.tmp-extract/
+data/rates/dist/
+*.zip
+*.pdf
+*.xlsx
+
