@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { axe } from 'vitest-axe';
 import { MemoryRouter } from 'react-router-dom';
@@ -57,6 +57,7 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
         </MemoryRouter>
       </AuthProvider>
     );
+    await screen.findByRole('heading', { name: 'Deshmukh residence' });
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -67,6 +68,7 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
         <SavedProjectsPage />
       </MemoryRouter>
     );
+    await screen.findByText('Deshmukh residence');
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });

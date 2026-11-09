@@ -218,3 +218,92 @@ describe('apiClient auth wiring', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+const project = {
+  id: '22222222-2222-2222-2222-222222222222',
+  user_id: user.id,
+  name: 'Test residence',
+  notes: 'Baner, Pune',
+  created_at: '2026-11-01T10:00:00Z',
+  updated_at: '2026-11-02T10:00:00Z',
+};
+
+describe('apiClient projects wiring', () => {
+  beforeEach(() => {
+    apiClient.setAccessToken('access-1');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('lists projects from the real endpoint with the bearer token', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () => jsonResponse({ items: [project], total: 1 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.listProjects()).resolves.toMatchObject({
+      total: 1,
+      items: [{ name: project.name }],
+    });
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe('/api/v1/projects');
+    expect(init.method).toBe('GET');
+    expect(init.credentials).toBe('include');
+    expect(init.headers).toMatchObject({ Authorization: 'Bearer access-1' });
+  });
+
+  it('deletes a project with DELETE and accepts an empty 204 response', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () => jsonResponse(null, 204));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.deleteProject(project.id)).resolves.toBeUndefined();
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(`/api/v1/projects/${project.id}`);
+    expect(init.method).toBe('DELETE');
+  });
+
+  it('raises an ApiError when deleting a missing project', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse(
+        {
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Project not found',
+            details: null,
+            request_id: 'req-3',
+          },
+        },
+        404
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.deleteProject(project.id)).rejects.toMatchObject({
+      status: 404,
+      message: 'Project not found',
+    });
+  });
+
+  it('deletes mock projects locally and returns 404 for unknown ids', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'true');
+    const created = await apiClient.createProject({
+      name: 'Temp mock project',
+      notes: 'To be deleted',
+    });
+
+    await apiClient.deleteProject(created.id);
+    const remaining = await apiClient.listProjects();
+    expect(remaining.items.some((item) => item.id === created.id)).toBe(false);
+
+    await expect(apiClient.getProject(created.id)).rejects.toMatchObject({
+      status: 404,
+    });
+  });
+});
