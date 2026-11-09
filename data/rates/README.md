@@ -30,7 +30,7 @@ psql "$DATABASE_URL" -f sql/schema.sql -f sql/load.sql     # run from this folde
 psql "$DATABASE_URL" -f sql/roles.sql                      # optional read-only API role
 ```
 Or restore everything at once: `gunzip -c dist/buildsmart_rates_v1.0.0.sql.gz | psql "$DATABASE_URL"`.
-Run `python validate.py` before loading any changed CSV; it exits non-zero on errors.
+Run `python validate.py` before loading any changed CSV; it exits non-zero on errors (SHA-256: `9942549b9a3d5314`).
 Tested on PostgreSQL 16.15: schema, load, constraint rejection tests, and dump restore all pass. Not tested on Supabase itself. Supabase's Data API exposes the `public` schema by default; keep `rates` out of the exposed schemas so only your backend reads it.
 
 ## Example queries

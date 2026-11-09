@@ -10,6 +10,10 @@ import sys
 
 import pandas as pd
 
+LABOUR_SHARE_THRESHOLD = 0.9
+EXPECTED_WPI_MONTHS = 42
+DAILY_RATE_TOLERANCE = 0.005
+
 csv_dir = (
     sys.argv[1]
     if len(sys.argv) > 1
@@ -89,7 +93,7 @@ add(
     (w.labour_rate > w.completed_rate).sum(),
 )
 
-n = (w.labour_rate / w.completed_rate > 0.9).sum()
+n = (w.labour_rate / w.completed_rate > LABOUR_SHARE_THRESHOLD).sum()
 add("work items where labour > 90% of rate (read item before use)", "INFO", n)
 
 n = (w.completed_rate == 0).sum()
@@ -144,8 +148,8 @@ s["month"] = pd.to_datetime(s.month)
 g = s.groupby("wpi_code").month.agg(["count", "min", "max"])
 add(
     "WPI: 42 months per item",
-    "ERROR" if (g["count"] != 42).any() else "OK",
-    (g["count"] != 42).sum(),
+    "ERROR" if (g["count"] != EXPECTED_WPI_MONTHS).any() else "OK",
+    (g["count"] != EXPECTED_WPI_MONTHS).sum(),
 )
 add(
     "WPI: index values positive",
@@ -167,7 +171,8 @@ add(
 )
 
 b = (
-    (mw.daily_rate - mw.total_monthly.apply(lambda x: math.ceil(x / 26 * 100) / 100)).abs() > 0.005
+    (mw.daily_rate - mw.total_monthly.apply(lambda x: math.ceil(x / 26 * 100) / 100)).abs()
+    > DAILY_RATE_TOLERANCE
 ).sum()
 add("min wage: daily = ceil(total/26, 2)", "ERROR" if b else "OK", b)
 
@@ -180,7 +185,8 @@ add(
 
 
 # 7 quantity-norm plausibility (known engineering ranges)
-def rng(cat_sub, item_sub, mat, lo, hi, unit="M3"):
+def rng(cat_sub, item_sub, mat, bounds, unit="M3"):
+    lo, hi = bounds
     x = q[
         (q.item_unit == unit)
         & (q.category.str.contains(cat_sub, case=False))
@@ -205,13 +211,14 @@ def rng(cat_sub, item_sub, mat, lo, hi, unit="M3"):
         res[-1]["detail"] = "no rows matched: check is vacuous"
 
 
-rng("Plain Cement", "cement concrete", "Cement", 2, 9)
-rng("Brick", "brick", "Bricks", 300, 700)
-rng("Plastering", "plaster", "Cement", 0.03, 0.4, "M2")
+rng("Plain Cement", "cement concrete", "Cement", (2, 9))
+rng("Brick", "brick", "Bricks", (300, 700))
+rng("Plastering", "plaster", "Cement", (0.03, 0.4), unit="M2")
 
 
 # 8 core rate cross-checks (SSR 'General Rates')
-def core(name_sub, lo, hi, unit):
+def core(name_sub, bounds, unit):
+    lo, hi = bounds
     x = m[(m.section == "General Rates") & m.material.str.contains(name_sub, case=False)]
     bad_rates = x[(x.rate < lo) | (x.rate > hi)]
     detail = x[["material_id", "rate"]].head(2).to_dict("records")
@@ -223,9 +230,9 @@ def core(name_sub, lo, hi, unit):
     )
 
 
-core("^Cement", 4000, 9000, "INR/MT")
-core("TMT", 40000, 90000, "INR/MT")
-core("Sand - Crushed", 600, 3000, "INR/cu.m")
+core("^Cement", (4000, 9000), "INR/MT")
+core("TMT", (40000, 90000), "INR/MT")
+core("Sand - Crushed", (600, 3000), "INR/cu.m")
 
 rep = pd.DataFrame(res)
 rep.to_csv(os.path.join(os.path.dirname(csv_dir), "data_quality_report.csv"), index=False)
