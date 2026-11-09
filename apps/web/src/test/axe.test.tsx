@@ -12,6 +12,7 @@ import { SavedProjectsPage } from '../pages/SavedProjectsPage';
 import { SavedProjectDetailPage } from '../pages/SavedProjectDetailPage';
 import { MaterialsGuidePage } from '../pages/MaterialsGuidePage';
 import { PdfPreviewPage } from '../pages/PdfPreviewPage';
+import { AuthProvider } from '../auth/AuthProvider';
 
 describe('Accessibility Checks (WCAG 2.1 AA)', () => {
   it('LandingPage has no accessibility violations', async () => {
@@ -26,9 +27,11 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
 
   it('LoginPage has no accessibility violations', async () => {
     const { container } = render(
-      <MemoryRouter>
-        <LoginPage />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <LoginPage />
+        </MemoryRouter>
+      </AuthProvider>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -36,9 +39,11 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
 
   it('RegisterPage has no accessibility violations', async () => {
     const { container } = render(
-      <MemoryRouter>
-        <RegisterPage />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <RegisterPage />
+        </MemoryRouter>
+      </AuthProvider>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -46,9 +51,11 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
 
   it('DashboardPage has no accessibility violations', async () => {
     const { container } = render(
-      <MemoryRouter>
-        <DashboardPage />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <DashboardPage />
+        </MemoryRouter>
+      </AuthProvider>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -86,9 +93,11 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
 
   it('PdfPreviewPage has no accessibility violations', async () => {
     const { container } = render(
-      <MemoryRouter>
-        <PdfPreviewPage />
-      </MemoryRouter>
+      <AuthProvider>
+        <MemoryRouter>
+          <PdfPreviewPage />
+        </MemoryRouter>
+      </AuthProvider>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();

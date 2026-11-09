@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Home, LogIn, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
+import { Home, LogIn, ShieldCheck } from 'lucide-react';
 import { z } from 'zod';
-import { apiClient } from '../services/apiClient';
+import { ApiError, isMockApi } from '../services/apiClient';
+import { useAuth } from '../auth/useAuth';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 const loginSchema = z.object({
@@ -12,16 +13,52 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+const mockDefaults: LoginFormData = {
+  email: 'aniket@buildsmart.local',
+  password: 'password12345',
+};
+
 export function LoginPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: 'aniket@buildsmart.local',
-    password: 'password12345',
-  });
+  const location = useLocation();
+  const { login, status } = useAuth();
+  const mock = isMockApi();
+
+  const from = (
+    location.state as {
+      from?: { pathname?: string; search?: string };
+    } | null
+  )?.from;
+  const redirectTo = from?.pathname ? `${from.pathname}${from.search ?? ''}` : '/app';
+
+  const [formData, setFormData] = useState<LoginFormData>(() =>
+    mock ? mockDefaults : { email: '', password: '' }
+  );
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+
+  if (status === 'authenticated') {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  const applyApiError = (error: unknown) => {
+    if (error instanceof ApiError) {
+      const mapped: Partial<Record<keyof LoginFormData, string>> = {};
+      for (const [field, message] of Object.entries(error.fieldErrors())) {
+        if (field === 'email' || field === 'password') {
+          mapped[field] = message;
+        }
+      }
+      if (Object.keys(mapped).length > 0) {
+        setErrors(mapped);
+        return;
+      }
+      setApiError(error.message);
+      return;
+    }
+    setApiError(error instanceof Error ? error.message : 'Login failed');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,13 +78,10 @@ export function LoginPage() {
     setErrors({});
     setLoading(true);
     try {
-      await apiClient.login(formData);
-      setSubmitted(true);
-      setTimeout(() => {
-        navigate('/app');
-      }, 500);
+      await login(formData);
+      navigate(redirectTo, { replace: true });
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Login failed');
+      applyApiError(err);
     } finally {
       setLoading(false);
     }
@@ -65,7 +99,7 @@ export function LoginPage() {
             <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
               Welcome back.
             </h1>
-            <SampleDataBadge text="Mock auth" variant="subtle" />
+            {mock && <SampleDataBadge text="Mock auth" variant="subtle" />}
           </div>
           <p className="text-xs text-ink-soft">
             Sign in to access your saved building notebook and project estimates.
@@ -83,17 +117,7 @@ export function LoginPage() {
             </div>
           )}
 
-          {submitted && (
-            <div
-              role="status"
-              className="p-3 text-xs bg-forest/10 border border-forest/20 text-forest rounded-md flex items-center gap-2"
-            >
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-              <span>Authentication successful. Redirecting to notebook...</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-1.5">
               <label htmlFor="email" className="block text-xs font-medium text-ink">
                 Email address
@@ -108,9 +132,13 @@ export function LoginPage() {
                 }`}
                 placeholder="name@example.com"
                 autoComplete="email"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p className="text-[11px] text-error font-medium">{errors.email}</p>
+                <p id="email-error" className="text-[11px] text-error font-medium">
+                  {errors.email}
+                </p>
               )}
             </div>
 
@@ -131,27 +159,32 @@ export function LoginPage() {
                 }`}
                 placeholder="••••••••••"
                 autoComplete="current-password"
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? 'password-error' : undefined}
               />
               {errors.password && (
-                <p className="text-[11px] text-error font-medium">{errors.password}</p>
+                <p id="password-error" className="text-[11px] text-error font-medium">
+                  {errors.password}
+                </p>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading || submitted}
-              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <LogIn className="w-4 h-4" />
               <span>{loading ? 'Authenticating...' : 'Sign in to notebook'}</span>
             </button>
           </form>
 
-          {/* Quick Demo Credentials Tip */}
-          <div className="pt-3 border-t border-ink/10 text-[11px] text-ink-soft flex items-center justify-between">
-            <span>Demo mode active</span>
-            <span className="font-mono text-ink">aniket@buildsmart.local</span>
-          </div>
+          {mock && (
+            <div className="pt-3 border-t border-ink/10 text-[11px] text-ink-soft flex items-center justify-between">
+              <span>Demo mode active</span>
+              <span className="font-mono text-ink">{mockDefaults.email}</span>
+            </div>
+          )}
         </div>
 
         {/* Footer Link */}

@@ -1,4 +1,10 @@
+import { isMockApi } from '../../services/apiClient';
+
 export function MockBanner() {
+  if (!isMockApi()) {
+    return null;
+  }
+
   return (
     <div
       role="region"

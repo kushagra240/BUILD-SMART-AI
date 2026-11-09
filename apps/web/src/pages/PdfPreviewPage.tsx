@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Download, CheckCircle2, FileText } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
+import { useAuth } from '../auth/useAuth';
 
 export function PdfPreviewPage() {
   const [downloaded, setDownloaded] = useState(false);
+  const { user } = useAuth();
 
   const handleDownload = () => {
     setDownloaded(true);
@@ -66,7 +68,7 @@ export function PdfPreviewPage() {
                 <div><span className="text-ink-soft">Total built-up:</span> <strong>1,800 sq ft</strong></div>
                 <div><span className="text-ink-soft">Configuration:</span> <strong>G+1 · 2 floors</strong></div>
                 <div><span className="text-ink-soft">Plot area:</span> <strong>1,200 sq ft</strong></div>
-                <div><span className="text-ink-soft">Prepared for:</span> <strong>Aniket Deshmukh</strong></div>
+                <div><span className="text-ink-soft">Prepared for:</span> <strong>{user?.full_name ?? 'Not signed in'}</strong></div>
                 <div><span className="text-ink-soft">Quality tier:</span> <strong>Standard</strong></div>
               </div>
 

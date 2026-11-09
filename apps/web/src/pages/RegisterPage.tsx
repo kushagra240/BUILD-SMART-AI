@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Home, UserPlus, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { Home, UserPlus, ShieldCheck } from 'lucide-react';
 import { z } from 'zod';
-import { apiClient } from '../services/apiClient';
+import { ApiError, isMockApi } from '../services/apiClient';
+import { useAuth } from '../auth/useAuth';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 const registerSchema = z
@@ -19,18 +20,46 @@ const registerSchema = z
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
+const mockDefaults: RegisterFormData = {
+  full_name: 'Aniket Deshmukh',
+  email: 'aniket@buildsmart.local',
+  password: 'password12345',
+  confirmPassword: 'password12345',
+};
+
 export function RegisterPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<RegisterFormData>({
-    full_name: 'Aniket Deshmukh',
-    email: 'aniket@buildsmart.local',
-    password: 'password12345',
-    confirmPassword: 'password12345',
-  });
+  const { register, status } = useAuth();
+  const mock = isMockApi();
+
+  const [formData, setFormData] = useState<RegisterFormData>(() =>
+    mock ? mockDefaults : { full_name: '', email: '', password: '', confirmPassword: '' }
+  );
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+
+  if (status === 'authenticated') {
+    return <Navigate to="/app" replace />;
+  }
+
+  const applyApiError = (error: unknown) => {
+    if (error instanceof ApiError) {
+      const mapped: Partial<Record<keyof RegisterFormData, string>> = {};
+      for (const [field, message] of Object.entries(error.fieldErrors())) {
+        if (field === 'full_name' || field === 'email' || field === 'password') {
+          mapped[field] = message;
+        }
+      }
+      if (Object.keys(mapped).length > 0) {
+        setErrors(mapped);
+        return;
+      }
+      setApiError(error.message);
+      return;
+    }
+    setApiError(error instanceof Error ? error.message : 'Registration failed');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,17 +79,14 @@ export function RegisterPage() {
     setErrors({});
     setLoading(true);
     try {
-      await apiClient.register({
+      await register({
         email: formData.email,
         password: formData.password,
         full_name: formData.full_name,
       });
-      setSubmitted(true);
-      setTimeout(() => {
-        navigate('/app');
-      }, 500);
+      navigate('/app', { replace: true });
     } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Registration failed');
+      applyApiError(err);
     } finally {
       setLoading(false);
     }
@@ -78,7 +104,7 @@ export function RegisterPage() {
             <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
               Create your notebook.
             </h1>
-            <SampleDataBadge text="Mock auth" variant="subtle" />
+            {mock && <SampleDataBadge text="Mock auth" variant="subtle" />}
           </div>
           <p className="text-xs text-ink-soft">
             Save estimates, compare quality tiers, and track your house project plans.
@@ -96,17 +122,7 @@ export function RegisterPage() {
             </div>
           )}
 
-          {submitted && (
-            <div
-              role="status"
-              className="p-3 text-xs bg-forest/10 border border-forest/20 text-forest rounded-md flex items-center gap-2"
-            >
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-              <span>Account created successfully. Redirecting to overview...</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-1.5">
               <label htmlFor="full_name" className="block text-xs font-medium text-ink">
                 Full name
@@ -121,9 +137,13 @@ export function RegisterPage() {
                 }`}
                 placeholder="e.g. Aniket Deshmukh"
                 autoComplete="name"
+                aria-invalid={Boolean(errors.full_name)}
+                aria-describedby={errors.full_name ? 'full_name-error' : undefined}
               />
               {errors.full_name && (
-                <p className="text-[11px] text-error font-medium">{errors.full_name}</p>
+                <p id="full_name-error" className="text-[11px] text-error font-medium">
+                  {errors.full_name}
+                </p>
               )}
             </div>
 
@@ -141,9 +161,13 @@ export function RegisterPage() {
                 }`}
                 placeholder="name@example.com"
                 autoComplete="email"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p className="text-[11px] text-error font-medium">{errors.email}</p>
+                <p id="email-error" className="text-[11px] text-error font-medium">
+                  {errors.email}
+                </p>
               )}
             </div>
 
@@ -164,9 +188,13 @@ export function RegisterPage() {
                 }`}
                 placeholder="••••••••••"
                 autoComplete="new-password"
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={errors.password ? 'password-error' : undefined}
               />
               {errors.password && (
-                <p className="text-[11px] text-error font-medium">{errors.password}</p>
+                <p id="password-error" className="text-[11px] text-error font-medium">
+                  {errors.password}
+                </p>
               )}
             </div>
 
@@ -184,16 +212,20 @@ export function RegisterPage() {
                 }`}
                 placeholder="••••••••••"
                 autoComplete="new-password"
+                aria-invalid={Boolean(errors.confirmPassword)}
+                aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
               />
               {errors.confirmPassword && (
-                <p className="text-[11px] text-error font-medium">{errors.confirmPassword}</p>
+                <p id="confirmPassword-error" className="text-[11px] text-error font-medium">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={loading || submitted}
-              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <UserPlus className="w-4 h-4" />
               <span>{loading ? 'Creating notebook...' : 'Register notebook'}</span>
