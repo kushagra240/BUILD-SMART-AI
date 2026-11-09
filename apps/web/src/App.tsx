@@ -14,31 +14,37 @@ import { MaterialsGuidePage } from './pages/MaterialsGuidePage';
 import { PdfPreviewPage } from './pages/PdfPreviewPage';
 import { MethodologyPage } from './pages/MethodologyPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { AuthProvider } from './auth/AuthProvider';
+import { RequireAuth } from './auth/RequireAuth';
 
 export function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-paper text-ink flex flex-col font-sans selection:bg-ochre/30 selection:text-ink">
-        <MockBanner />
-        <Navbar />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/app" element={<DashboardPage />} />
-            <Route path="/app/new" element={<WizardPage />} />
-            <Route path="/app/estimates/:id" element={<ResultsPage />} />
-            <Route path="/app/projects" element={<SavedProjectsPage />} />
-            <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
-            <Route path="/materials" element={<MaterialsGuidePage />} />
-            <Route path="/pdf" element={<PdfPreviewPage />} />
-            <Route path="/methodology" element={<MethodologyPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen bg-paper text-ink flex flex-col font-sans selection:bg-ochre/30 selection:text-ink">
+          <MockBanner />
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route element={<RequireAuth />}>
+                <Route path="/app" element={<DashboardPage />} />
+                <Route path="/app/new" element={<WizardPage />} />
+                <Route path="/app/estimates/:id" element={<ResultsPage />} />
+                <Route path="/app/projects" element={<SavedProjectsPage />} />
+                <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
+              </Route>
+              <Route path="/materials" element={<MaterialsGuidePage />} />
+              <Route path="/pdf" element={<PdfPreviewPage />} />
+              <Route path="/methodology" element={<MethodologyPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

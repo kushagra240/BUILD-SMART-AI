@@ -1,17 +1,25 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, MapPin, Menu, X, ChevronDown } from 'lucide-react';
+import { useAuth } from '../../auth/useAuth';
+
+function initialsFor(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return '·';
+  }
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
-
-  // Mock logged-in user profile shown in screenshots
-  const [currentUser] = useState<{ initials: string; name: string } | null>({
-    initials: 'AD',
-    name: 'Aniket Deshmukh',
-  });
+  const navigate = useNavigate();
+  const { user, status, logout } = useAuth();
 
   const isActive = (path: string) => {
     if (path === '/app') {
@@ -27,6 +35,13 @@ export function Navbar() {
       return location.pathname === '/materials';
     }
     return location.pathname === path;
+  };
+
+  const handleLogout = async () => {
+    setProfileDropdownOpen(false);
+    setMobileMenuOpen(false);
+    await logout();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -60,7 +75,7 @@ export function Navbar() {
 
           {/* Right Action / User Profile */}
           <div className="hidden sm:flex items-center gap-3">
-            {currentUser ? (
+            {user ? (
               <div className="relative">
                 <button
                   type="button"
@@ -69,16 +84,16 @@ export function Navbar() {
                   aria-expanded={profileDropdownOpen}
                 >
                   <span className="w-6 h-6 rounded-full bg-clay border border-ink/14 flex items-center justify-center text-[11px] font-mono font-semibold text-ink">
-                    {currentUser.initials}
+                    {initialsFor(user.full_name)}
                   </span>
-                  <span>{currentUser.name}</span>
+                  <span>{user.full_name}</span>
                   <ChevronDown className="w-3.5 h-3.5 text-ink-soft" aria-hidden="true" />
                 </button>
 
                 {profileDropdownOpen && (
                   <div className="absolute right-0 mt-1 w-48 bg-paper border border-ink/14 rounded-lg shadow-subtle py-1 z-50 text-xs">
                     <div className="px-3 py-2 border-b border-ink/10 text-ink-soft font-mono">
-                      Signed in as Aniket
+                      Signed in as {user.full_name}
                     </div>
                     <Link
                       to="/app"
@@ -94,16 +109,18 @@ export function Navbar() {
                     >
                       Saved projects
                     </Link>
-                    <Link
-                      to="/login"
-                      onClick={() => setProfileDropdownOpen(false)}
-                      className="block px-3 py-1.5 hover:bg-paper-deep text-brick border-t border-ink/10"
+                    <button
+                      type="button"
+                      onClick={() => void handleLogout()}
+                      className="block w-full text-left px-3 py-1.5 hover:bg-paper-deep text-brick border-t border-ink/10"
                     >
                       Log out
-                    </Link>
+                    </button>
                   </div>
                 )}
               </div>
+            ) : status === 'loading' ? (
+              <span className="text-xs text-ink-soft font-mono">Checking session…</span>
             ) : (
               <div className="flex items-center gap-2">
                 <Link
@@ -236,20 +253,37 @@ export function Navbar() {
             Methodology
           </Link>
           <div className="pt-2 border-t border-ink/10 flex justify-between gap-2">
-            <Link
-              to="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 text-center py-2 text-xs font-medium rounded border border-ink/14 bg-paper"
-            >
-              Log in
-            </Link>
-            <Link
-              to="/register"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 text-center py-2 text-xs font-semibold rounded bg-brick text-paper"
-            >
-              Register
-            </Link>
+            {user ? (
+              <>
+                <span className="flex-1 flex items-center px-2 text-xs text-ink-soft truncate">
+                  {user.full_name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="flex-1 text-center py-2 text-xs font-semibold rounded border border-brick/40 text-brick bg-paper"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 text-center py-2 text-xs font-medium rounded border border-ink/14 bg-paper"
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 text-center py-2 text-xs font-semibold rounded bg-brick text-paper"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       )}

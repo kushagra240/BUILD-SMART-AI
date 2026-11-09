@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Plus, ArrowRight, FileText, ChevronRight, Lightbulb } from 'lucide-react';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
+import { useAuth } from '../auth/useAuth';
 
 export function DashboardPage() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-paper text-ink pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
@@ -19,7 +22,9 @@ export function DashboardPage() {
               A starting point for your building budget.
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft font-sans">
-              Welcome back, Aniket. Make room for the home you have in mind.
+              {user
+                ? `Welcome back, ${user.full_name}. Make room for the home you have in mind.`
+                : 'Make room for the home you have in mind.'}
             </p>
           </div>
 
