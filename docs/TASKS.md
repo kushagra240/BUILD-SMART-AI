@@ -25,7 +25,7 @@ T50, T53, T55 devops/qa run in parallel
 
 | ID | Task | Depends | Status | Claimed by | Acceptance |
 |---|---|---|---|---|---|
-| T01 | Place the rates package in `data/rates/` (schema, load, roles, csv, validate.py, README). Add source PDFs to `.gitignore` (keep checksums only). | none | todo | | `python data/rates/validate.py` prints `0 ERROR` (output pasted); no CSV value edited; `git status` clean of PDFs |
+| T01 | Place the rates package in `data/rates/` (schema, load, roles, csv, validate.py, README). Add source PDFs to `.gitignore` (keep checksums only). | none | review | Antigravity (Gemini 3.8 Flash), 9 Nov 2026 | `python data/rates/validate.py` prints `0 ERROR` (output pasted); no CSV value edited; `git status` clean of PDFs |
 | T02 | Extract missing SSR items: shuttering/centering (ch.6 items 26.xx), interior emulsion and putty (35.xx), drainage and piping items (41-43). Add rows with page numbers and `parse_status`; bump dataset to v1.1.0. | T01 | todo | | validate.py 0 ERROR; every new row has `ssr_page`; ambiguous rows are REVIEW not guessed; list of what was added vs not found |
 | T03 | Resolve quantity-norm REVIEW rows (20) and the 7 REVIEW work items by reading the PDF pages; document Statement C-1 column meanings from the page header. | T01 | todo | | each fixed row cites page; remaining unsure rows stay REVIEW; C-1 columns documented in `data/rates/README.md` |
 | T04 | OCR `doc2.pdf` (likely electrical schedule) into the rates schema as `electrical_item_ssr` or equivalent. | T01 | todo | | all rows `REVIEW` until a human samples 20 rows against the PDF; error rate of the sample reported |

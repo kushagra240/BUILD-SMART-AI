@@ -12,7 +12,7 @@ Contents: 1 done, 2 mocked, 3 missing, 4 known bugs, 5 environment, 6 CI, 7 open
 - Projects CRUD with soft delete and object-level authorisation (404 for foreign resources); estimates stored immutably; health endpoints; Alembic migration 0001 (6 tables; citext extension); OpenAPI export and generated TypeScript types.
 - Tests: auth flows, token reuse, IDOR, validation envelope, rate limiter, estimate stub guard (backend); formatters, mock API, static-page axe tests (frontend).
 - Frontend visuals: landing, auth screens, wizard, results, methodology, 404, materials guide, PDF preview page (all on mock data).
-- Sourced rates database v1.0.0 (built and tested outside the repo; see `rates-database-and-engine.md`).
+- Sourced rates database v1.0.0 placed in `data/rates/` and validated with `python data/rates/validate.py` (result: `0 ERROR, 5 WARN, 40 OK`). Database schema, migration, seed, engine, and database loading do not exist yet.
 
 ## 2. Mocked or simulated
 
