@@ -47,6 +47,9 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+exclude = [
+    "data/rates/pipeline",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "I", "N", "UP", "PL"]
