@@ -22,40 +22,24 @@ def _split_sql_statements(sql: str) -> list[str]:
     """Split raw SQL script into executable statements respecting string literals and comments."""
     statements: list[str] = []
     current: list[str] = []
-    in_single_quote = False
-    in_comment = False
-    i = 0
-    while i < len(sql):
-        char = sql[i]
-        if in_comment:
-            if char == "\n":
-                in_comment = False
-            current.append(char)
-        elif in_single_quote:
+    in_quote = False
+
+    for line in sql.splitlines(keepends=True):
+        stripped = line.strip()
+        if not in_quote and stripped.startswith("--"):
+            continue
+        for char in line:
             if char == "'":
-                if i + 1 < len(sql) and sql[i + 1] == "'":
-                    current.append("''")
-                    i += 1
-                else:
-                    in_single_quote = False
-                    current.append(char)
-            else:
+                in_quote = not in_quote
                 current.append(char)
-        else:
-            if char == "-" and i + 1 < len(sql) and sql[i + 1] == "-":
-                in_comment = True
-                current.append(char)
-            elif char == "'":
-                in_single_quote = True
-                current.append(char)
-            elif char == ";":
+            elif char == ";" and not in_quote:
                 stmt = "".join(current).strip()
                 if stmt:
                     statements.append(stmt)
                 current = []
             else:
                 current.append(char)
-        i += 1
+
     rem = "".join(current).strip()
     if rem:
         statements.append(rem)
