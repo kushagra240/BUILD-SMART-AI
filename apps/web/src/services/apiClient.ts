@@ -1,4 +1,5 @@
 import type { components } from '../types/api.generated';
+import { MOCK_META_OPTIONS } from './mockApi';
 
 export type UserResponse = components['schemas']['UserResponse'];
 export type TokenResponse = components['schemas']['TokenResponse'];
@@ -8,6 +9,7 @@ export type ProjectResponse = components['schemas']['ProjectResponse'];
 export type ProjectListResponse = components['schemas']['ProjectListResponse'];
 export type EstimateCreate = components['schemas']['EstimateCreate'];
 export type EstimateResponse = components['schemas']['EstimateResponse'];
+export type EstimateZone = { id: string; name: string };
 
 /**
  * Mock mode is opt-out: the app runs against the simulated API unless the
@@ -397,6 +399,20 @@ class ApiClient {
   }
 
   // Estimate flows
+  async getEstimateZones(): Promise<EstimateZone[]> {
+    if (isMockApi()) {
+      return MOCK_META_OPTIONS.zones.map((zone) => ({
+        id: zone.zone_id,
+        name: zone.zone_name,
+      }));
+    }
+    const response = await this.request<components['schemas']['MetaOptionsResponse']>(
+      '/meta/options',
+      { method: 'GET' }
+    );
+    return response.zones.map((zone) => ({ id: zone.id, name: zone.name }));
+  }
+
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
     if (isMockApi()) {
       const area = req.built_up_area_sqft;

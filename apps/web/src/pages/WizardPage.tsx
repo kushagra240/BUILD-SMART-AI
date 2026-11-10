@@ -1,19 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMetaOptions, calculateEstimateMock } from '../services/mockApi';
-import { MetaOptions, QualityTier, ConstructionType } from '../types/estimate';
+import { calculateEstimateMock } from '../services/mockApi';
+import {
+  apiClient,
+  ApiError,
+  isMockApi,
+  type EstimateCreate,
+  type EstimateZone,
+} from '../services/apiClient';
+import { apiErrorMessage } from '../lib/errorMessage';
+import { QualityTier, ConstructionType } from '../types/estimate';
 import { formatINR, formatNumber } from '../lib/formatters';
 import { HouseSchematic } from '../components/common/HouseSchematic';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
+import { ErrorState } from '../components/common/AsyncState';
 import { ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
 
 interface WizardFormData {
   projectName: string;
   city: string;
   locality: string;
+  zoneId: string;
   builtUpArea: number;
   plotArea: number;
   floors: number;
+  bedrooms: number;
+  bathrooms: number;
   qualityTier: QualityTier;
   structuralSystem: ConstructionType;
   walling: string;
@@ -26,15 +38,22 @@ export function WizardPage() {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [, setMeta] = useState<MetaOptions | null>(null);
+  const [zones, setZones] = useState<EstimateZone[]>([]);
+  const [optionsError, setOptionsError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitFieldErrors, setSubmitFieldErrors] = useState<Record<string, string>>({});
+  const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
 
   const [form, setForm] = useState<WizardFormData>({
     projectName: 'Deshmukh residence',
     city: 'Pune, Maharashtra',
     locality: 'Baner',
+    zoneId: '',
     builtUpArea: 1800,
     plotArea: 1200,
     floors: 2,
+    bedrooms: 3,
+    bathrooms: 3,
     qualityTier: 'standard',
     structuralSystem: 'rcc_framed',
     walling: 'aac_blocks',
@@ -44,12 +63,24 @@ export function WizardPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    fetchMetaOptions().then((res) => {
-      setMeta(res);
-      setLoading(false);
-    });
+  const loadOptions = useCallback(() => {
+    setLoading(true);
+    setOptionsError(null);
+    apiClient
+      .getEstimateZones()
+      .then((response) => {
+        setZones(response);
+        setLoading(false);
+      })
+      .catch((cause: unknown) => {
+        setOptionsError(apiErrorMessage(cause, 'Could not load location zones'));
+        setLoading(false);
+      });
   }, []);
+
+  useEffect(() => {
+    loadOptions();
+  }, [loadOptions]);
 
   const ratePerSqFt =
     form.qualityTier === 'economy' ? 2000 : form.qualityTier === 'premium' ? 3100 : 2400;
@@ -59,6 +90,9 @@ export function WizardPage() {
 
   const validateStep1 = (): boolean => {
     const errs: Record<string, string> = {};
+    if (!form.projectName.trim()) {
+      errs.projectName = 'Enter a project name';
+    }
     if (!form.builtUpArea || form.builtUpArea <= 0) {
       errs.builtUpArea = 'Enter an area greater than 0 sq ft';
     } else if (form.builtUpArea < 300 || form.builtUpArea > 10000) {
@@ -66,6 +100,15 @@ export function WizardPage() {
     }
     if (!form.floors || form.floors < 1) {
       errs.floors = 'Select number of floors';
+    }
+    if (!form.bedrooms || form.bedrooms < 1 || form.bedrooms > 20) {
+      errs.bedrooms = 'Enter a bedroom count between 1 and 20';
+    }
+    if (!form.bathrooms || form.bathrooms < 1 || form.bathrooms > 20) {
+      errs.bathrooms = 'Enter a bathroom count between 1 and 20';
+    }
+    if (!form.zoneId) {
+      errs.zoneId = 'Choose a location zone';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -80,31 +123,80 @@ export function WizardPage() {
     }
   };
 
+  const buildInputs = (): EstimateCreate => ({
+    built_up_area_sqft: form.builtUpArea,
+    floors: form.floors,
+    bedrooms: form.bedrooms,
+    bathrooms: form.bathrooms,
+    zone_id: form.zoneId,
+    quality_tier: form.qualityTier,
+    construction_type: form.structuralSystem,
+    plot_area_sqft: form.plotArea > 0 ? form.plotArea : null,
+  });
+
   const handleCalculate = async () => {
+    setSubmitError(null);
+    setSubmitFieldErrors({});
+    if (!validateStep1()) {
+      setStep(1);
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const estimate = await calculateEstimateMock({
-        built_up_area_sqft: form.builtUpArea,
-        floors: form.floors,
-        bedrooms: 3,
-        bathrooms: 3,
-        zone_id: 'pune_west',
-        quality_tier: form.qualityTier,
-        construction_type: form.structuralSystem,
-        plot_area_sqft: form.plotArea,
-      });
+      if (isMockApi()) {
+        const estimate = await calculateEstimateMock(buildInputs());
+        navigate(`/app/estimates/${estimate.id}`, {
+          state: {
+            estimate,
+            projectName: form.projectName,
+            locality: `${form.locality}, Pune`,
+          },
+        });
+        return;
+      }
 
-      navigate('/app/estimates/BS-2026-004', {
+      // Estimates belong to a project, so create one first and reuse it if the
+      // user retries after a failed calculation.
+      let projectId = createdProjectId;
+      if (!projectId) {
+        const project = await apiClient.createProject({
+          name: form.projectName.trim(),
+          notes: `${form.locality}, Pune`,
+        });
+        projectId = project.id;
+        setCreatedProjectId(projectId);
+      }
+
+      const estimate = await apiClient.createEstimate(projectId, buildInputs());
+      navigate(`/app/estimates/${estimate.id}`, {
         state: {
           estimate,
           projectName: form.projectName,
           locality: `${form.locality}, Pune`,
         },
       });
+    } catch (cause: unknown) {
+      if (cause instanceof ApiError) {
+        setSubmitFieldErrors(cause.fieldErrors());
+      }
+      setSubmitError(
+        apiErrorMessage(cause, 'Could not calculate this estimate. Please try again.')
+      );
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (optionsError) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-paper px-4">
+        <div className="w-full max-w-2xl">
+          <ErrorState message={optionsError} onRetry={loadOptions} />
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -194,9 +286,14 @@ export function WizardPage() {
                     type="text"
                     value={form.projectName}
                     onChange={(e) => setForm({ ...form, projectName: e.target.value })}
-                    className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
+                    className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                      errors.projectName ? 'border-2 border-error' : 'border border-ink/14'
+                    }`}
                     placeholder="e.g. Deshmukh residence"
                   />
+                  {errors.projectName && (
+                    <p className="text-xs text-error font-medium">{errors.projectName}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -235,6 +332,37 @@ export function WizardPage() {
                       <option value="Aundh">Aundh (Central-West)</option>
                     </select>
                   </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="zone" className="block text-xs font-medium text-ink">
+                    Location zone *
+                  </label>
+                  <select
+                    id="zone"
+                    value={form.zoneId}
+                    onChange={(e) => {
+                      setForm({ ...form, zoneId: e.target.value });
+                      if (e.target.value) setErrors({ ...errors, zoneId: '' });
+                    }}
+                    className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                      errors.zoneId ? 'border-2 border-error' : 'border border-ink/14'
+                    }`}
+                  >
+                    <option value="">Select a zone</option>
+                    {zones.map((zone) => (
+                      <option key={zone.id} value={zone.id}>
+                        {zone.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.zoneId ? (
+                    <p className="text-xs text-error font-medium">{errors.zoneId}</p>
+                  ) : (
+                    <p className="text-[11px] text-ink-soft">
+                      Zones come from the BuildSmart options endpoint and are used for labour rates.
+                    </p>
+                  )}
                 </div>
 
                 <p className="text-[11px] text-ink-soft leading-relaxed">
@@ -334,6 +462,58 @@ export function WizardPage() {
                         {form.builtUpArea} sq ft ÷ {form.floors} floors
                       </span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  {/* Number of bedrooms */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="bedrooms" className="block text-xs font-medium text-ink">
+                      Bedrooms *
+                    </label>
+                    <input
+                      id="bedrooms"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={form.bedrooms || ''}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setForm({ ...form, bedrooms: val });
+                        if (val >= 1 && val <= 20) setErrors({ ...errors, bedrooms: '' });
+                      }}
+                      className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                        errors.bedrooms ? 'border-2 border-error' : 'border border-ink/14'
+                      }`}
+                    />
+                    {errors.bedrooms && (
+                      <p className="text-xs text-error font-medium">{errors.bedrooms}</p>
+                    )}
+                  </div>
+
+                  {/* Number of bathrooms */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="bathrooms" className="block text-xs font-medium text-ink">
+                      Bathrooms *
+                    </label>
+                    <input
+                      id="bathrooms"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={form.bathrooms || ''}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setForm({ ...form, bathrooms: val });
+                        if (val >= 1 && val <= 20) setErrors({ ...errors, bathrooms: '' });
+                      }}
+                      className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                        errors.bathrooms ? 'border-2 border-error' : 'border border-ink/14'
+                      }`}
+                    />
+                    {errors.bathrooms && (
+                      <p className="text-xs text-error font-medium">{errors.bathrooms}</p>
+                    )}
                   </div>
                 </div>
 
@@ -639,6 +819,25 @@ export function WizardPage() {
                 </div>
               </div>
 
+              {submitError && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-xs text-error space-y-1"
+                >
+                  <p className="font-semibold">Could not calculate the estimate</p>
+                  <p>{submitError}</p>
+                  {Object.entries(submitFieldErrors).length > 0 && (
+                    <ul className="list-disc pl-4 space-y-0.5">
+                      {Object.entries(submitFieldErrors).map(([field, message]) => (
+                        <li key={field}>
+                          <span className="font-mono">{field}</span>: {message}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
               {/* Form Navigation Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                 <button
@@ -653,10 +852,14 @@ export function WizardPage() {
                   type="button"
                   onClick={handleCalculate}
                   disabled={submitting}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring"
+                  aria-busy={submitting}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring disabled:opacity-70"
                 >
                   {submitting ? (
-                    <span>Calculating...</span>
+                    <>
+                      <span className="w-4 h-4 border-2 border-paper/50 border-t-paper rounded-full animate-spin" aria-hidden="true" />
+                      <span>Calculating...</span>
+                    </>
                   ) : (
                     <>
                       <span>Calculate estimate</span>
