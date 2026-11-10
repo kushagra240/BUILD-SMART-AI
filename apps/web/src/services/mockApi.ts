@@ -54,15 +54,19 @@ export async function fetchMetaOptions(): Promise<MetaOptions> {
   return MOCK_META_OPTIONS;
 }
 
-export async function calculateEstimateMock(inputs: ProjectInputs): Promise<EstimateResponse> {
+export async function calculateEstimateMock(
+  inputs: ProjectInputs,
+  projectId = 'mock-project'
+): Promise<EstimateResponse> {
   await new Promise((resolve) => setTimeout(resolve, 350));
 
   const baseRate = TIER_RATES[inputs.quality_tier] || 1900;
   const zoneMult = ZONE_MULTIPLIERS[inputs.zone_id] || 1.0;
   const floorFactor = 1 + (inputs.floors - 1) * 0.04;
 
-  const costPerSqFt = Math.round(baseRate * zoneMult * floorFactor);
-  const p50Total = Math.round(inputs.built_up_area_sqft * costPerSqFt);
+  const p50Total = Math.round(
+    inputs.built_up_area_sqft * Math.round(baseRate * zoneMult * floorFactor)
+  );
 
   // Confidence interval: P10 is -10%, P90 is +12%
   const p10Total = Math.round(p50Total * 0.90);
@@ -105,8 +109,6 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
     category: b.category,
     amount: b.floorAmt,
     share_pct: b.pct,
-    p10: Math.round(b.floorAmt * 0.90),
-    p90: Math.round(b.floorAmt * 1.12),
   }));
 
   // Material Recommendations
@@ -229,8 +231,6 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
     budgetStatus = {
       status: 'not_provided',
       gap_inr: 0,
-      gap_pct: 0,
-      message: 'No target budget provided. Showing full market estimate.',
     };
   } else {
     const gap = inputs.budget_inr - p50Total;
@@ -240,22 +240,16 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
       budgetStatus = {
         status: 'within',
         gap_inr: gap,
-        gap_pct: gapPct,
-        message: `Your budget of ₹${(inputs.budget_inr / 100000).toFixed(2)} Lakh is fully sufficient for this project specification.`,
       };
     } else if (Math.abs(gapPct) <= 10) {
       budgetStatus = {
         status: 'tight',
         gap_inr: gap,
-        gap_pct: gapPct,
-        message: `Your budget is tight (~${Math.abs(gapPct)}% below estimated cost). Consider minor tier downgrades in finishing items.`,
       };
     } else {
       budgetStatus = {
         status: 'below_minimum',
         gap_inr: gap,
-        gap_pct: gapPct,
-        message: `Your budget is ₹${(Math.abs(gap) / 100000).toFixed(2)} Lakh (${Math.abs(gapPct)}%) below the minimum estimated requirement.`,
       };
     }
   }
@@ -264,28 +258,25 @@ export async function calculateEstimateMock(inputs: ProjectInputs): Promise<Esti
     {
       label: 'Built-up Area',
       impact_pct: 65.0,
-      description: `${inputs.built_up_area_sqft} sq. ft built-up area across ${inputs.floors} floor(s).`,
     },
     {
       label: `Quality Tier (${inputs.quality_tier.toUpperCase()})`,
       impact_pct: 22.0,
-      description: `Selecting ${inputs.quality_tier} quality tier vs Economy changes base cost by ~${inputs.quality_tier === 'premium' ? 60 : 22}%.`,
     },
     {
       label: `Location Zone (${inputs.zone_id.replace('pune_', '').toUpperCase()})`,
       impact_pct: Math.round((zoneMult - 1) * 100),
-      description: `Zone labour and transport adjustment (+${Math.round((zoneMult - 1) * 100)}%).`,
     },
   ];
 
   return {
     id: `est_mock_${Date.now()}`,
+    project_id: projectId,
     inputs,
     total: {
       p50: p50Total,
       p10: p10Total,
       p90: p90Total,
-      cost_per_sqft: costPerSqFt,
       currency: 'INR',
     },
     confidence: {
