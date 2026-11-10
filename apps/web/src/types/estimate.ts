@@ -1,86 +1,23 @@
-export type QualityTier = 'economy' | 'standard' | 'premium';
-export type ConstructionType = 'rcc_framed' | 'load_bearing';
+/**
+ * Estimate types are bound to the generated OpenAPI contract (`api.generated.ts`).
+ * Do not redeclare response shapes here: the backend v1 shape is the single source
+ * of truth, and this file only re-exports it plus UI-only option shapes.
+ */
+import type { components } from './api.generated';
 
-export interface ProjectInputs {
-  built_up_area_sqft: number;
-  floors: number;
-  bedrooms: number;
-  bathrooms: number;
-  zone_id: string;
-  quality_tier: QualityTier;
-  construction_type: ConstructionType;
-  plot_area_sqft?: number | null;
-  budget_inr?: number | null;
-}
+type Schemas = components['schemas'];
 
-export interface TotalEstimate {
-  p50: number;
-  p10: number;
-  p90: number;
-  cost_per_sqft: number;
-  currency: 'INR';
-}
+export type QualityTier = Schemas['EstimateCreate']['quality_tier'];
+export type ConstructionType = Schemas['EstimateCreate']['construction_type'];
 
-export interface ConfidenceInfo {
-  label: 'High' | 'Medium' | 'Low';
-  reason: string;
-}
-
-export interface CategoryBreakdownItem {
-  category: string;
-  amount: number;
-  share_pct: number;
-  p10: number;
-  p90: number;
-}
-
-export interface MaterialSpec {
-  material_id: string;
-  category: string;
-  grade_spec: string;
-  description: string;
-  unit: string;
-  unit_cost_range_inr: string;
-  quality_level: string;
-}
-
-export interface MaterialRecommendationItem {
-  category: string;
-  primary: MaterialSpec;
-  alternative: MaterialSpec;
-  reason: string;
-}
-
-export interface BudgetStatus {
-  status: 'within' | 'tight' | 'below_minimum' | 'not_provided';
-  gap_inr: number;
-  gap_pct: number;
-  message: string;
-}
-
-export interface CostDriver {
-  label: string;
-  impact_pct: number;
-  description: string;
-}
-
-export interface EstimateResponse {
-  id: string;
-  inputs: ProjectInputs;
-  total: TotalEstimate;
-  confidence: ConfidenceInfo;
-  breakdown: CategoryBreakdownItem[];
-  materials: MaterialRecommendationItem[];
-  budget: BudgetStatus;
-  drivers: CostDriver[];
-  model: {
-    version: string;
-    data_version: string;
-  };
-  disclaimer: string;
-  is_mock: boolean;
-  created_at: string;
-}
+export type ProjectInputs = Schemas['EstimateCreate'];
+export type TotalEstimate = Schemas['TotalEstimate'];
+export type ConfidenceInfo = Schemas['ConfidenceEstimate'];
+export type CategoryBreakdownItem = Schemas['BreakdownCategoryItem'];
+export type MaterialRecommendationItem = Schemas['MaterialRecommendationItem'];
+export type BudgetStatus = Schemas['BudgetAssessment'];
+export type CostDriver = Schemas['CostDriverItem'];
+export type EstimateResponse = Schemas['EstimateResponse'];
 
 export interface LocationZone {
   zone_id: string;
