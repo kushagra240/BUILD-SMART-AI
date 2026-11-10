@@ -412,3 +412,106 @@ describe('apiClient estimate wiring', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+function blobResponse(body: Blob, contentType: string, status = 200): Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    statusText: status >= 200 && status < 300 ? 'OK' : 'Error',
+    headers: {
+      get: (name: string) => (name.toLowerCase() === 'content-type' ? contentType : null),
+    },
+    blob: async () => body,
+  } as unknown as Response;
+}
+
+describe('apiClient estimate PDF wiring', () => {
+  beforeEach(() => {
+    apiClient.setAccessToken('access-1');
+    apiClient.setUnauthorizedHandler(null);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('fetches the project estimate PDF as a blob with the bearer token', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const pdf = new Blob(['%PDF-1.4'], { type: 'application/pdf' });
+    const fetchMock = vi.fn(async () => blobResponse(pdf, 'application/pdf'));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.downloadEstimatePdf(project.id, 'estimate-1')).resolves.toBe(pdf);
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(`/api/v1/projects/${project.id}/estimates/estimate-1/pdf`);
+    expect(init.method).toBe('GET');
+    expect(init.credentials).toBe('include');
+    expect(init.headers).toMatchObject({ Authorization: 'Bearer access-1' });
+  });
+
+  it('rejects a 2xx HTML response instead of treating it as a PDF', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () => blobResponse(new Blob(['<html>']), 'text/html'));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const error = await apiClient
+      .downloadEstimatePdf(project.id, 'estimate-1')
+      .catch((cause: unknown) => cause);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ code: 'NOT_A_PDF' });
+    expect((error as ApiError).message).toContain('text/html');
+  });
+
+  it('surfaces the backend error envelope when the PDF is missing', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse(
+        {
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Estimate not found',
+            details: null,
+            request_id: 'req-pdf',
+          },
+        },
+        404
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.downloadEstimatePdf(project.id, 'missing')).rejects.toMatchObject({
+      status: 404,
+      message: 'Estimate not found',
+    });
+  });
+
+  it('refreshes the session once and retries a 401 PDF request', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    apiClient.setAccessToken('expired-token');
+    const pdf = new Blob(['%PDF-1.4'], { type: 'application/pdf' });
+    let pdfCalls = 0;
+
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === `/api/v1/projects/${project.id}/estimates/estimate-1/pdf`) {
+        pdfCalls += 1;
+        return pdfCalls === 1
+          ? jsonResponse(unauthorizedError, 401)
+          : blobResponse(pdf, 'application/pdf');
+      }
+      if (url === '/api/v1/auth/refresh') {
+        return jsonResponse({ access_token: 'fresh-token', token_type: 'bearer', expires_in: 900 });
+      }
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.downloadEstimatePdf(project.id, 'estimate-1')).resolves.toBe(pdf);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(apiClient.getAccessToken()).toBe('fresh-token');
+  });
+});

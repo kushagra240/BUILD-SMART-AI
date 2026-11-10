@@ -59,6 +59,27 @@ type ResultsLocationState = {
   locality?: string;
 };
 
+/**
+ * Hand a blob to the browser's own download flow. Extracted so jsdom tests can
+ * stub `URL.createObjectURL` and anchor clicks without touching the page logic.
+ */
+function saveBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.rel = 'noopener';
+  document.body.appendChild(anchor);
+  try {
+    anchor.click();
+  } finally {
+    anchor.remove();
+    // Revoke after the click has been dispatched; revoking synchronously breaks
+    // the download in some browsers.
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+}
+
 /** Guard against stale/partial navigation state before trusting it. */
 function isEstimateResponse(value: unknown): value is EstimateResponse {
   if (typeof value !== 'object' || value === null) {
@@ -113,6 +134,8 @@ export function ResultsPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [pdfStatus, setPdfStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   useEffect(() => {
     if (estimate) {
@@ -144,6 +167,28 @@ export function ResultsPage() {
       active = false;
     };
   }, [estimate, id, reloadKey]);
+
+  /**
+   * Ask the API for the PDF and hand the bytes to the browser. Failures only
+   * affect the button area: the estimate itself stays readable.
+   */
+  const handleDownloadPdf = async () => {
+    if (!estimate || pdfStatus === 'loading') {
+      return;
+    }
+
+    setPdfStatus('loading');
+    setPdfError(null);
+
+    try {
+      const blob = await apiClient.downloadEstimatePdf(estimate.project_id, estimate.id);
+      saveBlob(blob, `buildsmart-estimate-${shortId(estimate.id)}.pdf`);
+      setPdfStatus('idle');
+    } catch (cause: unknown) {
+      setPdfError(apiErrorMessage(cause, 'Could not generate the PDF'));
+      setPdfStatus('error');
+    }
+  };
 
   if (status === 'redirect') {
     return <Navigate to="/app" replace />;
@@ -217,6 +262,16 @@ export function ResultsPage() {
 
           <div className="flex items-center gap-2">
             {estimate.is_mock && <SampleDataBadge text="Mock / stub data" variant="contrast" />}
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={pdfStatus === 'loading'}
+              aria-busy={pdfStatus === 'loading'}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-forest hover:bg-forest-hover disabled:opacity-60 disabled:cursor-not-allowed text-paper text-xs font-medium transition-colors focus-ring"
+            >
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{pdfStatus === 'loading' ? 'Generating PDF…' : 'Download PDF'}</span>
+            </button>
             <Link
               to="/app/projects"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
@@ -227,11 +282,23 @@ export function ResultsPage() {
               to="/pdf"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
             >
-              <Download className="w-3.5 h-3.5 text-ink-soft" />
               <span>PDF preview</span>
             </Link>
           </div>
         </div>
+
+        {pdfStatus === 'error' && (
+          <div
+            role="alert"
+            className="rounded-lg border border-brick/40 bg-brick-light px-4 py-3 text-xs text-ink space-y-1"
+          >
+            <strong className="text-brick">PDF export failed.</strong>
+            <p className="leading-relaxed">{pdfError}</p>
+            <p className="text-ink-soft leading-relaxed">
+              The estimate above is still valid. Try again, or use the PDF preview page.
+            </p>
+          </div>
+        )}
 
         {/* Mock warning: only when the API says is_mock is true */}
         {estimate.is_mock && (
