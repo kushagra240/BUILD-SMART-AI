@@ -19,6 +19,7 @@ from app.engine.contracts import (
     MissingDataError,
     TotalCost,
 )
+from app.engine.materials import get_material_recommendations
 from app.rates.repository import (
     get_active_dataset_version,
     get_labour_rate,
@@ -334,6 +335,7 @@ async def calculate_estimate(
     breakdown = _distribute_integer_breakdown(raw_category_costs, total_p50)
     budget = _evaluate_budget(input_data.budget_inr, total_p50, total_p10)
     drivers = _build_cost_drivers(raw_category_costs, float(total_p50))
+    materials = get_material_recommendations(input_data.quality_tier)
 
     confidence = ConfidenceInfo(
         label="Medium",
@@ -349,6 +351,7 @@ async def calculate_estimate(
         confidence=confidence,
         breakdown=breakdown,
         line_items=line_items,
+        materials=materials,
         budget=budget,
         drivers=drivers,
         engine_version="1.0.0",

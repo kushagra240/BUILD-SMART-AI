@@ -102,6 +102,15 @@ class CostDriver(BaseEngineModel):
     impact_pct: float
 
 
+class MaterialRecommendation(BaseEngineModel):
+    """Dynamic material recommendation specification for a major work category."""
+
+    category: str
+    primary: dict[str, str | float | int]
+    alternative: dict[str, str | float | int]
+    reason: str
+
+
 class EstimationResult(BaseEngineModel):
     """Complete output of the bottom-up estimation engine."""
 
@@ -109,6 +118,7 @@ class EstimationResult(BaseEngineModel):
     confidence: ConfidenceInfo
     breakdown: list[CategoryBreakdown]
     line_items: list[BOQLineItem]
+    materials: list[MaterialRecommendation] = Field(default_factory=list)
     budget: BudgetAssessment
     drivers: list[CostDriver]
     engine_version: str = "1.0.0"

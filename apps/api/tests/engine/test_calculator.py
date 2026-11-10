@@ -345,3 +345,80 @@ async def test_calculate_estimate_budget_assessment() -> None:
         )
         assert res_below.budget.status == "below_minimum"
         assert res_below.budget.gap_inr > 0
+
+
+@pytest.mark.asyncio
+async def test_calculate_estimate_material_recommendations_by_tier() -> None:
+    session = AsyncMock()
+    items = _mock_rates_environment()
+
+    dummy_zone = ZoneRecord(
+        zone_id="ZN-PMC",
+        name="Pune",
+        min_wage_zone="I",
+        source_id="SRC-02",
+        status="READ",
+    )
+    dummy_labour = LabourRateRecord(
+        trade="Electrician",
+        daily_rate=Decimal("963.77"),
+        unit="day",
+        source_id="SRC-02",
+    )
+
+    with (
+        patch("app.engine.calculator.get_zone", new=AsyncMock(return_value=dummy_zone)),
+        patch(
+            "app.engine.calculator.get_work_item",
+            new=AsyncMock(side_effect=lambda _, code: items.get(code)),
+        ),
+        patch("app.engine.calculator.get_labour_rate", new=AsyncMock(return_value=dummy_labour)),
+        patch(
+            "app.engine.calculator.get_active_dataset_version",
+            new=AsyncMock(return_value=None),
+        ),
+    ):
+        for tier in ("economy", "standard", "premium"):
+            res = await calculate_estimate(
+                session,
+                EstimationInput(
+                    built_up_area_sqft=1000.0,
+                    floors=1,
+                    bedrooms=2,
+                    bathrooms=1,
+                    zone_id="ZN-PMC",
+                    quality_tier=tier,
+                ),
+            )
+            assert len(res.materials) == 5
+            categories = [m.category for m in res.materials]
+            assert categories == ["Cement", "Steel", "Masonry", "Flooring", "Plumbing"]
+
+        econ_res = await calculate_estimate(
+            session,
+            EstimationInput(
+                built_up_area_sqft=1000.0,
+                floors=1,
+                bedrooms=2,
+                bathrooms=1,
+                zone_id="ZN-PMC",
+                quality_tier="economy",
+            ),
+        )
+        prem_res = await calculate_estimate(
+            session,
+            EstimationInput(
+                built_up_area_sqft=1000.0,
+                floors=1,
+                bedrooms=2,
+                bathrooms=1,
+                zone_id="ZN-PMC",
+                quality_tier="premium",
+            ),
+        )
+
+        econ_steel = next(m for m in econ_res.materials if m.category == "Steel")
+        prem_steel = next(m for m in prem_res.materials if m.category == "Steel")
+        assert "500 Standard" in str(econ_steel.primary["name"])
+        assert "550D" in str(prem_steel.primary["name"])
+

@@ -17,6 +17,7 @@ from app.schemas.estimate import (
     CostDriverItem,
     EstimateCreate,
     EstimateResponse,
+    MaterialRecommendationItem,
     ModelMetaItem,
     TotalEstimate,
 )
@@ -79,7 +80,7 @@ async def create_estimate(
         total_p90=result.total.p90,
         confidence_label=result.confidence.label,
         breakdown=[b.model_dump() for b in result.breakdown],
-        materials=[],
+        materials=[m.model_dump() for m in result.materials],
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=req.budget_inr,
         budget_status=result.budget.status,
@@ -110,7 +111,15 @@ async def create_estimate(
             )
             for b in result.breakdown
         ],
-        materials=[],
+        materials=[
+            MaterialRecommendationItem(
+                category=m.category,
+                primary=m.primary,
+                alternative=m.alternative,
+                reason=m.reason,
+            )
+            for m in result.materials
+        ],
         budget=BudgetAssessment(
             status=result.budget.status,
             gap_inr=result.budget.gap_inr,

@@ -54,7 +54,7 @@ async def create_estimate_for_project(
         total_p90=result.total.p90,
         confidence_label=result.confidence.label,
         breakdown=[b.model_dump() for b in result.breakdown],
-        materials=[],
+        materials=[m.model_dump() for m in result.materials],
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=inputs.budget_inr,
         budget_status=result.budget.status,
@@ -85,7 +85,15 @@ async def create_estimate_for_project(
             )
             for b in result.breakdown
         ],
-        materials=[],
+        materials=[
+            MaterialRecommendationItem(
+                category=m.category,
+                primary=m.primary,
+                alternative=m.alternative,
+                reason=m.reason,
+            )
+            for m in result.materials
+        ],
         budget=BudgetAssessment(
             status=result.budget.status,
             gap_inr=result.budget.gap_inr,
@@ -150,7 +158,9 @@ async def get_estimate_by_id(
             reason="Calculated bottom-up from Maharashtra PWD SSR 2022-23 rates.",
         ),
         breakdown=[BreakdownCategoryItem.model_validate(b) for b in estimate.breakdown],
-        materials=[MaterialRecommendationItem.model_validate(m) for m in estimate.materials],
+        materials=[
+            MaterialRecommendationItem.model_validate(m) for m in (estimate.materials or [])
+        ],
         budget=BudgetAssessment(
             status=saved_budget_status,
             gap_inr=0,

@@ -12,9 +12,11 @@ from app.engine.contracts import (
     CostDriver,
     EstimationInput,
     EstimationResult,
+    MaterialRecommendation,
     MissingDataError,
     TotalCost,
 )
+from app.engine.materials import get_material_recommendations
 
 __all__ = [
     "BOQLineItem",
@@ -24,7 +26,9 @@ __all__ = [
     "CostDriver",
     "EstimationInput",
     "EstimationResult",
+    "MaterialRecommendation",
     "MissingDataError",
     "TotalCost",
     "calculate_estimate",
+    "get_material_recommendations",
 ]

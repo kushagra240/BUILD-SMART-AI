@@ -14,6 +14,7 @@ from app.engine.contracts import (
     ConfidenceInfo,
     CostDriver,
     EstimationResult,
+    MaterialRecommendation,
     MissingDataError,
     TotalCost,
 )
@@ -37,6 +38,22 @@ def _dummy_engine_result() -> EstimationResult:
             CategoryBreakdown(category="Electrical", amount=175000, share_pct=7.0),
             CategoryBreakdown(category="Finishing", amount=325000, share_pct=13.0),
             CategoryBreakdown(category="Labour", amount=250000, share_pct=10.0),
+        ],
+        materials=[
+            MaterialRecommendation(
+                category="Steel",
+                primary={
+                    "name": "Fe 500D High-Ductility TMT Rebar",
+                    "grade": "Fe 500D",
+                    "spec": "IS 1786",
+                },
+                alternative={
+                    "name": "Fe 500 Standard TMT Rebar",
+                    "grade": "Fe 500",
+                    "spec": "IS 1786",
+                },
+                reason="Mandatory for ductile detailing in seismic zone III.",
+            )
         ],
         line_items=[],
         budget=BudgetAssessment(status="within", gap_inr=500000),
@@ -114,6 +131,11 @@ async def test_create_estimate_route_success(client: AsyncClient) -> None:
         breakdown = data["breakdown"]
         assert len(breakdown) == 9
         assert sum(item["amount"] for item in breakdown) == 2500000
+
+        # Check materials
+        assert len(data["materials"]) == 1
+        assert data["materials"][0]["category"] == "Steel"
+        assert data["materials"][0]["primary"]["grade"] == "Fe 500D"
 
         # Verify engine received session and EstimationInput correctly
         assert mock_engine.called
@@ -227,6 +249,8 @@ async def test_get_estimate_by_id(client: AsyncClient) -> None:
         assert get_data["id"] == est_id
         assert get_data["project_id"] == proj_id
         assert get_data["is_mock"] is False
+        assert len(get_data["materials"]) == 1
+        assert get_data["materials"][0]["category"] == "Steel"
 
 
 @pytest.mark.asyncio
