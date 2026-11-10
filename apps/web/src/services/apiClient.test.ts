@@ -307,3 +307,108 @@ describe('apiClient projects wiring', () => {
     });
   });
 });
+
+describe('apiClient estimate wiring', () => {
+  const inputs = {
+    built_up_area_sqft: 1800,
+    floors: 2,
+    bedrooms: 3,
+    bathrooms: 3,
+    zone_id: 'zone-west',
+    quality_tier: 'standard' as const,
+    construction_type: 'rcc_framed' as const,
+    plot_area_sqft: 1200,
+  };
+
+  beforeEach(() => {
+    apiClient.setAccessToken('access-1');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('loads zone options from /meta/options', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse({
+        zones: [
+          { id: 'zone-west', name: 'West Pune' },
+          { id: 'zone-east', name: 'East Pune' },
+        ],
+        quality_tiers: [],
+        construction_types: [],
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.getEstimateZones()).resolves.toEqual([
+      { id: 'zone-west', name: 'West Pune' },
+      { id: 'zone-east', name: 'East Pune' },
+    ]);
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe('/api/v1/meta/options');
+    expect(init.method).toBe('GET');
+  });
+
+  it('posts the estimate payload to the project estimate endpoint', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse({ id: 'estimate-1', project_id: project.id, is_mock: true }, 201)
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.createEstimate(project.id, inputs)).resolves.toMatchObject({
+      id: 'estimate-1',
+    });
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(`/api/v1/projects/${project.id}/estimates`);
+    expect(init.method).toBe('POST');
+    expect(JSON.parse(String(init.body))).toEqual(inputs);
+  });
+
+  it('surfaces 422 validation details on the estimate request', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse(
+        {
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Request payload validation failed',
+            details: [
+              {
+                loc: ['body', 'bedrooms'],
+                msg: 'Input should be less than or equal to 20',
+                type: 'less_than_equal',
+              },
+            ],
+            request_id: 'req-9',
+          },
+        },
+        422
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const error = await apiClient.createEstimate(project.id, inputs).catch((cause) => cause);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(422);
+    expect(error.fieldErrors()).toEqual({
+      bedrooms: 'Input should be less than or equal to 20',
+    });
+  });
+
+  it('returns mock zones without a network call in mock mode', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'true');
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const zones = await apiClient.getEstimateZones();
+    expect(zones.some((zone) => zone.id === 'pune_west')).toBe(true);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
