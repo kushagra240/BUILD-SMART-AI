@@ -41,9 +41,9 @@ T50, T53, T55 devops/qa run in parallel
 | T12 | Write security events to `audit_log` (login ok/fail, lockout, token reuse, password change); hashed IPs, no secrets. | none | todo | | tests assert rows written; no token or full email in rows |
 | T13 | Fix `gap_inr` in `get_estimate_by_id`; set `model_version_id` (or its engine-version replacement); make `/meta/options` data-driven from `rates.zone` and one shared category list. | T10 | todo | | tests for each; OpenAPI regenerated; frontend types regenerated |
 | T14 | Return `MISSING_DATA` (HTTP 422) from the estimate endpoint when the engine raises `MissingDataError`; map error envelope. | T21 | todo | | test with a missing zone factor returns code and the missing keys |
-| T15 | Shared-store throttling and lockout state (database table or Redis), replacing in-memory state. | none | todo | | restart does not reset limits; multi-process test |
+| T15 | Wire FastAPI Estimates Route to the Math Engine (`POST /api/v1/projects/{project_id}/estimates` calls `calculate_estimate`, handles 422 `MISSING_DATA`). | T21, T22 | done | Antigravity | 200 on success, 422 on missing data; OpenAPI response mapped |
 | T16 | Account deletion endpoint and password reset (Should-have). | none | todo | | deletion removes the user's projects and estimates; reset always returns 202 |
-| T17 | PDF service (ReportLab and matplotlib) and `GET /estimates/{id}/report.pdf` from the saved estimate. | T27 | todo | | text-extraction test matches stored figures; MOCK/DEV notice present when applicable; A4 |
+| T17 | Backend PDF Export Service (ReportLab) and `GET /api/v1/projects/{project_id}/estimates/{estimate_id}/pdf` from the saved estimate. | T15 | done | Antigravity | text-extraction test matches stored figures; MOCK/DEV notice present when applicable; A4 |
 
 ## L3 Estimation engine
 
@@ -75,9 +75,10 @@ T50, T53, T55 devops/qa run in parallel
 | T41 | Single category list and one mock layer aligned to OpenAPI v1; delete the three conflicting rate tables; fake numbers are round placeholders with a visible badge. | none | todo | | grep finds one category source; mock response validates against generated types |
 | T42 | Auth context, route guards for `/app/*`, silent refresh (single-flight), real logout, remove the hard-coded user. | none | todo | | tests for guard redirect, refresh on 401, logout calls API |
 | T43 | Wizard with 4 steps using `/meta/options`; remove hard-coded zone and rooms; send only fields the API supports. | T41 | todo | | wizard tests; no literal zone ids in components |
-| T44 | Results page with every v1 section (range, confidence, doughnut with table toggle, breakdown, materials, budget, drivers, badge, versions, disclaimer). | T41 | todo | | render tests; badge shown whenever `is_mock` true; contrast not claimed without real-browser check |
+| T44 | Reconcile Estimate Types and Update Results Page with every v1 section (range, confidence, doughnut with table toggle, breakdown, materials, budget, drivers, badge, versions, disclaimer). | T41 | done | Antigravity | render tests; badge shown whenever `is_mock` true; contrast not claimed without real-browser check |
 | T45 | Projects list and detail from the API: rename, delete, compare two estimates. Remove hard-coded arrays. | T42 | todo | | integration tests against mocks that match OpenAPI |
-| T46 | Decide and execute: use or remove `chart.js`, `react-query`, `react-hook-form` (record as an ADR). | none | todo | | no unused dependencies remain |
+| T46 | Wire PDF Export Button on Results Page. | T44, T17 | done | Antigravity | triggers blob download of generated PDF; download button tests pass |
+| T47 | Decide and execute: use or remove `chart.js`, `react-query`, `react-hook-form` (record as an ADR). | none | todo | | no unused dependencies remain |
 
 ## L6 DevOps, security, QA, docs
 
