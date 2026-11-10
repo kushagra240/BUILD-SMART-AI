@@ -11,7 +11,6 @@ import { DashboardPage } from './pages/DashboardPage';
 import { SavedProjectsPage } from './pages/SavedProjectsPage';
 import { SavedProjectDetailPage } from './pages/SavedProjectDetailPage';
 import { MaterialsGuidePage } from './pages/MaterialsGuidePage';
-import { PdfPreviewPage } from './pages/PdfPreviewPage';
 import { MethodologyPage } from './pages/MethodologyPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { AuthProvider } from './auth/AuthProvider';
@@ -37,7 +36,6 @@ export function App() {
                 <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
               </Route>
               <Route path="/materials" element={<MaterialsGuidePage />} />
-              <Route path="/pdf" element={<PdfPreviewPage />} />
               <Route path="/methodology" element={<MethodologyPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

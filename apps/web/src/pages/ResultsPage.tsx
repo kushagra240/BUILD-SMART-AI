@@ -102,21 +102,84 @@ function isEstimateResponse(value: unknown): value is EstimateResponse {
   );
 }
 
-/** Render a contract dictionary (`primary`/`alternative`) without inventing keys. */
-function DictionaryEntries({ data }: { data: Record<string, string | number> }) {
-  const entries = Object.entries(data);
-  if (entries.length === 0) {
-    return null;
+/**
+ * Compare two contract dictionaries (`primary` / `alternative`) as a table.
+ * Keys are never hardcoded: rows are the union of the keys the API sent, so a
+ * new backend field appears without a frontend change.
+ */
+function MaterialComparison({
+  label,
+  primary,
+  alternative,
+}: {
+  label: string;
+  primary: Record<string, string | number>;
+  alternative: Record<string, string | number>;
+}) {
+  const keys = Array.from(new Set([...Object.keys(primary), ...Object.keys(alternative)]));
+
+  if (keys.length === 0) {
+    return (
+      <p className="border-t border-ink/10 p-4 text-sm text-ink-soft">
+        No specification fields were returned for this material.
+      </p>
+    );
   }
+
+  const renderValue = (source: Record<string, string | number>, key: string) => {
+    const value = source[key];
+    if (value === undefined || value === '') {
+      return <span className="italic text-ink-soft">Not provided</span>;
+    }
+    return typeof value === 'number' ? formatNumber(value) : value;
+  };
+
   return (
-    <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1">
-      {entries.map(([key, value]) => (
-        <div key={key} className="flex justify-between gap-2 border-b border-ink/10 py-1">
-          <dt className="text-ink-soft">{titleCase(key)}</dt>
-          <dd className="font-medium text-ink text-right">{String(value)}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="overflow-x-auto">
+      <table className="w-full table-fixed text-sm">
+        <caption className="sr-only">{label}</caption>
+        <thead>
+          <tr className="border-y border-ink/10 bg-paper-deep/50 text-left">
+            <th
+              scope="col"
+              className="w-[30%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+            >
+              Specification
+            </th>
+            <th
+              scope="col"
+              className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+            >
+              Primary
+            </th>
+            <th
+              scope="col"
+              className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+            >
+              Alternative
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-ink/10">
+          {keys.map((key) => (
+            <tr key={key} className="align-top">
+              <th
+                scope="row"
+                className="break-words px-4 py-2.5 text-left font-medium text-ink-soft"
+              >
+                {titleCase(key)}
+              </th>
+              <td className="break-words px-4 py-2.5 text-ink">
+                {renderValue(primary, key)}
+              </td>
+              <td className="break-words px-4 py-2.5 text-ink">
+                {renderValue(alternative, key)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -278,12 +341,6 @@ export function ResultsPage() {
             >
               <span>Saved projects</span>
             </Link>
-            <Link
-              to="/pdf"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
-            >
-              <span>PDF preview</span>
-            </Link>
           </div>
         </div>
 
@@ -295,7 +352,7 @@ export function ResultsPage() {
             <strong className="text-brick">PDF export failed.</strong>
             <p className="leading-relaxed">{pdfError}</p>
             <p className="text-ink-soft leading-relaxed">
-              The estimate above is still valid. Try again, or use the PDF preview page.
+              The estimate above is still valid. Try the download again in a moment.
             </p>
           </div>
         )}
@@ -475,14 +532,14 @@ export function ResultsPage() {
             </p>
 
             {/* Material recommendations from the API */}
-            <div className="bg-paper-deep/60 border border-ink/14 rounded-lg p-5 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <h3 className="font-headline font-bold text-base text-ink">
+            <div className="overflow-hidden rounded-lg border border-ink/14 bg-paper-deep/60">
+              <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <h3 className="font-headline text-base font-bold text-ink">
                   Material recommendations
                 </h3>
                 <Link
                   to="/materials"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-brick hover:underline focus-ring rounded"
+                  className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-brick hover:underline focus-ring rounded sm:self-auto"
                 >
                   <span>Open the material guide</span>
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -490,38 +547,35 @@ export function ResultsPage() {
               </div>
 
               {estimate.materials.length > 0 ? (
-                <div className="space-y-4">
+                <div className="divide-y divide-ink/14 border-t border-ink/14">
                   {estimate.materials.map((material) => (
-                    <div
-                      key={material.category}
-                      className="border-t border-ink/10 pt-3 first:border-t-0 first:pt-0 space-y-2"
-                    >
-                      <div className="text-sm font-semibold text-ink">
-                        {titleCase(material.category)}
+                    <section key={material.category} className="bg-paper">
+                      <div className="space-y-1 p-4">
+                        <h4 className="break-words text-sm font-semibold text-ink">
+                          {titleCase(material.category)}
+                        </h4>
+                        <p className="break-words text-sm leading-relaxed text-ink-soft">
+                          {material.reason}
+                        </p>
                       </div>
-                      <p className="text-xs text-ink-soft">{material.reason}</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                        <div className="space-y-1">
-                          <div className="text-[10px] font-mono uppercase tracking-wider text-ink-soft">
-                            Primary
-                          </div>
-                          <DictionaryEntries data={material.primary} />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-[10px] font-mono uppercase tracking-wider text-ink-soft">
-                            Alternative
-                          </div>
-                          <DictionaryEntries data={material.alternative} />
-                        </div>
-                      </div>
-                    </div>
+                      <MaterialComparison
+                        label={`${titleCase(material.category)} primary and alternative specification`}
+                        primary={material.primary}
+                        alternative={material.alternative}
+                      />
+                    </section>
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-ink-soft">
+                <p className="border-t border-ink/14 p-4 text-sm text-ink-soft">
                   No material recommendations were returned for this estimate.
                 </p>
               )}
+
+              <p className="border-t border-ink/14 bg-paper-deep/40 px-4 py-2.5 text-xs leading-relaxed text-ink-soft">
+                Shown exactly as returned by the estimate service. Generic specifications, not a
+                brand endorsement or a supplier quotation.
+              </p>
             </div>
 
             {/* Service disclaimer */}
