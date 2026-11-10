@@ -48,7 +48,12 @@ def setup_error_handlers(app: FastAPI) -> None:
             status.HTTP_501_NOT_IMPLEMENTED: "NOT_IMPLEMENTED",
         }
         error_code = code_map.get(exc.status_code, "HTTP_ERROR")
-        detail = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
+        if isinstance(exc.detail, dict) and "code" in exc.detail:
+            error_code = str(exc.detail["code"])
+        if isinstance(exc.detail, dict) and "message" in exc.detail:
+            detail = str(exc.detail["message"])
+        else:
+            detail = exc.detail if isinstance(exc.detail, str) else str(exc.detail)
         resp = make_error_response(
             status_code=exc.status_code,
             code=error_code,
