@@ -227,3 +227,85 @@ async def test_get_estimate_by_id(client: AsyncClient) -> None:
         assert get_data["id"] == est_id
         assert get_data["project_id"] == proj_id
         assert get_data["is_mock"] is False
+
+
+@pytest.mark.asyncio
+async def test_export_estimate_pdf_success(client: AsyncClient) -> None:
+    headers = await _get_auth_header(client, "pdf_tester@example.com")
+
+    # 1. Create project
+    proj_res = await client.post(
+        "/api/v1/projects",
+        json={"name": "PDF Export Bungalow"},
+        headers=headers,
+    )
+    assert proj_res.status_code == 201
+    proj_id = proj_res.json()["id"]
+
+    # 2. Create estimate
+    est_payload = {
+        "built_up_area_sqft": 1800.0,
+        "floors": 2,
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "zone_id": "ZN-PMC",
+        "quality_tier": "standard",
+        "construction_type": "rcc_framed",
+        "plot_area_sqft": 2400.0,
+        "budget_inr": 3500000,
+    }
+
+    mock_result = _dummy_engine_result()
+    with patch(
+        "app.api.v1.estimates.calculate_estimate",
+        new=AsyncMock(return_value=mock_result),
+    ):
+        est_res = await client.post(
+            f"/api/v1/projects/{proj_id}/estimates",
+            json=est_payload,
+            headers=headers,
+        )
+        assert est_res.status_code == 200
+        est_id = est_res.json()["id"]
+
+    # 3. Download PDF via /projects/{project_id}/estimates/{estimate_id}/pdf
+    pdf_res = await client.get(
+        f"/api/v1/projects/{proj_id}/estimates/{est_id}/pdf",
+        headers=headers,
+    )
+    assert pdf_res.status_code == 200
+    assert "application/pdf" in pdf_res.headers["content-type"]
+    assert f"buildsmart-estimate-{est_id}.pdf" in pdf_res.headers["content-disposition"]
+    assert pdf_res.content.startswith(b"%PDF")
+    assert len(pdf_res.content) > 1000
+
+    # 4. Also verify direct route alias /estimates/{estimate_id}/pdf
+    direct_res = await client.get(
+        f"/api/v1/estimates/{est_id}/pdf",
+        headers=headers,
+    )
+    assert direct_res.status_code == 200
+    assert "application/pdf" in direct_res.headers["content-type"]
+    assert direct_res.content.startswith(b"%PDF")
+
+
+@pytest.mark.asyncio
+async def test_export_estimate_pdf_not_found(client: AsyncClient) -> None:
+    headers = await _get_auth_header(client, "pdf_404_tester@example.com")
+    fake_proj = uuid.uuid4()
+    fake_est = uuid.uuid4()
+
+    # Wrong project and estimate
+    res = await client.get(
+        f"/api/v1/projects/{fake_proj}/estimates/{fake_est}/pdf",
+        headers=headers,
+    )
+    assert res.status_code == 404
+
+    # Wrong direct estimate
+    res_direct = await client.get(
+        f"/api/v1/estimates/{fake_est}/pdf",
+        headers=headers,
+    )
+    assert res_direct.status_code == 404
+
