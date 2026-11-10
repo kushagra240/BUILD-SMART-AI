@@ -11,7 +11,6 @@ import { DashboardPage } from '../pages/DashboardPage';
 import { SavedProjectsPage } from '../pages/SavedProjectsPage';
 import { SavedProjectDetailPage } from '../pages/SavedProjectDetailPage';
 import { MaterialsGuidePage } from '../pages/MaterialsGuidePage';
-import { PdfPreviewPage } from '../pages/PdfPreviewPage';
 import { AuthProvider } from '../auth/AuthProvider';
 
 describe('Accessibility Checks (WCAG 2.1 AA)', () => {
@@ -88,18 +87,6 @@ describe('Accessibility Checks (WCAG 2.1 AA)', () => {
       <MemoryRouter>
         <MaterialsGuidePage />
       </MemoryRouter>
-    );
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
-
-  it('PdfPreviewPage has no accessibility violations', async () => {
-    const { container } = render(
-      <AuthProvider>
-        <MemoryRouter>
-          <PdfPreviewPage />
-        </MemoryRouter>
-      </AuthProvider>
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();

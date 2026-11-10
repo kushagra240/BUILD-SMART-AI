@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ResultsPage } from './ResultsPage';
@@ -156,6 +156,87 @@ describe('ResultsPage contract rendering', () => {
 
     expect(screen.getByText('Tight')).toBeInTheDocument();
     expect(screen.queryByText(/short by/)).not.toBeInTheDocument();
+  });
+  it('no longer links to the removed PDF preview route', () => {
+    renderResults({ state: { estimate } });
+
+    const staleLinks = screen
+      .queryAllByRole('link')
+      .filter((link) => link.getAttribute('href') === '/pdf');
+    expect(staleLinks).toHaveLength(0);
+    expect(screen.queryByText(/PDF preview/i)).not.toBeInTheDocument();
+  });
+
+  it('renders one comparison table per material with the keys the API sent', () => {
+    renderResults({
+      state: {
+        estimate: {
+          ...estimate,
+          materials: [
+            {
+              category: 'cement',
+              primary: { name: 'OPC 53 grade', grade: 'OPC 53', unit_rate_inr: 42000 },
+              alternative: { name: 'PPC blend', grade: 'PPC', unit_rate_inr: 39500 },
+              reason: 'Chosen for structural work.',
+            },
+          ],
+        },
+      },
+    });
+
+    expect(screen.getByRole('heading', { name: 'Cement' })).toBeInTheDocument();
+    expect(screen.getByText('Chosen for structural work.')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Specification' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Primary' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Alternative' })).toBeInTheDocument();
+    expect(screen.getByRole('rowheader', { name: 'Name' })).toBeInTheDocument();
+    expect(screen.getByRole('rowheader', { name: 'Grade' })).toBeInTheDocument();
+    expect(screen.getByText('OPC 53 grade')).toBeInTheDocument();
+    expect(screen.getByText('PPC blend')).toBeInTheDocument();
+    // Numbers use the en-IN formatter, not raw digits.
+    expect(screen.getByText('42,000')).toBeInTheDocument();
+  });
+
+  it('uses the union of dictionary keys and marks a missing value as not provided', () => {
+    renderResults({
+      state: {
+        estimate: {
+          ...estimate,
+          materials: [
+            {
+              category: 'steel',
+              primary: { name: 'Fe 500D TMT', grade: 'Fe 500D' },
+              alternative: { name: 'Fe 550D TMT' },
+              reason: 'Reinforcement steel.',
+            },
+          ],
+        },
+      },
+    });
+
+    expect(screen.getByRole('rowheader', { name: 'Grade' })).toBeInTheDocument();
+    const table = screen.getByRole('table', {
+      name: /Steel primary and alternative specification/i,
+    });
+    expect(within(table).getByText('Not provided')).toBeInTheDocument();
+  });
+
+  it('shows dictionary values verbatim instead of rewriting provenance markers', () => {
+    renderResults({ state: { estimate } });
+
+    // The fixture carries "[MOCK]" prefixes: the page must render what the API
+    // sent and rely on the mock banner for the warning, never rewrite the data.
+    expect(screen.getByText('[MOCK] Placeholder Cement A')).toBeInTheDocument();
+    expect(screen.getByText('[MOCK] Placeholder Cement B')).toBeInTheDocument();
+    expect(screen.getByTestId('sample-data-badge')).toHaveTextContent('Mock / stub data');
+  });
+
+  it('shows an empty state when the estimate has no materials', () => {
+    renderResults({ state: { estimate: { ...estimate, materials: [] } } });
+
+    expect(
+      screen.getByText('No material recommendations were returned for this estimate.')
+    ).toBeInTheDocument();
   });
 });
 
