@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ResultsPage } from './ResultsPage';
 import { apiClient, ApiError, type EstimateResponse } from '../services/apiClient';
 
@@ -156,5 +156,128 @@ describe('ResultsPage contract rendering', () => {
 
     expect(screen.getByText('Tight')).toBeInTheDocument();
     expect(screen.queryByText(/short by/)).not.toBeInTheDocument();
+  });
+});
+
+describe('ResultsPage PDF download', () => {
+  const objectUrl = 'blob:buildsmart-estimate';
+  const createObjectURL = vi.fn(() => objectUrl);
+  const revokeObjectURL = vi.fn();
+  const clicked: { anchor: HTMLAnchorElement | null } = { anchor: null };
+
+  beforeEach(() => {
+    clicked.anchor = null;
+    createObjectURL.mockClear();
+    revokeObjectURL.mockClear();
+    // jsdom does not implement the object-URL API.
+    Object.defineProperty(URL, 'createObjectURL', {
+      value: createObjectURL,
+      configurable: true,
+      writable: true,
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      value: revokeObjectURL,
+      configurable: true,
+      writable: true,
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    // The page revokes the object URL on a 0 ms timer, which may fire after the
+    // test body finishes, so replace the spies with no-ops instead of deleting.
+    Object.defineProperty(URL, 'createObjectURL', {
+      value: () => objectUrl,
+      configurable: true,
+      writable: true,
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      value: () => {},
+      configurable: true,
+      writable: true,
+    });
+  });
+
+  it('requests the PDF with the contract ids and starts the browser download', async () => {
+    const blob = new Blob(['%PDF-1.4'], { type: 'application/pdf' });
+    const downloadSpy = vi.spyOn(apiClient, 'downloadEstimatePdf').mockResolvedValue(blob);
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(function (this: HTMLAnchorElement) {
+        clicked.anchor = this;
+      });
+
+    renderResults({ state: { estimate } });
+    fireEvent.click(screen.getByRole('button', { name: 'Download PDF' }));
+
+    await waitFor(() => expect(clickSpy).toHaveBeenCalledTimes(1));
+
+    expect(downloadSpy).toHaveBeenCalledWith(estimate.project_id, estimate.id);
+    expect(createObjectURL).toHaveBeenCalledWith(blob);
+    expect(clicked.anchor?.download).toBe(
+      `buildsmart-estimate-${estimate.id.slice(0, 8).toUpperCase()}.pdf`
+    );
+    expect(screen.getByRole('button', { name: 'Download PDF' })).toBeEnabled();
+    await waitFor(() => expect(revokeObjectURL).toHaveBeenCalledWith(objectUrl));
+  });
+
+  it('shows a busy state until the PDF request resolves', async () => {
+    let resolvePdf: (blob: Blob) => void = () => {};
+    const pending = new Promise<Blob>((resolve) => {
+      resolvePdf = resolve;
+    });
+    vi.spyOn(apiClient, 'downloadEstimatePdf').mockReturnValue(pending);
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    renderResults({ state: { estimate } });
+    fireEvent.click(screen.getByRole('button', { name: 'Download PDF' }));
+
+    const busyButton = await screen.findByRole('button', { name: 'Generating PDF…' });
+    expect(busyButton).toBeDisabled();
+    expect(busyButton).toHaveAttribute('aria-busy', 'true');
+
+    resolvePdf(new Blob(['%PDF-1.4'], { type: 'application/pdf' }));
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Download PDF' })).toBeEnabled()
+    );
+  });
+
+  it('keeps the estimate readable and shows the error when the PDF fails', async () => {
+    vi.spyOn(apiClient, 'downloadEstimatePdf').mockRejectedValue(
+      new ApiError(404, 'NOT_FOUND', 'PDF export is not available yet')
+    );
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+
+    renderResults({ state: { estimate } });
+    fireEvent.click(screen.getByRole('button', { name: 'Download PDF' }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('PDF export failed');
+    expect(alert).toHaveTextContent('PDF export is not available yet');
+    expect(screen.getByRole('button', { name: 'Download PDF' })).toBeEnabled();
+    expect(clickSpy).not.toHaveBeenCalled();
+    expect(createObjectURL).not.toHaveBeenCalled();
+    expect(screen.getByRole('heading', { name: 'Your home, in numbers.' })).toBeInTheDocument();
+    expect(screen.getAllByText(/36,00,000/).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('clears the error and downloads when the user retries', async () => {
+    const blob = new Blob(['%PDF-1.4'], { type: 'application/pdf' });
+    vi.spyOn(apiClient, 'downloadEstimatePdf')
+      .mockRejectedValueOnce(new ApiError(503, 'UNAVAILABLE', 'PDF service warming up'))
+      .mockResolvedValueOnce(blob);
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    renderResults({ state: { estimate } });
+    fireEvent.click(screen.getByRole('button', { name: 'Download PDF' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('PDF service warming up');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Download PDF' }));
+
+    await waitFor(() => expect(createObjectURL).toHaveBeenCalledWith(blob));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

@@ -177,7 +177,8 @@ class ApiClient {
     this.unauthorizedHandler?.();
   }
 
-  private async send<T>(path: string, options: RequestInit = {}): Promise<T> {
+  /** Perform the request with auth headers; throws on any non-2xx response. */
+  private async sendRaw(path: string, options: RequestInit = {}): Promise<Response> {
     const headers: Record<string, string> = {
       ...(options.headers as Record<string, string>),
     };
@@ -200,6 +201,12 @@ class ApiClient {
       throw await ApiError.fromResponse(response);
     }
 
+    return response;
+  }
+
+  private async send<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const response = await this.sendRaw(path, options);
+
     if (response.status === 204) {
       return {} as T;
     }
@@ -207,13 +214,14 @@ class ApiClient {
     return response.json() as Promise<T>;
   }
 
-  private async request<T>(
+  /** Run a request, rotating the session once when the access token expired. */
+  private async fetchWithRetry(
     path: string,
     options: RequestInit = {},
     allowRetry = true
-  ): Promise<T> {
+  ): Promise<Response> {
     try {
-      return await this.send<T>(path, options);
+      return await this.sendRaw(path, options);
     } catch (error) {
       // Only credential/session endpoints must not trigger a refresh; /auth/me
       // still deserves a refresh-and-retry when the access token expires.
@@ -234,10 +242,52 @@ class ApiClient {
           this.notifyUnauthorized();
           throw error;
         }
-        return this.send<T>(path, options);
+        return this.sendRaw(path, options);
       }
       throw error;
     }
+  }
+
+  private async request<T>(
+    path: string,
+    options: RequestInit = {},
+    allowRetry = true
+  ): Promise<T> {
+    const response = await this.fetchWithRetry(path, options, allowRetry);
+
+    if (response.status === 204) {
+      return {} as T;
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  /**
+   * Read a binary body. `request` always parses JSON, so binary endpoints need
+   * their own read path; the estimate PDF is the only one today.
+   *
+   * A response that is 2xx but not `application/pdf` is rejected instead of
+   * being handed to the browser, because a dev/proxy fallback would otherwise
+   * download an HTML page as "report.pdf".
+   */
+  private async requestBlob(
+    path: string,
+    options: RequestInit = {},
+    allowRetry = true
+  ): Promise<Blob> {
+    const response = await this.fetchWithRetry(path, options, allowRetry);
+    const contentType = (response.headers.get('content-type') ?? '').toLowerCase();
+
+    if (!contentType.includes('application/pdf')) {
+      throw new ApiError(
+        response.status,
+        'NOT_A_PDF',
+        `Expected a PDF but the server returned "${contentType || 'no content type'}". ` +
+          'The PDF export endpoint may not be deployed yet.'
+      );
+    }
+
+    return response.blob();
   }
 
   // Auth flows
@@ -482,6 +532,21 @@ class ApiClient {
       });
     }
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Download the generated PDF for a saved estimate as a Blob.
+   *
+   * GET /projects/{projectId}/estimates/{estimateId}/pdf -> application/pdf
+   *
+   * The backend PDF service (board task T17) is not built yet, so non-mock mode
+   * currently fails with the server's own error, or with NOT_A_PDF if the dev
+   * server answers with its SPA HTML fallback.
+   */
+  async downloadEstimatePdf(projectId: string, estimateId: string): Promise<Blob> {
+    return this.requestBlob(`/projects/${projectId}/estimates/${estimateId}/pdf`, {
       method: 'GET',
     });
   }
