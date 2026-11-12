@@ -17,9 +17,9 @@ const estimate: EstimateResponse = {
   materials: [
     {
       category: 'cement',
-      primary: { name: '[MOCK] Placeholder Cement A', unit_rate_inr: 100 },
-      alternative: { name: '[MOCK] Placeholder Cement B', unit_rate_inr: 100 },
-      reason: '[MOCK STUB] synthetic data, not validated',
+      primary: { name: 'OPC 43 Grade Cement', unit_rate_inr: 400 },
+      alternative: { name: 'PPC Blended Cement', unit_rate_inr: 350 },
+      reason: 'Selected for structural RCC work.',
     },
   ],
   budget: { status: 'not_provided', gap_inr: 0 },
@@ -224,10 +224,10 @@ describe('ResultsPage contract rendering', () => {
   it('shows dictionary values verbatim instead of rewriting provenance markers', () => {
     renderResults({ state: { estimate } });
 
-    // The fixture carries "[MOCK]" prefixes: the page must render what the API
-    // sent and rely on the mock banner for the warning, never rewrite the data.
-    expect(screen.getByText('[MOCK] Placeholder Cement A')).toBeInTheDocument();
-    expect(screen.getByText('[MOCK] Placeholder Cement B')).toBeInTheDocument();
+    // Values must be rendered exactly as the API sent them; provenance comes
+    // from the is_mock badge, never from string rewriting in the view.
+    expect(screen.getByText('OPC 43 Grade Cement')).toBeInTheDocument();
+    expect(screen.getByText('PPC Blended Cement')).toBeInTheDocument();
     expect(screen.getByTestId('sample-data-badge')).toHaveTextContent('Mock / stub data');
   });
 

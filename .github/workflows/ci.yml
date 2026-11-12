@@ -55,6 +55,7 @@ jobs:
 
   node-lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: ./apps/web
@@ -79,6 +80,12 @@ jobs:
 
       - name: Run Vitest Unit Tests
         run: npm test -- --run
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E tests
+        run: npm run test:e2e
 
       - name: Run npm audit (High Severity)
         run: npm audit --audit-level=high --omit=dev
