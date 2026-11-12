@@ -89,10 +89,13 @@ async def test_create_estimate_route_success(client: AsyncClient) -> None:
     }
 
     mock_result = _dummy_engine_result()
-    with patch(
-        "app.api.v1.estimates.calculate_estimate",
-        new=AsyncMock(return_value=mock_result),
-    ) as mock_engine:
+    with (
+        patch(
+            "app.api.v1.estimates.calculate_estimate",
+            new=AsyncMock(return_value=mock_result),
+        ) as mock_engine,
+        patch("app.services.estimation.predict_variance", return_value=0.10) as mock_ml,
+    ):
         est_res = await client.post(
             f"/api/v1/projects/{proj_id}/estimates",
             json=est_payload,
@@ -117,6 +120,7 @@ async def test_create_estimate_route_success(client: AsyncClient) -> None:
 
         # Verify engine received session and EstimationInput correctly
         assert mock_engine.called
+        assert mock_ml.called
         call_session, call_input = mock_engine.call_args[0]
         assert call_session is not None
         assert call_input.built_up_area_sqft == 1500.0
@@ -209,9 +213,12 @@ async def test_get_estimate_by_id(client: AsyncClient) -> None:
     }
 
     mock_result = _dummy_engine_result()
-    with patch(
-        "app.api.v1.estimates.calculate_estimate",
-        new=AsyncMock(return_value=mock_result),
+    with (
+        patch(
+            "app.api.v1.estimates.calculate_estimate",
+            new=AsyncMock(return_value=mock_result),
+        ),
+        patch("app.services.estimation.predict_variance", return_value=0.10),
     ):
         create_res = await client.post(
             f"/api/v1/projects/{proj_id}/estimates",
@@ -256,9 +263,12 @@ async def test_export_estimate_pdf_success(client: AsyncClient) -> None:
     }
 
     mock_result = _dummy_engine_result()
-    with patch(
-        "app.api.v1.estimates.calculate_estimate",
-        new=AsyncMock(return_value=mock_result),
+    with (
+        patch(
+            "app.api.v1.estimates.calculate_estimate",
+            new=AsyncMock(return_value=mock_result),
+        ),
+        patch("app.services.estimation.predict_variance", return_value=0.10),
     ):
         est_res = await client.post(
             f"/api/v1/projects/{proj_id}/estimates",
@@ -308,4 +318,56 @@ async def test_export_estimate_pdf_not_found(client: AsyncClient) -> None:
         headers=headers,
     )
     assert res_direct.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_create_estimate_ml_calibrated_variance(client: AsyncClient) -> None:
+    headers = await _get_auth_header(client, "ml_calib_tester@example.com")
+
+    proj_res = await client.post(
+        "/api/v1/projects",
+        json={"name": "ML Calibrated Bungalow"},
+        headers=headers,
+    )
+    assert proj_res.status_code == 201
+    proj_id = proj_res.json()["id"]
+
+    est_payload = {
+        "built_up_area_sqft": 2000.0,
+        "floors": 3,
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "zone_id": "ZN-CANT",
+        "quality_tier": "premium",
+        "construction_type": "rcc_framed",
+        "plot_area_sqft": 2500.0,
+        "budget_inr": 2300000,
+    }
+
+    mock_result = _dummy_engine_result()
+    with (
+        patch(
+            "app.api.v1.estimates.calculate_estimate",
+            new=AsyncMock(return_value=mock_result),
+        ),
+        patch("app.services.estimation.predict_variance", return_value=0.15) as mock_ml,
+    ):
+        est_res = await client.post(
+            f"/api/v1/projects/{proj_id}/estimates",
+            json=est_payload,
+            headers=headers,
+        )
+        assert est_res.status_code == 200
+        data = est_res.json()
+        assert mock_ml.called
+
+        # Calibrated bounds:
+        # P10 = 2500000 * (1 - 0.15) = 2125000
+        # P90 = 2500000 * (1 + 0.15 * 1.5) = 3062500
+        assert data["total"]["p50"] == 2500000
+        assert data["total"]["p10"] == 2125000
+        assert data["total"]["p90"] == 3062500
+        assert "Secondary ML calibration applied" in data["confidence"]["reason"]
+        assert data["budget"]["status"] == "tight"
+
 

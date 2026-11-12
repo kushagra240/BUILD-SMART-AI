@@ -1,12 +1,18 @@
+import functools
+import logging
 import uuid
-from typing import Literal
+from pathlib import Path
+from typing import Any, Literal
 
+import joblib
+import numpy as np
+import pandas as pd
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engine.calculator import calculate_estimate
-from app.engine.contracts import EstimationInput
+from app.engine.contracts import EstimationInput, EstimationResult
 from app.models.estimate import Estimate
 from app.schemas.estimate import (
     BreakdownCategoryItem,
@@ -20,6 +26,142 @@ from app.schemas.estimate import (
     TotalEstimate,
 )
 from app.services import project_service
+
+logger = logging.getLogger(__name__)
+
+FEATURE_COLUMNS: list[str] = [
+    "built_up_area",
+    "floors",
+    "quality_tier_encoded",
+    "zone_id_encoded",
+]
+
+TIER_ENCODING: dict[str, int] = {
+    "economy": 0,
+    "standard": 1,
+    "premium": 2,
+}
+
+ZONE_ENCODING: dict[str, int] = {
+    "ZN-PMC": 0,
+    "ZN-PCMC": 1,
+    "ZN-CANT": 2,
+    "ZN-COUNCIL": 3,
+    "ZN-OTHER": 4,
+}
+
+_MODEL_CANDIDATE_PATHS: list[Path] = [
+    Path(__file__).resolve().parent.parent.parent / "ml" / "ml_model.pkl",
+    Path(__file__).resolve().parent.parent.parent.parent.parent / "ml" / "ml_model.pkl",
+    Path("apps/api/ml/ml_model.pkl").resolve(),
+    Path("ml/ml_model.pkl").resolve(),
+]
+
+
+@functools.lru_cache(maxsize=1)
+def load_ml_model() -> Any | None:
+    """Load and cache the trained RandomForestRegressor calibration model in memory."""
+    for path in _MODEL_CANDIDATE_PATHS:
+        if path.is_file():
+            try:
+                model = joblib.load(path)
+                logger.info("Loaded ML calibration model from %s", path)
+                return model
+            except Exception as exc:
+                logger.warning("Failed loading ML model from %s: %s", path, exc)
+    logger.warning("No ML calibration model found; falling back to default variance.")
+    return None
+
+
+def predict_variance(
+    built_up_area: float,
+    floors: int,
+    quality_tier: str,
+    zone_id: str,
+) -> float:
+    """Predict cost variance percentage for contingency calibration.
+
+    Features: [built_up_area, floors, quality_tier_encoded, zone_id_encoded]
+    Target: variance percentage (clamped to [0.05, 0.30])
+    """
+    model = load_ml_model()
+    tier_enc = TIER_ENCODING.get(quality_tier, 1)
+    zone_enc = ZONE_ENCODING.get(zone_id, 0)
+
+    if model is not None:
+        try:
+            features_df = pd.DataFrame(
+                [[built_up_area, floors, tier_enc, zone_enc]],
+                columns=FEATURE_COLUMNS,
+            )
+            pred = float(model.predict(features_df)[0])
+            return float(np.clip(pred, 0.05, 0.30))
+        except Exception as exc:
+            logger.warning("ML variance prediction error: %s; using default 0.10", exc)
+
+    return 0.10
+
+
+def apply_ml_calibration(
+    result: EstimationResult,
+    inputs: EstimationInput | EstimateCreate,
+) -> EstimationResult:
+    """Apply the secondary ML calibration layer to adjust P10/P90 range and budget assessment.
+
+    Uses the scikit-learn RandomForestRegressor to predict dynamic variance percentage
+    from [built_up_area, floors, quality_tier_encoded, zone_id_encoded], adjusting
+    the confidence spread and evaluating the budget against the calibrated bounds.
+    """
+    area = float(inputs.built_up_area_sqft)
+    floors = int(inputs.floors)
+    tier = str(inputs.quality_tier)
+    zone = str(inputs.zone_id)
+
+    variance_pct = predict_variance(area, floors, tier, zone)
+
+    p50 = result.total.p50
+    calibrated_p10 = int(round(p50 * (1.0 - variance_pct)))
+    calibrated_p90 = int(round(p50 * (1.0 + variance_pct * 1.5)))
+
+    budget_inr = getattr(inputs, "budget_inr", None)
+    new_budget_status = result.budget.status
+    new_budget_gap = result.budget.gap_inr
+
+    if budget_inr is not None and budget_inr > 0:
+        if budget_inr >= p50:
+            new_budget_status = "within"
+            new_budget_gap = int(budget_inr - p50)
+        elif budget_inr >= calibrated_p10:
+            new_budget_status = "tight"
+            new_budget_gap = int(p50 - budget_inr)
+        else:
+            new_budget_status = "below_minimum"
+            new_budget_gap = int(calibrated_p10 - budget_inr)
+
+    new_confidence_reason = result.confidence.reason
+    if "ML calibration" not in new_confidence_reason:
+        new_confidence_reason += (
+            f" Secondary ML calibration applied (RandomForestRegressor v1.0.0; "
+            f"predicted variance: {variance_pct:.1%})."
+        )
+
+    calibrated_total = result.total.model_copy(
+        update={"p10": calibrated_p10, "p90": calibrated_p90}
+    )
+    calibrated_budget = result.budget.model_copy(
+        update={"status": new_budget_status, "gap_inr": new_budget_gap}
+    )
+    calibrated_confidence = result.confidence.model_copy(
+        update={"reason": new_confidence_reason}
+    )
+
+    return result.model_copy(
+        update={
+            "total": calibrated_total,
+            "budget": calibrated_budget,
+            "confidence": calibrated_confidence,
+        }
+    )
 
 
 async def create_estimate_for_project(
@@ -45,6 +187,7 @@ async def create_estimate_for_project(
     )
 
     result = await calculate_estimate(db, engine_input)
+    result = apply_ml_calibration(result, engine_input)
 
     estimate = Estimate(
         project_id=project.id,

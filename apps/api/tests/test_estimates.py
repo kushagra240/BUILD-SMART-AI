@@ -82,9 +82,12 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
     }
 
     mock_result = _dummy_engine_result()
-    with patch(
-        "app.api.v1.estimates.calculate_estimate",
-        new=AsyncMock(return_value=mock_result),
+    with (
+        patch(
+            "app.api.v1.estimates.calculate_estimate",
+            new=AsyncMock(return_value=mock_result),
+        ),
+        patch("app.services.estimation.predict_variance", return_value=0.10),
     ):
         est_res = await client.post(
             f"/api/v1/projects/{proj_id}/estimates",
