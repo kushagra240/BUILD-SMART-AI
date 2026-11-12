@@ -10,6 +10,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+import sqlalchemy as sa
 from app.rates import (
     RatesRepository,
     get_active_dataset_version,
@@ -33,7 +34,6 @@ from app.rates.tables import (
 from app.rates.tables import (
     zone as zone_table,
 )
-import sqlalchemy as sa
 
 
 def _make_mock_result(

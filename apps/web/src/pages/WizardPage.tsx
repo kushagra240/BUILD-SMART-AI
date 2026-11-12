@@ -1,19 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMetaOptions, calculateEstimateMock } from '../services/mockApi';
-import { MetaOptions, QualityTier, ConstructionType } from '../types/estimate';
+import { useTranslation } from 'react-i18next';
+import { calculateEstimateMock } from '../services/mockApi';
+import {
+  apiClient,
+  ApiError,
+  isMockApi,
+  type EstimateCreate,
+  type EstimateZone,
+} from '../services/apiClient';
+import { apiErrorMessage } from '../lib/errorMessage';
+import { QualityTier, ConstructionType } from '../types/estimate';
 import { formatINR, formatNumber } from '../lib/formatters';
 import { HouseSchematic } from '../components/common/HouseSchematic';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
+import { ErrorState } from '../components/common/AsyncState';
 import { ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
 
 interface WizardFormData {
   projectName: string;
   city: string;
   locality: string;
+  zoneId: string;
   builtUpArea: number;
   plotArea: number;
   floors: number;
+  bedrooms: number;
+  bathrooms: number;
   qualityTier: QualityTier;
   structuralSystem: ConstructionType;
   walling: string;
@@ -21,20 +34,49 @@ interface WizardFormData {
   windows: string;
 }
 
+const QUALITY_RATES: Record<QualityTier, number> = {
+  economy: 2000,
+  standard: 2400,
+  premium: 3100,
+};
+
+const QUALITY_ORDER: QualityTier[] = ['economy', 'standard', 'premium'];
+
+const LOCALITIES = ['Baner', 'Kothrud', 'Bavdhan', 'Wagholi', 'Kharadi', 'Wakad', 'Aundh'] as const;
+
+const WALLING_OPTIONS = ['aac_blocks', 'red_clay', 'fly_ash'] as const;
+const FLOORING_OPTIONS = ['vitrified_standard', 'vitrified_large', 'ceramic'] as const;
+const WINDOWS_OPTIONS = ['upvc_standard', 'aluminium_anodized', 'wooden_teak'] as const;
+
+const FLOOR_OPTIONS = [
+  { value: 1, key: 'ground' },
+  { value: 2, key: 'g1' },
+  { value: 3, key: 'g2' },
+  { value: 4, key: 'g3' },
+] as const;
+
 export function WizardPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [, setMeta] = useState<MetaOptions | null>(null);
+  const [zones, setZones] = useState<EstimateZone[]>([]);
+  const [optionsError, setOptionsError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitFieldErrors, setSubmitFieldErrors] = useState<Record<string, string>>({});
+  const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
 
   const [form, setForm] = useState<WizardFormData>({
     projectName: 'Deshmukh residence',
     city: 'Pune, Maharashtra',
     locality: 'Baner',
+    zoneId: '',
     builtUpArea: 1800,
     plotArea: 1200,
     floors: 2,
+    bedrooms: 3,
+    bathrooms: 3,
     qualityTier: 'standard',
     structuralSystem: 'rcc_framed',
     walling: 'aac_blocks',
@@ -44,28 +86,51 @@ export function WizardPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    fetchMetaOptions().then((res) => {
-      setMeta(res);
-      setLoading(false);
-    });
-  }, []);
+  const loadOptions = useCallback(() => {
+    setLoading(true);
+    setOptionsError(null);
+    apiClient
+      .getEstimateZones()
+      .then((response) => {
+        setZones(response);
+        setLoading(false);
+      })
+      .catch((cause: unknown) => {
+        setOptionsError(apiErrorMessage(cause, t('wizard.errors.loadZones')));
+        setLoading(false);
+      });
+  }, [t]);
 
-  const ratePerSqFt =
-    form.qualityTier === 'economy' ? 2000 : form.qualityTier === 'premium' ? 3100 : 2400;
+  useEffect(() => {
+    loadOptions();
+  }, [loadOptions]);
+
+  const ratePerSqFt = QUALITY_RATES[form.qualityTier];
   const calculatedTotal = form.builtUpArea * ratePerSqFt;
   const approxPerFloor =
     form.floors > 0 ? Math.round(form.builtUpArea / form.floors) : form.builtUpArea;
 
   const validateStep1 = (): boolean => {
     const errs: Record<string, string> = {};
+    if (!form.projectName.trim()) {
+      errs.projectName = t('wizard.validation.projectName');
+    }
     if (!form.builtUpArea || form.builtUpArea <= 0) {
-      errs.builtUpArea = 'Enter an area greater than 0 sq ft';
+      errs.builtUpArea = t('wizard.validation.builtUpAreaRequired');
     } else if (form.builtUpArea < 300 || form.builtUpArea > 10000) {
-      errs.builtUpArea = 'Built-up area must be between 300 and 10,000 sq ft';
+      errs.builtUpArea = t('wizard.validation.builtUpAreaRange');
     }
     if (!form.floors || form.floors < 1) {
-      errs.floors = 'Select number of floors';
+      errs.floors = t('wizard.validation.floors');
+    }
+    if (!form.bedrooms || form.bedrooms < 1 || form.bedrooms > 20) {
+      errs.bedrooms = t('wizard.validation.bedrooms');
+    }
+    if (!form.bathrooms || form.bathrooms < 1 || form.bathrooms > 20) {
+      errs.bathrooms = t('wizard.validation.bathrooms');
+    }
+    if (!form.zoneId) {
+      errs.zoneId = t('wizard.validation.zone');
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -80,37 +145,84 @@ export function WizardPage() {
     }
   };
 
+  const buildInputs = (): EstimateCreate => ({
+    built_up_area_sqft: form.builtUpArea,
+    floors: form.floors,
+    bedrooms: form.bedrooms,
+    bathrooms: form.bathrooms,
+    zone_id: form.zoneId,
+    quality_tier: form.qualityTier,
+    construction_type: form.structuralSystem,
+    plot_area_sqft: form.plotArea > 0 ? form.plotArea : null,
+  });
+
   const handleCalculate = async () => {
+    setSubmitError(null);
+    setSubmitFieldErrors({});
+    if (!validateStep1()) {
+      setStep(1);
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const estimate = await calculateEstimateMock({
-        built_up_area_sqft: form.builtUpArea,
-        floors: form.floors,
-        bedrooms: 3,
-        bathrooms: 3,
-        zone_id: 'pune_west',
-        quality_tier: form.qualityTier,
-        construction_type: form.structuralSystem,
-        plot_area_sqft: form.plotArea,
-      });
+      if (isMockApi()) {
+        const estimate = await calculateEstimateMock(buildInputs());
+        navigate(`/app/estimates/${estimate.id}`, {
+          state: {
+            estimate,
+            projectName: form.projectName,
+            locality: `${form.locality}, Pune`,
+          },
+        });
+        return;
+      }
 
-      navigate('/app/estimates/BS-2026-004', {
+      // Estimates belong to a project, so create one first and reuse it if the
+      // user retries after a failed calculation.
+      let projectId = createdProjectId;
+      if (!projectId) {
+        const project = await apiClient.createProject({
+          name: form.projectName.trim(),
+          notes: `${form.locality}, Pune`,
+        });
+        projectId = project.id;
+        setCreatedProjectId(projectId);
+      }
+
+      const estimate = await apiClient.createEstimate(projectId, buildInputs());
+      navigate(`/app/estimates/${estimate.id}`, {
         state: {
           estimate,
           projectName: form.projectName,
           locality: `${form.locality}, Pune`,
         },
       });
+    } catch (cause: unknown) {
+      if (cause instanceof ApiError) {
+        setSubmitFieldErrors(cause.fieldErrors());
+      }
+      setSubmitError(apiErrorMessage(cause, t('wizard.errors.calculateFallback')));
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (optionsError) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-paper px-4">
+        <div className="w-full max-w-2xl">
+          <ErrorState message={optionsError} onRetry={loadOptions} />
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-3 bg-paper">
         <div className="w-8 h-8 border-2 border-brick border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs font-mono text-ink-soft">Loading options...</span>
+        <span className="text-xs font-mono text-ink-soft">{t('wizard.loading')}</span>
       </div>
     );
   }
@@ -122,21 +234,17 @@ export function WizardPage() {
         <div className="space-y-2 border-b border-ink/10 pb-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
-              NEW ESTIMATE / STEP 0{step}
+              {t('wizard.kicker', { step })}
             </span>
-            <SampleDataBadge text="Sample data" />
+            <SampleDataBadge text={t('common.sampleData')} />
           </div>
 
           <h1 className="font-headline text-2xl sm:text-4xl font-bold text-ink tracking-tight">
-            {step === 1
-              ? 'Tell us about the home you have in mind.'
-              : 'Choose how you want to build.'}
+            {step === 1 ? t('wizard.headings.step1') : t('wizard.headings.step2')}
           </h1>
 
           <p className="text-xs sm:text-sm text-ink-soft font-sans">
-            {step === 1
-              ? 'Start with the site and size. Approximate measurements are fine for a first estimate.'
-              : 'A few practical choices set the starting budget. You can revise these later.'}
+            {step === 1 ? t('wizard.subtitles.step1') : t('wizard.subtitles.step2')}
           </p>
 
           {/* Stepper Pills */}
@@ -151,7 +259,7 @@ export function WizardPage() {
               }`}
             >
               <span>1</span>
-              <span>Project & site</span>
+              <span>{t('wizard.steps.projectSite')}</span>
             </button>
             <span className="text-ink-soft">›</span>
             <button
@@ -164,12 +272,12 @@ export function WizardPage() {
               }`}
             >
               <span>2</span>
-              <span>Construction preferences</span>
+              <span>{t('wizard.steps.preferences')}</span>
             </button>
             <span className="text-ink-soft">›</span>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded text-xs text-ink-soft border border-ink/10">
               <span>3</span>
-              <span>Your estimate</span>
+              <span>{t('wizard.steps.estimate')}</span>
             </div>
           </div>
         </div>
@@ -182,29 +290,36 @@ export function WizardPage() {
               {/* Project & location section */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-4">
                 <h2 className="font-headline text-lg font-bold text-ink">
-                  Project & location
+                  {t('wizard.sections.projectLocation')}
                 </h2>
 
                 <div className="space-y-1.5">
                   <label htmlFor="projectName" className="block text-xs font-medium text-ink">
-                    Project name
+                    {t('wizard.fields.projectName')}
                   </label>
                   <input
                     id="projectName"
                     type="text"
                     value={form.projectName}
                     onChange={(e) => setForm({ ...form, projectName: e.target.value })}
-                    className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
-                    placeholder="e.g. Deshmukh residence"
+                    className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                      errors.projectName ? 'border-2 border-error' : 'border border-ink/14'
+                    }`}
+                    placeholder={t('wizard.fields.projectNamePlaceholder')}
                   />
+                  {errors.projectName && (
+                    <p className="text-xs text-error font-medium">{errors.projectName}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center">
-                      <label htmlFor="city" className="block text-xs font-medium text-ink">City</label>
+                      <label htmlFor="city" className="block text-xs font-medium text-ink">
+                        {t('wizard.fields.city')}
+                      </label>
                       <span className="text-[10px] font-mono text-ink-soft bg-paper px-1.5 py-0.5 rounded border border-ink/14">
-                        Fixed region
+                        {t('wizard.fields.fixedRegion')}
                       </span>
                     </div>
                     <input
@@ -218,7 +333,7 @@ export function WizardPage() {
 
                   <div className="space-y-1.5">
                     <label htmlFor="locality" className="block text-xs font-medium text-ink">
-                      Locality
+                      {t('wizard.fields.locality')}
                     </label>
                     <select
                       id="locality"
@@ -226,33 +341,60 @@ export function WizardPage() {
                       onChange={(e) => setForm({ ...form, locality: e.target.value })}
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="Baner">Baner (West Pune)</option>
-                      <option value="Kothrud">Kothrud (West Pune)</option>
-                      <option value="Bavdhan">Bavdhan (West Pune)</option>
-                      <option value="Wagholi">Wagholi (East Pune)</option>
-                      <option value="Kharadi">Kharadi (East Pune)</option>
-                      <option value="Wakad">Wakad (PCMC / North-West)</option>
-                      <option value="Aundh">Aundh (Central-West)</option>
+                      {LOCALITIES.map((id) => (
+                        <option key={id} value={id}>
+                          {t(`wizard.localities.${id.toLowerCase()}`)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
+                <div className="space-y-1.5">
+                  <label htmlFor="zone" className="block text-xs font-medium text-ink">
+                    {t('wizard.fields.zone')}
+                  </label>
+                  <select
+                    id="zone"
+                    value={form.zoneId}
+                    onChange={(e) => {
+                      setForm({ ...form, zoneId: e.target.value });
+                      if (e.target.value) setErrors({ ...errors, zoneId: '' });
+                    }}
+                    className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
+                      errors.zoneId ? 'border-2 border-error' : 'border border-ink/14'
+                    }`}
+                  >
+                    <option value="">{t('wizard.fields.zonePlaceholder')}</option>
+                    {zones.map((zone) => (
+                      <option key={zone.id} value={zone.id}>
+                        {t(`enum.zones.${zone.id}`, { defaultValue: zone.name })}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.zoneId ? (
+                    <p className="text-xs text-error font-medium">{errors.zoneId}</p>
+                  ) : (
+                    <p className="text-[11px] text-ink-soft">{t('wizard.hints.zone')}</p>
+                  )}
+                </div>
+
                 <p className="text-[11px] text-ink-soft leading-relaxed">
-                  This estimate uses illustrative Pune planning assumptions, not verified live rates.
+                  {t('wizard.hints.planningAssumption')}
                 </p>
               </div>
 
               {/* Area & floors section */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-4">
                 <h2 className="font-headline text-lg font-bold text-ink">
-                  Area & floors
+                  {t('wizard.sections.areaFloors')}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Total Built-up Area */}
                   <div className="space-y-1.5">
                     <label htmlFor="builtUpArea" className="block text-xs font-medium text-ink">
-                      Total built-up area *
+                      {t('wizard.fields.builtUpArea')}
                     </label>
                     <div className="relative">
                       <input
@@ -271,20 +413,20 @@ export function WizardPage() {
                         }`}
                       />
                       <span className="absolute right-3 top-2.5 text-xs text-ink-soft font-mono pointer-events-none">
-                        sq ft
+                        {t('common.sqFt')}
                       </span>
                     </div>
                     {errors.builtUpArea ? (
                       <p className="text-xs text-error font-medium">{errors.builtUpArea}</p>
                     ) : (
-                      <p className="text-[11px] text-ink-soft">Add the built-up area of every floor.</p>
+                      <p className="text-[11px] text-ink-soft">{t('wizard.hints.addAllFloors')}</p>
                     )}
                   </div>
 
                   {/* Plot area */}
                   <div className="space-y-1.5">
                     <label htmlFor="plotArea" className="block text-xs font-medium text-ink">
-                      Plot area
+                      {t('wizard.fields.plotArea')}
                     </label>
                     <div className="relative">
                       <input
@@ -295,12 +437,10 @@ export function WizardPage() {
                         className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink font-mono focus-ring pr-16"
                       />
                       <span className="absolute right-3 top-2.5 text-xs text-ink-soft font-mono pointer-events-none">
-                        sq ft
+                        {t('common.sqFt')}
                       </span>
                     </div>
-                    <p className="text-[11px] text-ink-soft">
-                      Optional. Land area is not used to price construction.
-                    </p>
+                    <p className="text-[11px] text-ink-soft">{t('wizard.hints.plotOptional')}</p>
                   </div>
                 </div>
 
@@ -308,7 +448,7 @@ export function WizardPage() {
                   {/* Number of floors */}
                   <div className="space-y-1.5">
                     <label htmlFor="floors" className="block text-xs font-medium text-ink">
-                      Number of floors *
+                      {t('wizard.fields.floors')}
                     </label>
                     <select
                       id="floors"
@@ -316,24 +456,82 @@ export function WizardPage() {
                       onChange={(e) => setForm({ ...form, floors: Number(e.target.value) })}
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="1">Ground only · 1 floor</option>
-                      <option value="2">G + 1 · Ground + first</option>
-                      <option value="3">G + 2 · Ground + 2 floors</option>
-                      <option value="4">G + 3 · Ground + 3 floors</option>
+                      {FLOOR_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {t(`wizard.floors.${option.key}`)}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   {/* Approx per floor */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-ink">
-                      Approx. built-up per floor
+                      {t('wizard.fields.approxPerFloor')}
                     </label>
                     <div className="px-3 py-2 bg-paper/60 border border-ink/14 rounded-md text-sm font-mono text-ink flex justify-between">
-                      <span>{formatNumber(approxPerFloor)} sq ft</span>
+                      <span>
+                        {formatNumber(approxPerFloor)} {t('common.sqFt')}
+                      </span>
                       <span className="text-[11px] text-ink-soft">
-                        {form.builtUpArea} sq ft ÷ {form.floors} floors
+                        {t('wizard.floors.perFloorFormula', {
+                          count: form.floors,
+                          area: formatNumber(form.builtUpArea),
+                        })}
                       </span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  {/* Number of bedrooms */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="bedrooms" className="block text-xs font-medium text-ink">
+                      {t('wizard.fields.bedrooms')}
+                    </label>
+                    <input
+                      id="bedrooms"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={form.bedrooms || ''}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setForm({ ...form, bedrooms: val });
+                        if (val >= 1 && val <= 20) setErrors({ ...errors, bedrooms: '' });
+                      }}
+                      className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                        errors.bedrooms ? 'border-2 border-error' : 'border border-ink/14'
+                      }`}
+                    />
+                    {errors.bedrooms && (
+                      <p className="text-xs text-error font-medium">{errors.bedrooms}</p>
+                    )}
+                  </div>
+
+                  {/* Number of bathrooms */}
+                  <div className="space-y-1.5">
+                    <label htmlFor="bathrooms" className="block text-xs font-medium text-ink">
+                      {t('wizard.fields.bathrooms')}
+                    </label>
+                    <input
+                      id="bathrooms"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={form.bathrooms || ''}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setForm({ ...form, bathrooms: val });
+                        if (val >= 1 && val <= 20) setErrors({ ...errors, bathrooms: '' });
+                      }}
+                      className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
+                        errors.bathrooms ? 'border-2 border-error' : 'border border-ink/14'
+                      }`}
+                    />
+                    {errors.bathrooms && (
+                      <p className="text-xs text-error font-medium">{errors.bathrooms}</p>
+                    )}
                   </div>
                 </div>
 
@@ -341,22 +539,24 @@ export function WizardPage() {
                 <div className="bg-clay/40 border border-ink/14 rounded-md p-3.5 flex gap-2.5 items-start text-xs text-ink-soft">
                   <Info className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    <strong className="text-ink">Area is not the same as plot size.</strong> Your {formatNumber(form.plotArea)} sq ft plot may hold {formatNumber(form.builtUpArea)} sq ft across floors. This estimate uses the total {formatNumber(form.builtUpArea)} sq ft, not {formatNumber(form.plotArea)} sq ft.
+                    <strong className="text-ink">{t('wizard.areaCallout.title')}</strong>{' '}
+                    {t('wizard.areaCallout.body', {
+                      plot: formatNumber(form.plotArea),
+                      built: formatNumber(form.builtUpArea),
+                    })}
                   </p>
                 </div>
               </div>
 
               {/* Form Actions */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                <span className="text-xs text-ink-soft">
-                  * Required fields · Your estimate is not saved yet
-                </span>
+                <span className="text-xs text-ink-soft">{t('wizard.requiredNote')}</span>
                 <button
                   type="button"
                   onClick={handleNextStep}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring"
                 >
-                  <span>Continue to preferences</span>
+                  <span>{t('wizard.actions.continue')}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -366,28 +566,26 @@ export function WizardPage() {
             <div className="lg:col-span-4 space-y-5">
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
                 <h3 className="font-headline text-base font-bold text-ink">
-                  Measure the whole home
+                  {t('wizard.side.measureTitle')}
                 </h3>
                 <HouseSchematic
-                  groundArea={`${formatNumber(approxPerFloor)} sq ft`}
-                  firstFloorArea={`${formatNumber(approxPerFloor)} sq ft`}
-                  totalArea={`${formatNumber(form.builtUpArea)} sq ft`}
+                  groundArea={`${formatNumber(approxPerFloor)} ${t('common.sqFt')}`}
+                  firstFloorArea={`${formatNumber(approxPerFloor)} ${t('common.sqFt')}`}
+                  totalArea={`${formatNumber(form.builtUpArea)} ${t('common.sqFt')}`}
                 />
                 <p className="text-[11px] text-ink-soft leading-relaxed pt-2 border-t border-ink/10">
-                  Include the covered area of all floors, including walls. Do not add open terraces or gardens. Confirm area definitions with your architect.
+                  {t('wizard.side.measureBody')}
                 </p>
               </div>
 
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2">
                 <h3 className="font-headline text-base font-bold text-ink">
-                  What happens next
+                  {t('wizard.side.nextTitle')}
                 </h3>
                 <p className="text-xs text-ink-soft leading-relaxed">
-                  Choose a construction quality and finishes. We&apos;ll outline nine cost categories and practical material options.
+                  {t('wizard.side.nextBody')}
                 </p>
-                <p className="text-[11px] text-ink-soft">
-                  No site visit or structural assessment is included.
-                </p>
+                <p className="text-[11px] text-ink-soft">{t('wizard.side.nextNote')}</p>
               </div>
             </div>
           </div>
@@ -401,131 +599,70 @@ export function WizardPage() {
               {/* Construction Quality Section */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-4">
                 <h2 className="font-headline text-lg font-bold text-ink">
-                  Construction quality
+                  {t('wizard.sections.quality')}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* Economy */}
-                  <label
-                    className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
-                      form.qualityTier === 'economy'
-                        ? 'border-forest bg-paper shadow-card ring-1 ring-forest'
-                        : 'border-ink/14 bg-paper/60 hover:bg-paper'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="qualityTier"
-                      value="economy"
-                      checked={form.qualityTier === 'economy'}
-                      onChange={() => setForm({ ...form, qualityTier: 'economy' })}
-                      className="sr-only"
-                    />
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-sm text-ink">Economy</span>
-                        {form.qualityTier === 'economy' && (
-                          <span className="w-4 h-4 rounded-full bg-forest text-paper flex items-center justify-center text-[10px]">
-                            <Check className="w-2.5 h-2.5" />
-                          </span>
-                        )}
-                      </div>
-                      <div className="font-headline text-xl font-bold text-ink">₹2,000</div>
-                      <div className="text-[11px] font-mono text-ink-soft">
-                        per sq ft · planning assumption
-                      </div>
-                      <div className="text-xs text-ink-soft pt-1 font-sans">
-                        Simple, durable essentials
-                      </div>
-                    </div>
-                  </label>
-
-                  {/* Standard */}
-                  <label
-                    className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
-                      form.qualityTier === 'standard'
-                        ? 'border-forest bg-paper shadow-card ring-1 ring-forest'
-                        : 'border-ink/14 bg-paper/60 hover:bg-paper'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="qualityTier"
-                      value="standard"
-                      checked={form.qualityTier === 'standard'}
-                      onChange={() => setForm({ ...form, qualityTier: 'standard' })}
-                      className="sr-only"
-                    />
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-sm text-ink">Standard</span>
-                        {form.qualityTier === 'standard' && (
-                          <span className="w-4 h-4 rounded-full bg-forest text-paper flex items-center justify-center text-[10px]">
-                            <Check className="w-2.5 h-2.5" />
-                          </span>
-                        )}
-                      </div>
-                      <div className="font-headline text-xl font-bold text-ink">₹2,400</div>
-                      <div className="text-[11px] font-mono text-ink-soft">
-                        per sq ft · planning assumption
-                      </div>
-                      <div className="text-xs text-ink-soft pt-1 font-sans">
-                        Balanced everyday comfort
-                      </div>
-                    </div>
-                  </label>
-
-                  {/* Premium */}
-                  <label
-                    className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
-                      form.qualityTier === 'premium'
-                        ? 'border-forest bg-paper shadow-card ring-1 ring-forest'
-                        : 'border-ink/14 bg-paper/60 hover:bg-paper'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="qualityTier"
-                      value="premium"
-                      checked={form.qualityTier === 'premium'}
-                      onChange={() => setForm({ ...form, qualityTier: 'premium' })}
-                      className="sr-only"
-                    />
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold text-sm text-ink">Premium</span>
-                        {form.qualityTier === 'premium' && (
-                          <span className="w-4 h-4 rounded-full bg-forest text-paper flex items-center justify-center text-[10px]">
-                            <Check className="w-2.5 h-2.5" />
-                          </span>
-                        )}
-                      </div>
-                      <div className="font-headline text-xl font-bold text-ink">₹3,100</div>
-                      <div className="text-[11px] font-mono text-ink-soft">
-                        per sq ft · planning assumption
-                      </div>
-                      <div className="text-xs text-ink-soft pt-1 font-sans">
-                        Higher-spec finishes
-                      </div>
-                    </div>
-                  </label>
+                  {QUALITY_ORDER.map((tier) => {
+                    const selected = form.qualityTier === tier;
+                    return (
+                      <label
+                        key={tier}
+                        className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
+                          selected
+                            ? 'border-forest bg-paper shadow-card ring-1 ring-forest'
+                            : 'border-ink/14 bg-paper/60 hover:bg-paper'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="qualityTier"
+                          value={tier}
+                          checked={selected}
+                          onChange={() => setForm({ ...form, qualityTier: tier })}
+                          className="sr-only"
+                        />
+                        <div className="space-y-1">
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold text-sm text-ink">
+                              {t(`enum.quality.${tier}`)}
+                            </span>
+                            {selected && (
+                              <span className="w-4 h-4 rounded-full bg-forest text-paper flex items-center justify-center text-[10px]">
+                                <Check className="w-2.5 h-2.5" />
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-headline text-xl font-bold text-ink">
+                            {formatINR(QUALITY_RATES[tier])}
+                          </div>
+                          <div className="text-[11px] font-mono text-ink-soft">
+                            {t('wizard.quality.perSqFt')}
+                          </div>
+                          <div className="text-xs text-ink-soft pt-1 font-sans">
+                            {t(`wizard.quality.${tier}Desc`)}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
 
                 <p className="text-[11px] text-ink-soft leading-relaxed">
-                  Illustrative rates include a 5% contingency. They are not supplier quotes or current verified market rates.
+                  {t('wizard.quality.note')}
                 </p>
               </div>
 
               {/* Structure & finishes 2x2 grid */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-4">
                 <h2 className="font-headline text-lg font-bold text-ink">
-                  Structure & finishes
+                  {t('wizard.sections.structure')}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="structuralSystem" className="block text-xs font-medium text-ink">
-                      Structural system
+                      {t('wizard.fields.structuralSystem')}
                     </label>
                     <select
                       id="structuralSystem"
@@ -535,14 +672,18 @@ export function WizardPage() {
                       }
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="rcc_framed">RCC framed structure</option>
-                      <option value="load_bearing">Load-bearing masonry</option>
+                      <option value="rcc_framed">
+                        {t('enum.construction.rcc_framed')}
+                      </option>
+                      <option value="load_bearing">
+                        {t('enum.construction.load_bearing')}
+                      </option>
                     </select>
                   </div>
 
                   <div className="space-y-1.5">
                     <label htmlFor="walling" className="block text-xs font-medium text-ink">
-                      Walling preference
+                      {t('wizard.fields.walling')}
                     </label>
                     <select
                       id="walling"
@@ -550,15 +691,17 @@ export function WizardPage() {
                       onChange={(e) => setForm({ ...form, walling: e.target.value })}
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="aac_blocks">AAC block masonry</option>
-                      <option value="red_clay">Red clay brick</option>
-                      <option value="fly_ash">Fly ash brick</option>
+                      {WALLING_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {t(`wizard.options.walling.${option}`)}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div className="space-y-1.5">
                     <label htmlFor="flooring" className="block text-xs font-medium text-ink">
-                      Flooring
+                      {t('wizard.fields.flooring')}
                     </label>
                     <select
                       id="flooring"
@@ -566,15 +709,17 @@ export function WizardPage() {
                       onChange={(e) => setForm({ ...form, flooring: e.target.value })}
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="vitrified_standard">Standard vitrified tiles</option>
-                      <option value="vitrified_large">Large format vitrified tiles</option>
-                      <option value="ceramic">Ceramic tiles</option>
+                      {FLOORING_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {t(`wizard.options.flooring.${option}`)}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div className="space-y-1.5">
                     <label htmlFor="windows" className="block text-xs font-medium text-ink">
-                      Windows
+                      {t('wizard.fields.windows')}
                     </label>
                     <select
                       id="windows"
@@ -582,62 +727,72 @@ export function WizardPage() {
                       onChange={(e) => setForm({ ...form, windows: e.target.value })}
                       className="w-full px-3 py-2 bg-paper border border-ink/14 rounded-md text-sm text-ink focus-ring font-sans"
                     >
-                      <option value="upvc_standard">uPVC, standard glazing</option>
-                      <option value="aluminium_anodized">Aluminium, anodized basic</option>
-                      <option value="wooden_teak">Engineered wood frame</option>
+                      {WINDOWS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {t(`wizard.options.windows.${option}`)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-ink-soft leading-relaxed">
-                  Floor structure, member sizes and material specifications need an engineer&apos;s design.
+                  {t('wizard.hints.structure')}
                 </p>
               </div>
 
               {/* What this budget covers */}
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-3">
                 <h2 className="font-headline text-lg font-bold text-ink">
-                  What this budget covers
+                  {t('wizard.sections.coverage')}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-sans">
                   <div className="space-y-2">
                     <div className="text-[11px] font-mono uppercase tracking-wider text-forest font-semibold">
-                      INCLUDED IN THIS ESTIMATE
+                      {t('wizard.coverage.includedTitle')}
                     </div>
                     <ul className="space-y-1.5 text-ink">
-                      <li className="flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-forest" />
-                        <span>Civil structure and basic finishes</span>
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-forest" />
-                        <span>Electrical and plumbing works</span>
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-forest" />
-                        <span>Standard sanitary fixtures</span>
-                      </li>
-                      <li className="flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-forest" />
-                        <span>5% contingency allowance</span>
-                      </li>
+                      {['included1', 'included2', 'included3', 'included4'].map((key) => (
+                        <li key={key} className="flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-forest" />
+                          <span>{t(`wizard.coverage.${key}`)}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
 
                   <div className="space-y-2">
                     <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft font-semibold">
-                      BUDGET SEPARATELY
+                      {t('wizard.coverage.excludedTitle')}
                     </div>
                     <ul className="space-y-1.5 text-ink-soft">
-                      <li>· Land and statutory approval fees</li>
-                      <li>· Architect and professional fees</li>
-                      <li>· Compound wall, landscaping, external works</li>
-                      <li>· Furniture, modular kitchen, lift and solar</li>
+                      {['excluded1', 'excluded2', 'excluded3', 'excluded4'].map((key) => (
+                        <li key={key}>· {t(`wizard.coverage.${key}`)}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
+
+              {submitError && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-xs text-error space-y-1"
+                >
+                  <p className="font-semibold">{t('wizard.errors.calculateTitle')}</p>
+                  <p>{submitError}</p>
+                  {Object.entries(submitFieldErrors).length > 0 && (
+                    <ul className="list-disc pl-4 space-y-0.5">
+                      {Object.entries(submitFieldErrors).map(([field, message]) => (
+                        <li key={field}>
+                          <span className="font-mono">{field}</span>: {message}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
 
               {/* Form Navigation Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
@@ -647,19 +802,23 @@ export function WizardPage() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-ink/14 bg-paper hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Back to project details</span>
+                  <span>{t('wizard.actions.back')}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleCalculate}
                   disabled={submitting}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring"
+                  aria-busy={submitting}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring disabled:opacity-70"
                 >
                   {submitting ? (
-                    <span>Calculating...</span>
+                    <>
+                      <span className="w-4 h-4 border-2 border-paper/50 border-t-paper rounded-full animate-spin" aria-hidden="true" />
+                      <span>{t('wizard.actions.calculating')}</span>
+                    </>
                   ) : (
                     <>
-                      <span>Calculate estimate</span>
+                      <span>{t('wizard.actions.calculate')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -672,9 +831,9 @@ export function WizardPage() {
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-clay text-ink-soft border border-ink/14 font-semibold">
-                    READY TO ESTIMATE
+                    {t('wizard.summary.ready')}
                   </span>
-                  <SampleDataBadge text="Sample data" variant="subtle" />
+                  <SampleDataBadge text={t('common.sampleData')} variant="subtle" />
                 </div>
 
                 <div className="space-y-0.5">
@@ -686,27 +845,43 @@ export function WizardPage() {
 
                 <div className="space-y-2 text-xs font-sans border-t border-b border-ink/10 py-3">
                   <div className="flex justify-between">
-                    <span className="text-ink-soft">Building</span>
-                    <span className="font-mono text-ink">G+{form.floors - 1} · {form.floors} floors</span>
+                    <span className="text-ink-soft">{t('wizard.summary.building')}</span>
+                    <span className="font-mono text-ink">
+                      {t('wizard.summary.floorsValue', {
+                        count: form.floors,
+                        above: form.floors - 1,
+                      })}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-soft">Total built-up</span>
-                    <span className="font-mono text-ink">{formatNumber(form.builtUpArea)} sq ft</span>
+                    <span className="text-ink-soft">{t('wizard.summary.totalBuiltUp')}</span>
+                    <span className="font-mono text-ink">
+                      {formatNumber(form.builtUpArea)} {t('common.sqFt')}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-soft">Plot area</span>
-                    <span className="font-mono text-ink">{formatNumber(form.plotArea)} sq ft</span>
+                    <span className="text-ink-soft">{t('wizard.summary.plotArea')}</span>
+                    <span className="font-mono text-ink">
+                      {formatNumber(form.plotArea)} {t('common.sqFt')}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-soft">Quality</span>
-                    <span className="font-semibold text-ink capitalize">{form.qualityTier}</span>
+                    <span className="text-ink-soft">{t('wizard.summary.quality')}</span>
+                    <span className="font-semibold text-ink capitalize">
+                      {t(`enum.quality.${form.qualityTier}`)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-soft">Planning rate</span>
-                    <span className="font-mono text-ink">₹{formatNumber(ratePerSqFt)} / sq ft</span>
+                    <span className="text-ink-soft">{t('wizard.summary.planningRate')}</span>
+                    <span className="font-mono text-ink">
+                      ₹{formatNumber(ratePerSqFt)} / {t('common.sqFt')}
+                    </span>
                   </div>
                   <div className="text-[11px] font-mono text-ink-soft pt-1 border-t border-ink/10">
-                    {formatNumber(form.builtUpArea)} sq ft × ₹{formatNumber(ratePerSqFt)} / sq ft
+                    {t('wizard.summary.formula', {
+                      area: formatNumber(form.builtUpArea),
+                      rate: formatNumber(ratePerSqFt),
+                    })}
                   </div>
                 </div>
 
@@ -715,9 +890,7 @@ export function WizardPage() {
                   <div className="font-headline text-3xl font-bold text-brick tracking-tight">
                     {formatINR(calculatedTotal)}
                   </div>
-                  <p className="text-[11px] text-ink-soft">
-                    Preliminary total, including contingency
-                  </p>
+                  <p className="text-[11px] text-ink-soft">{t('wizard.summary.totalNote')}</p>
                 </div>
               </div>
 
@@ -725,10 +898,10 @@ export function WizardPage() {
               <div className="bg-clay/50 border border-ink/14 rounded-lg p-4 space-y-1.5 text-xs">
                 <div className="font-semibold text-ink font-sans flex items-center gap-1.5">
                   <Info className="w-3.5 h-3.5 text-forest" />
-                  <span>A sound starting assumption</span>
+                  <span>{t('wizard.summary.assumptionTitle')}</span>
                 </div>
                 <p className="text-ink-soft leading-relaxed">
-                  Assumes a regular site, normal foundations and no basement. Soil conditions and access can affect costs.
+                  {t('wizard.summary.assumptionBody')}
                 </p>
               </div>
             </div>

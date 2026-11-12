@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginPage } from './LoginPage';
 import { ApiError } from '../services/apiClient';
@@ -70,6 +70,25 @@ describe('LoginPage API errors', () => {
     fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Invalid email or password');
+  });
+
+  it('lands on the projects dashboard after a successful sign in', async () => {
+    auth.login.mockResolvedValueOnce({ id: 'usr_mock_1' });
+
+    render(
+      <MemoryRouter initialEntries={['/login']}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/app" element={<div>Overview page</div>} />
+          <Route path="/app/projects" element={<div>Projects dashboard</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
+
+    expect(await screen.findByText('Projects dashboard')).toBeInTheDocument();
+    expect(screen.queryByText('Overview page')).not.toBeInTheDocument();
   });
 
   it('does not prefill credentials when the real API is enabled', () => {

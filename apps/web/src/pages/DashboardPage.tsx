@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, ArrowRight, ChevronRight, FolderOpen, Lightbulb } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
@@ -19,6 +20,7 @@ export function DashboardPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const mock = isMockApi();
   const latest = items[0] ?? null;
+  const { t } = useTranslation();
 
   const handleDelete = async (projectId: string) => {
     setActionError(null);
@@ -33,17 +35,17 @@ export function DashboardPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
-                YOUR BUILDING NOTEBOOK
+                {t('dashboard.kicker')}
               </span>
-              {mock && <SampleDataBadge text="Sample data" />}
+              {mock && <SampleDataBadge text={t('common.sampleData')} />}
             </div>
             <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-              A starting point for your building budget.
+              {t('dashboard.title')}
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft font-sans">
               {user
-                ? `Welcome back, ${user.full_name}. Make room for the home you have in mind.`
-                : 'Make room for the home you have in mind.'}
+                ? t('dashboard.welcome', { name: user.full_name })
+                : t('dashboard.welcomePlain')}
             </p>
           </div>
 
@@ -52,7 +54,7 @@ export function DashboardPage() {
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors whitespace-nowrap focus-ring"
           >
             <Plus className="w-4 h-4" />
-            <span>Start a new estimate</span>
+            <span>{t('projects.startNewEstimate')}</span>
           </Link>
         </div>
 
@@ -65,9 +67,14 @@ export function DashboardPage() {
           </div>
         )}
 
-        {status === 'loading' && <LoadingState label="Loading your projects…" />}
+        {status === 'loading' && <LoadingState label={t('dashboard.loading')} />}
 
-        {status === 'error' && <ErrorState message={error ?? 'Could not load your projects'} onRetry={reload} />}
+        {status === 'error' && (
+          <ErrorState
+            message={error ?? t('dashboard.errors.load')}
+            onRetry={reload}
+          />
+        )}
 
         {status === 'success' && (
           <>
@@ -78,7 +85,7 @@ export function DashboardPage() {
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
                       <span className="text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-                        LATEST PROJECT
+                        {t('dashboard.latest.label')}
                       </span>
                       <span className="px-2 py-0.5 rounded bg-clay border border-ink/14 text-[11px] text-ink">
                         {projectReference(latest.id)}
@@ -89,22 +96,34 @@ export function DashboardPage() {
                       {latest.name}
                     </h2>
                     <p className="text-xs text-ink-soft">
-                      {latest.notes || 'No notes added to this project yet.'}
+                      {latest.notes || t('dashboard.latest.noNotes')}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-b border-ink/10 py-4 text-xs">
                     <div>
-                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">Created</div>
-                      <div className="mt-0.5 font-medium text-ink">{formatDate(latest.created_at)}</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
+                        {t('dashboard.latest.created')}
+                      </div>
+                      <div className="mt-0.5 font-medium text-ink">
+                        {formatDate(latest.created_at)}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">Last updated</div>
-                      <div className="mt-0.5 font-medium text-ink">{formatDateTime(latest.updated_at)}</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
+                        {t('dashboard.latest.updated')}
+                      </div>
+                      <div className="mt-0.5 font-medium text-ink">
+                        {formatDateTime(latest.updated_at)}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">Estimate</div>
-                      <div className="mt-0.5 font-medium text-ink-soft">Not calculated yet</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
+                        {t('dashboard.latest.estimate')}
+                      </div>
+                      <div className="mt-0.5 font-medium text-ink-soft">
+                        {t('dashboard.latest.notCalculated')}
+                      </div>
                     </div>
                   </div>
 
@@ -113,7 +132,7 @@ export function DashboardPage() {
                       to={`/app/projects/${latest.id}`}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
                     >
-                      <span>Open project</span>
+                      <span>{t('dashboard.latest.open')}</span>
                       <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                     </Link>
                     <DeleteProjectButton
@@ -152,7 +171,7 @@ export function DashboardPage() {
                     </svg>
                   </div>
                   <p className="text-[11px] text-ink-soft text-center pt-2 font-sans italic">
-                    A home begins with a plan. Reference image, not your proposed design.
+                    {t('dashboard.latest.imageCaption')}
                   </p>
                 </div>
               </div>
@@ -162,17 +181,17 @@ export function DashboardPage() {
                   <FolderOpen className="w-6 h-6 stroke-[1.5]" aria-hidden="true" />
                 </div>
                 <div className="space-y-1 max-w-md mx-auto">
-                  <h2 className="font-headline text-xl font-bold text-ink">No saved projects yet.</h2>
-                  <p className="text-xs text-ink-soft">
-                    Start an estimate to create your first project. It will appear here once saved.
-                  </p>
+                  <h2 className="font-headline text-xl font-bold text-ink">
+                    {t('dashboard.empty.title')}
+                  </h2>
+                  <p className="text-xs text-ink-soft">{t('dashboard.empty.body')}</p>
                 </div>
                 <Link
                   to="/app/new"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
                 >
                   <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Start a new estimate</span>
+                  <span>{t('projects.startNewEstimate')}</span>
                 </Link>
               </div>
             )}
@@ -181,37 +200,39 @@ export function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                  Saved projects
+                  {t('dashboard.cards.projects')}
                 </div>
                 <div className="font-headline text-3xl sm:text-4xl font-bold text-ink">
                   {String(total).padStart(2, '0')}
                 </div>
                 <p className="text-xs text-ink-soft">
-                  {total === 1 ? 'One project in your notebook' : 'Projects kept in your notebook'}
+                  {t('dashboard.cards.projectsCount', { count: total })}
                 </p>
               </div>
 
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                  Latest project
+                  {t('dashboard.cards.latest')}
                 </div>
                 <div className="font-headline text-xl sm:text-2xl font-bold text-forest truncate">
-                  {latest ? latest.name : 'None yet'}
+                  {latest ? latest.name : t('dashboard.cards.noneYet')}
                 </div>
                 <p className="text-xs text-ink-soft">
-                  {latest ? `Updated ${formatDate(latest.updated_at)}` : 'Create a project to get started'}
+                  {latest
+                    ? t('dashboard.cards.updated', { date: formatDate(latest.updated_at) })
+                    : t('dashboard.cards.createPrompt')}
                 </p>
               </div>
 
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-1">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                  Data source
+                  {t('dashboard.cards.dataSource')}
                 </div>
                 <div className="font-headline text-xl sm:text-2xl font-bold text-ink">
-                  {mock ? 'Mock API' : 'Live API'}
+                  {mock ? t('dashboard.cards.mockApi') : t('dashboard.cards.liveApi')}
                 </div>
                 <p className="text-xs text-ink-soft">
-                  {mock ? 'Demo projects from the local mock service' : 'Synced with your BuildSmart account'}
+                  {mock ? t('dashboard.cards.mockNote') : t('dashboard.cards.liveNote')}
                 </p>
               </div>
             </div>
@@ -220,12 +241,14 @@ export function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               <div className="lg:col-span-8 space-y-5">
                 <div className="flex items-center justify-between border-b border-ink/14 pb-2">
-                  <h2 className="font-headline text-xl font-bold text-ink">Recent projects</h2>
+                  <h2 className="font-headline text-xl font-bold text-ink">
+                    {t('dashboard.recent.title')}
+                  </h2>
                   <Link
                     to="/app/projects"
                     className="text-xs font-medium text-brick hover:underline inline-flex items-center gap-1"
                   >
-                    <span>View all projects</span>
+                    <span>{t('dashboard.recent.viewAll')}</span>
                     <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </Link>
                 </div>
@@ -245,7 +268,7 @@ export function DashboardPage() {
                             {project.name}
                           </div>
                           <div className="text-xs text-ink-soft">
-                            {project.notes || 'No notes added'}
+                            {project.notes || t('projects.noNotes')}
                           </div>
                         </Link>
                         <div className="flex items-center gap-4">
@@ -260,7 +283,7 @@ export function DashboardPage() {
                           />
                           <Link
                             to={`/app/projects/${project.id}`}
-                            aria-label={`Open ${project.name}`}
+                            aria-label={t('projects.openProject', { name: project.name })}
                             className="text-ink-soft hover:text-ink transition-colors focus-ring rounded"
                           >
                             <ChevronRight className="w-4 h-4" aria-hidden="true" />
@@ -270,33 +293,34 @@ export function DashboardPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-ink-soft">
-                    Your saved projects will be listed here after you save your first estimate.
-                  </p>
+                  <p className="text-xs text-ink-soft">{t('dashboard.recent.empty')}</p>
                 )}
 
                 <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-4 flex gap-3 items-start text-xs text-ink-soft">
                   <Lightbulb className="w-4 h-4 text-ochre flex-shrink-0 mt-0.5" aria-hidden="true" />
                   <p className="leading-relaxed">
-                    <strong className="text-ink">New to your notebook?</strong> Start with your total built-up area. You can refine material choices before saving a report.
+                    <strong className="text-ink">{t('dashboard.tip.title')}</strong>{' '}
+                    {t('dashboard.tip.body')}
                   </p>
                 </div>
               </div>
 
               <div className="lg:col-span-4 space-y-4">
                 <div className="bg-clay/50 border border-ink/14 rounded-lg p-5 space-y-3">
-                  <h3 className="font-headline text-lg font-bold text-ink">Before you commit</h3>
+                  <h3 className="font-headline text-lg font-bold text-ink">
+                    {t('dashboard.side.title')}
+                  </h3>
                   <p className="text-xs text-ink-soft leading-relaxed">
-                    Keep a contingency before you commit. Site conditions and final drawings can change your budget.
+                    {t('dashboard.side.body')}
                   </p>
                   <p className="text-[11px] text-ink-soft leading-relaxed border-t border-ink/10 pt-2">
-                    Land, statutory approvals, professional fees and external works are outside these estimates.
+                    {t('dashboard.side.note')}
                   </p>
                   <Link
                     to="/materials"
                     className="inline-flex items-center gap-1.5 text-xs font-medium text-brick hover:underline pt-1"
                   >
-                    <span>Read the material guide</span>
+                    <span>{t('dashboard.side.link')}</span>
                     <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </Link>
                 </div>

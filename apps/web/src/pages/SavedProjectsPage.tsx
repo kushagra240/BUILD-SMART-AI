@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, ChevronRight, FolderX } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
@@ -13,6 +14,7 @@ export function SavedProjectsPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const { items, total, status, error, reload, remove } = useProjects();
   const mock = isMockApi();
+  const { t } = useTranslation();
 
   const query = search.trim().toLowerCase();
   const filtered = items.filter((project) => {
@@ -38,15 +40,17 @@ export function SavedProjectsPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
-                YOUR BUILDING NOTEBOOK / {String(total).padStart(2, '0')} PROJECTS
+                {t('projects.kicker', {
+                  projectCount: String(total).padStart(2, '0'),
+                })}
               </span>
-              {mock && <SampleDataBadge text="Sample data" />}
+              {mock && <SampleDataBadge text={t('projects.sampleData')} />}
             </div>
             <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-              Every idea, kept in one place.
+              {t('projects.title')}
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft font-sans">
-              Return to your projects, review your notes and keep a record as plans take shape.
+              {t('projects.subtitle')}
             </p>
           </div>
 
@@ -55,7 +59,7 @@ export function SavedProjectsPage() {
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors whitespace-nowrap focus-ring"
           >
             <Plus className="w-4 h-4" />
-            <span>Start a new estimate</span>
+            <span>{t('projects.startNewEstimate')}</span>
           </Link>
         </div>
 
@@ -68,10 +72,10 @@ export function SavedProjectsPage() {
           </div>
         )}
 
-        {status === 'loading' && <LoadingState label="Loading your saved projects…" />}
+        {status === 'loading' && <LoadingState label={t('projects.loading')} />}
 
         {status === 'error' && (
-          <ErrorState message={error ?? 'Could not load your projects'} onRetry={reload} />
+          <ErrorState message={error ?? t('projects.loadError')} onRetry={reload} />
         )}
 
         {status === 'success' && (
@@ -85,8 +89,8 @@ export function SavedProjectsPage() {
                 />
                 <input
                   type="text"
-                  aria-label="Search projects by name or notes"
-                  placeholder="Search by name or notes"
+                  aria-label={t('projects.searchLabel')}
+                  placeholder={t('projects.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 bg-paper border border-ink/14 rounded-md text-xs text-ink placeholder:text-ink-soft focus-ring font-sans"
@@ -94,80 +98,80 @@ export function SavedProjectsPage() {
               </div>
             </div>
 
-            {/* Projects Table or Empty State */}
+            {/* Projects grid or Empty State */}
             {filtered.length > 0 ? (
-              <div className="border border-ink/14 rounded-lg overflow-hidden bg-paper shadow-card">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-paper-deep/70 text-ink-soft font-mono uppercase text-[10px] tracking-wider border-b border-ink/14">
-                      <tr>
-                        <th scope="col" className="py-3 px-4 font-semibold">Project</th>
-                        <th scope="col" className="py-3 px-4 font-semibold">Created</th>
-                        <th scope="col" className="py-3 px-4 font-semibold">Updated</th>
-                        <th scope="col" className="py-3 px-4 text-center font-semibold">Open</th>
-                        <th scope="col" className="py-3 px-4 text-center font-semibold">Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ink/10 font-sans">
-                      {filtered.map((project) => (
-                        <tr
-                          key={project.id}
-                          className="hover:bg-paper-deep/40 transition-colors group"
-                        >
-                          <td className="py-3.5 px-4">
-                            <Link
-                              to={`/app/projects/${project.id}`}
-                              className="block focus-ring rounded"
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {filtered.map((project) => {
+                    const nameId = `project-name-${project.id}`;
+                    return (
+                      <article
+                        key={project.id}
+                        aria-labelledby={nameId}
+                        className="group flex flex-col justify-between rounded-lg border border-ink/14 bg-paper p-4 shadow-card transition-colors hover:border-brick/40"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 space-y-1">
+                            <h2
+                              id={nameId}
+                              className="break-words font-headline text-sm font-semibold text-ink"
                             >
-                              <div className="font-semibold text-sm text-ink group-hover:text-brick transition-colors">
+                              <Link
+                                to={`/app/projects/${project.id}`}
+                                className="rounded transition-colors group-hover:text-brick focus-ring"
+                              >
                                 {project.name}
-                              </div>
-                              <div className="text-[11px] text-ink-soft max-w-md truncate">
-                                {project.notes || 'No notes added'}
-                              </div>
-                            </Link>
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-ink-soft">
-                            {formatDate(project.created_at)}
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-ink-soft">
-                            {formatDateTime(project.updated_at)}
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <Link
-                              to={`/app/projects/${project.id}`}
-                              className="inline-flex items-center justify-center p-1.5 rounded hover:bg-paper-deep text-ink-soft hover:text-brick transition-colors focus-ring"
-                              aria-label={`Open ${project.name}`}
-                            >
-                              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-                            </Link>
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <DeleteProjectButton
-                              projectId={project.id}
-                              projectName={project.name}
-                              onDelete={handleDelete}
-                              onError={setActionError}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              </Link>
+                            </h2>
+                            <p className="line-clamp-2 break-words text-xs text-ink-soft">
+                              {project.notes || t('projects.noNotes')}
+                            </p>
+                          </div>
+                          <Link
+                            to={`/app/projects/${project.id}`}
+                            className="inline-flex shrink-0 items-center justify-center rounded p-1.5 text-ink-soft transition-colors hover:bg-paper-deep hover:text-brick focus-ring"
+                            aria-label={t('projects.openProject', { name: project.name })}
+                          >
+                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                          </Link>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-ink/10 pt-3">
+                          <dl className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px] text-ink-soft">
+                            <div>
+                              <dt className="uppercase tracking-wider">{t('projects.created')}</dt>
+                              <dd className="text-ink">{formatDate(project.created_at)}</dd>
+                            </div>
+                            <div>
+                              <dt className="uppercase tracking-wider">{t('projects.updated')}</dt>
+                              <dd className="text-ink">{formatDateTime(project.updated_at)}</dd>
+                            </div>
+                          </dl>
+                          <DeleteProjectButton
+                            projectId={project.id}
+                            projectName={project.name}
+                            onDelete={handleDelete}
+                            onError={setActionError}
+                            variant="button"
+                          />
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
 
-                {/* Table Footer */}
-                <div className="bg-paper-deep/40 border-t border-ink/14 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-soft font-mono">
+                {/* Results footer */}
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-ink/14 bg-paper-deep/40 px-4 py-2.5 font-mono text-xs text-ink-soft">
                   <span>
-                    Showing {filtered.length} of {total} saved projects
+                    {t('projects.showing', { shown: filtered.length, total })}
                   </span>
                   {query !== '' && (
                     <button
                       type="button"
                       onClick={() => setSearch('')}
-                      className="text-brick hover:underline focus-ring rounded"
+                      className="rounded text-brick hover:underline focus-ring"
                     >
-                      Clear search
+                      {t('projects.clearSearch')}
                     </button>
                   )}
                 </div>
@@ -181,19 +185,19 @@ export function SavedProjectsPage() {
                   {query !== '' ? (
                     <>
                       <h2 className="font-headline text-lg font-bold text-ink">
-                        No projects match “{search}”.
+                        {t('projects.noMatchesTitle', { query: search })}
                       </h2>
                       <p className="text-xs text-ink-soft">
-                        Try another name or piece of notes, or clear your search.
+                        {t('projects.noMatchesBody')}
                       </p>
                     </>
                   ) : (
                     <>
                       <h2 className="font-headline text-lg font-bold text-ink">
-                        No saved projects yet.
+                        {t('projects.emptyTitle')}
                       </h2>
                       <p className="text-xs text-ink-soft">
-                        Start an estimate to create your first project. It will appear here once saved.
+                        {t('projects.emptyBody')}
                       </p>
                     </>
                   )}
@@ -204,7 +208,7 @@ export function SavedProjectsPage() {
                     onClick={() => setSearch('')}
                     className="px-4 py-2 rounded-md bg-paper border border-ink/14 text-xs font-medium text-ink hover:bg-paper-deep transition-colors focus-ring"
                   >
-                    Clear search
+                    {t('projects.clearSearch')}
                   </button>
                 ) : (
                   <Link
@@ -212,7 +216,7 @@ export function SavedProjectsPage() {
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
                   >
                     <Plus className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>Start a new estimate</span>
+                    <span>{t('projects.startNewEstimate')}</span>
                   </Link>
                 )}
               </div>
@@ -223,9 +227,9 @@ export function SavedProjectsPage() {
         {hasProjects && (
           <div className="bg-clay/40 border border-ink/14 rounded-lg p-4 text-xs text-ink-soft leading-relaxed space-y-1">
             <strong className="text-ink font-sans">
-              Your estimates are planning records, not quotations:
+              {t('projects.disclaimerTitle')}
             </strong>{' '}
-            Amounts use the area and quality selected when saved. Review assumptions and obtain fresh local quotations before making decisions.
+            {t('projects.disclaimerBody')}
           </div>
         )}
       </div>

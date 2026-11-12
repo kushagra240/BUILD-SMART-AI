@@ -11,4 +11,16 @@ describe('App Component', () => {
     expect(screen.getByText(/Start 4-Step Estimate Wizard/i)).toBeInTheDocument();
     expect(screen.getAllByTestId('sample-data-badge').length).toBeGreaterThan(0);
   });
+
+  it('falls through to the not-found page for the removed /pdf route', () => {
+    window.history.pushState({}, '', '/pdf');
+    try {
+      render(<App />);
+      expect(
+        screen.getByRole('heading', { name: /Page not found in your notebook/i })
+      ).toBeInTheDocument();
+    } finally {
+      window.history.pushState({}, '', '/');
+    }
+  });
 });

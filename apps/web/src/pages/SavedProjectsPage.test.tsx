@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SavedProjectsPage } from './SavedProjectsPage';
 import { apiClient, ApiError } from '../services/apiClient';
+import i18n from '../i18n';
 
 const projects = [
   {
@@ -41,7 +42,7 @@ describe('SavedProjectsPage projects', () => {
   });
 
   it('loads projects and filters by name or notes', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: projects, total: 2 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: projects, total: 2 });
 
     renderPage();
 
@@ -59,7 +60,7 @@ describe('SavedProjectsPage projects', () => {
 
   it('shows the API error and retries', async () => {
     const listSpy = vi
-      .spyOn(apiClient, 'listProjects')
+      .spyOn(apiClient, 'getProjects')
       .mockRejectedValueOnce(new ApiError(500, 'INTERNAL_SERVER_ERROR', 'Project service down'))
       .mockResolvedValueOnce({ items: [], total: 0 });
 
@@ -73,7 +74,7 @@ describe('SavedProjectsPage projects', () => {
   });
 
   it('deletes a project after confirmation', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: projects, total: 2 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: projects, total: 2 });
     const deleteSpy = vi.spyOn(apiClient, 'deleteProject').mockResolvedValue();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
@@ -89,16 +90,48 @@ describe('SavedProjectsPage projects', () => {
     expect(screen.getByText('Showing 1 of 1 saved projects')).toBeInTheDocument();
   });
 
+  it('renders each project as a card that links to its detail page', async () => {
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: projects, total: 2 });
+
+    renderPage();
+
+    expect(
+      await screen.findByRole('heading', { name: 'Deshmukh residence' })
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+    expect(screen.getByRole('link', { name: 'Deshmukh residence' })).toHaveAttribute(
+      'href',
+      `/app/projects/${projects[0].id}`
+    );
+  });
+
   it('shows an empty state when the user has no projects', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: [], total: 0 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [], total: 0 });
 
     renderPage();
 
     expect(await screen.findByText('No saved projects yet.')).toBeInTheDocument();
   });
 
+  it('translates the dashboard empty state into Hindi', async () => {
+    await i18n.changeLanguage('hi');
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [], total: 0 });
+
+    renderPage();
+
+    expect(
+      await screen.findByText('अभी कोई सहेजा हुआ प्रोजेक्ट नहीं है।')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('प्रोजेक्ट्स को नाम या नोट्स से खोजें')
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('link', { name: 'नया अनुमान शुरू करें' })
+    ).toHaveLength(2);
+  });
+
   it('keeps the row and reports a failed delete', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: projects, total: 2 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: projects, total: 2 });
     vi.spyOn(apiClient, 'deleteProject').mockRejectedValue(
       new ApiError(500, 'INTERNAL_SERVER_ERROR', 'Delete failed')
     );

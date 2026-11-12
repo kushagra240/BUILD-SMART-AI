@@ -1,4 +1,5 @@
 import type { components } from '../types/api.generated';
+import { MOCK_META_OPTIONS } from './mockApi';
 
 export type UserResponse = components['schemas']['UserResponse'];
 export type TokenResponse = components['schemas']['TokenResponse'];
@@ -8,6 +9,7 @@ export type ProjectResponse = components['schemas']['ProjectResponse'];
 export type ProjectListResponse = components['schemas']['ProjectListResponse'];
 export type EstimateCreate = components['schemas']['EstimateCreate'];
 export type EstimateResponse = components['schemas']['EstimateResponse'];
+export type EstimateZone = { id: string; name: string };
 
 /**
  * Mock mode is opt-out: the app runs against the simulated API unless the
@@ -175,7 +177,8 @@ class ApiClient {
     this.unauthorizedHandler?.();
   }
 
-  private async send<T>(path: string, options: RequestInit = {}): Promise<T> {
+  /** Perform the request with auth headers; throws on any non-2xx response. */
+  private async sendRaw(path: string, options: RequestInit = {}): Promise<Response> {
     const headers: Record<string, string> = {
       ...(options.headers as Record<string, string>),
     };
@@ -198,6 +201,12 @@ class ApiClient {
       throw await ApiError.fromResponse(response);
     }
 
+    return response;
+  }
+
+  private async send<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const response = await this.sendRaw(path, options);
+
     if (response.status === 204) {
       return {} as T;
     }
@@ -205,13 +214,14 @@ class ApiClient {
     return response.json() as Promise<T>;
   }
 
-  private async request<T>(
+  /** Run a request, rotating the session once when the access token expired. */
+  private async fetchWithRetry(
     path: string,
     options: RequestInit = {},
     allowRetry = true
-  ): Promise<T> {
+  ): Promise<Response> {
     try {
-      return await this.send<T>(path, options);
+      return await this.sendRaw(path, options);
     } catch (error) {
       // Only credential/session endpoints must not trigger a refresh; /auth/me
       // still deserves a refresh-and-retry when the access token expires.
@@ -232,10 +242,52 @@ class ApiClient {
           this.notifyUnauthorized();
           throw error;
         }
-        return this.send<T>(path, options);
+        return this.sendRaw(path, options);
       }
       throw error;
     }
+  }
+
+  private async request<T>(
+    path: string,
+    options: RequestInit = {},
+    allowRetry = true
+  ): Promise<T> {
+    const response = await this.fetchWithRetry(path, options, allowRetry);
+
+    if (response.status === 204) {
+      return {} as T;
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  /**
+   * Read a binary body. `request` always parses JSON, so binary endpoints need
+   * their own read path; the estimate PDF is the only one today.
+   *
+   * A response that is 2xx but not `application/pdf` is rejected instead of
+   * being handed to the browser, because a dev/proxy fallback would otherwise
+   * download an HTML page as "report.pdf".
+   */
+  private async requestBlob(
+    path: string,
+    options: RequestInit = {},
+    allowRetry = true
+  ): Promise<Blob> {
+    const response = await this.fetchWithRetry(path, options, allowRetry);
+    const contentType = (response.headers.get('content-type') ?? '').toLowerCase();
+
+    if (!contentType.includes('application/pdf')) {
+      throw new ApiError(
+        response.status,
+        'NOT_A_PDF',
+        `Expected a PDF but the server returned "${contentType || 'no content type'}". ` +
+          'The PDF export endpoint may not be deployed yet.'
+      );
+    }
+
+    return response.blob();
   }
 
   // Auth flows
@@ -338,7 +390,8 @@ class ApiClient {
   }
 
   // Projects flows
-  async listProjects(): Promise<ProjectListResponse> {
+  /** GET /projects -> the signed-in user's saved projects. */
+  async getProjects(): Promise<ProjectListResponse> {
     if (isMockApi()) {
       return {
         items: MOCK_PROJECTS,
@@ -348,6 +401,11 @@ class ApiClient {
     return this.request<ProjectListResponse>('/projects', {
       method: 'GET',
     });
+  }
+
+  /** Older name for {@link getProjects}; kept so existing callers keep working. */
+  async listProjects(): Promise<ProjectListResponse> {
+    return this.getProjects();
   }
 
   async createProject(req: components['schemas']['ProjectCreate']): Promise<ProjectResponse> {
@@ -397,6 +455,20 @@ class ApiClient {
   }
 
   // Estimate flows
+  async getEstimateZones(): Promise<EstimateZone[]> {
+    if (isMockApi()) {
+      return MOCK_META_OPTIONS.zones.map((zone) => ({
+        id: zone.zone_id,
+        name: zone.zone_name,
+      }));
+    }
+    const response = await this.request<components['schemas']['MetaOptionsResponse']>(
+      '/meta/options',
+      { method: 'GET' }
+    );
+    return response.zones.map((zone) => ({ id: zone.id, name: zone.name }));
+  }
+
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
     if (isMockApi()) {
       const area = req.built_up_area_sqft;
@@ -466,6 +538,21 @@ class ApiClient {
       });
     }
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Download the generated PDF for a saved estimate as a Blob.
+   *
+   * GET /projects/{projectId}/estimates/{estimateId}/pdf -> application/pdf
+   *
+   * The backend PDF service (board task T17) is not built yet, so non-mock mode
+   * currently fails with the server's own error, or with NOT_A_PDF if the dev
+   * server answers with its SPA HTML fallback.
+   */
+  async downloadEstimatePdf(projectId: string, estimateId: string): Promise<Blob> {
+    return this.requestBlob(`/projects/${projectId}/estimates/${estimateId}/pdf`, {
       method: 'GET',
     });
   }

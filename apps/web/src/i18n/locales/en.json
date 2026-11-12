@@ -1,0 +1,686 @@
+{
+  "app": {
+    "title": "BuildSmart AI — Intelligent Construction Cost Estimation"
+  },
+  "common": {
+    "sampleData": "Sample data",
+    "sampleDataPrototype": "Sample data · Prototype",
+    "mockAuth": "Mock auth",
+    "loading": "Loading…",
+    "notProvided": "Not provided",
+    "notCalculated": "Not calculated",
+    "notCalculatedYet": "Not calculated yet",
+    "sqFt": "sq ft",
+    "required": "* Required fields",
+    "lakh": "Lakh",
+    "crore": "Cr"
+  },
+  "schematic": {
+    "only": "SCHEMATIC ONLY · NOT A FLOOR PLAN",
+    "aria": "Schematic two-floor house elevation",
+    "groundFloor": "Ground floor",
+    "firstFloor": "First floor",
+    "totalBuiltUp": "Total built-up",
+    "defaultGround": "900 sq ft",
+    "defaultFirst": "900 sq ft",
+    "defaultTotal": "1,800 sq ft"
+  },
+  "footer": {
+    "tagline": "Thoughtful budgets, before you build.",
+    "region": "Pune Region (P10–P90 Ranges)",
+    "indicative": "Indicative estimates · Not a contractor quotation"
+  },
+  "mockBanner": {
+    "aria": "Demo mode disclaimer banner",
+    "label": "Demo Mode (Mock API):",
+    "body": "Running with simulated Pune planning data. All figures are round estimates."
+  },
+  "nav": {
+    "homeAria": "BuildSmart AI home",
+    "context": "HOUSE CONSTRUCTION / PUNE, INDIA",
+    "overview": "Overview",
+    "newEstimate": "New estimate",
+    "savedProjects": "Saved projects",
+    "materialsGuide": "Materials guide",
+    "methodology": "Methodology",
+    "planningForPune": "Planning for Pune",
+    "subNavigation": "Sub navigation",
+    "toggleMenu": "Toggle navigation menu",
+    "projectOverview": "Project overview",
+    "signedInAs": "Signed in as {{name}}",
+    "logout": "Log out",
+    "login": "Log in",
+    "register": "Register",
+    "checkingSession": "Checking session…"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिंदी",
+    "mr": "मराठी"
+  },
+  "auth": {
+    "checkingSession": "Checking your session…",
+    "shared": {
+      "emailLabel": "Email address",
+      "emailPlaceholder": "name@example.com",
+      "passwordLabel": "Password",
+      "passwordMinHint": "Min 10 characters",
+      "passwordPlaceholder": "••••••••••",
+      "errors": {
+        "emailInvalid": "Please enter a valid email address",
+        "passwordMin": "Password must be at least 10 characters long"
+      },
+      "securityLogin": "Argon2id password hashing · HTTP-only cookie rotation",
+      "securityRegister": "Strict privacy: No telemetry, no selling of site queries"
+    },
+    "login": {
+      "title": "Welcome back.",
+      "subtitle": "Sign in to access your saved building notebook and project estimates.",
+      "submit": "Sign in to notebook",
+      "submitting": "Authenticating...",
+      "failed": "Login failed",
+      "demoMode": "Demo mode active",
+      "footerPrompt": "Don't have a building notebook yet?",
+      "footerLink": "Create an account"
+    },
+    "register": {
+      "title": "Create your notebook.",
+      "subtitle": "Save estimates, compare quality tiers, and track your house project plans.",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "e.g. Aniket Deshmukh",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Register notebook",
+      "submitting": "Creating notebook...",
+      "failed": "Registration failed",
+      "errors": {
+        "fullNameMin": "Full name must be at least 2 characters",
+        "passwordMismatch": "Passwords do not match"
+      },
+      "footerPrompt": "Already have a notebook?",
+      "footerLink": "Sign in"
+    }
+  },
+  "wizard": {
+    "kicker": "NEW ESTIMATE / STEP 0{{step}}",
+    "loading": "Loading options...",
+    "errors": {
+      "loadZones": "Could not load location zones",
+      "calculateTitle": "Could not calculate the estimate",
+      "calculateFallback": "Could not calculate this estimate. Please try again."
+    },
+    "headings": {
+      "step1": "Tell us about the home you have in mind.",
+      "step2": "Choose how you want to build."
+    },
+    "subtitles": {
+      "step1": "Start with the site and size. Approximate measurements are fine for a first estimate.",
+      "step2": "A few practical choices set the starting budget. You can revise these later."
+    },
+    "steps": {
+      "projectSite": "Project & site",
+      "preferences": "Construction preferences",
+      "estimate": "Your estimate"
+    },
+    "sections": {
+      "projectLocation": "Project & location",
+      "areaFloors": "Area & floors",
+      "quality": "Construction quality",
+      "structure": "Structure & finishes",
+      "coverage": "What this budget covers"
+    },
+    "fields": {
+      "projectName": "Project name",
+      "projectNamePlaceholder": "e.g. Deshmukh residence",
+      "city": "City",
+      "fixedRegion": "Fixed region",
+      "locality": "Locality",
+      "zone": "Location zone *",
+      "zonePlaceholder": "Select a zone",
+      "builtUpArea": "Total built-up area *",
+      "plotArea": "Plot area",
+      "floors": "Number of floors *",
+      "approxPerFloor": "Approx. built-up per floor",
+      "bedrooms": "Bedrooms *",
+      "bathrooms": "Bathrooms *",
+      "structuralSystem": "Structural system",
+      "walling": "Walling preference",
+      "flooring": "Flooring",
+      "windows": "Windows"
+    },
+    "hints": {
+      "zone": "Zones come from the BuildSmart options endpoint and are used for labour rates.",
+      "planningAssumption": "This estimate uses illustrative Pune planning assumptions, not verified live rates.",
+      "addAllFloors": "Add the built-up area of every floor.",
+      "plotOptional": "Optional. Land area is not used to price construction.",
+      "structure": "Floor structure, member sizes and material specifications need an engineer's design."
+    },
+    "floors": {
+      "ground": "Ground only · 1 floor",
+      "g1": "G + 1 · Ground + first",
+      "g2": "G + 2 · Ground + 2 floors",
+      "g3": "G + 3 · Ground + 3 floors",
+      "perFloorFormula_one": "{{area}} sq ft ÷ {{count}} floor",
+      "perFloorFormula_other": "{{area}} sq ft ÷ {{count}} floors"
+    },
+    "areaCallout": {
+      "title": "Area is not the same as plot size.",
+      "body": "Your {{plot}} sq ft plot may hold {{built}} sq ft across floors. This estimate uses the total {{built}} sq ft, not {{plot}} sq ft."
+    },
+    "requiredNote": "* Required fields · Your estimate is not saved yet",
+    "actions": {
+      "continue": "Continue to preferences",
+      "back": "Back to project details",
+      "calculate": "Calculate estimate",
+      "calculating": "Calculating..."
+    },
+    "side": {
+      "measureTitle": "Measure the whole home",
+      "measureBody": "Include the covered area of all floors, including walls. Do not add open terraces or gardens. Confirm area definitions with your architect.",
+      "nextTitle": "What happens next",
+      "nextBody": "Choose a construction quality and finishes. We'll outline nine cost categories and practical material options.",
+      "nextNote": "No site visit or structural assessment is included."
+    },
+    "quality": {
+      "perSqFt": "per sq ft · planning assumption",
+      "economyDesc": "Simple, durable essentials",
+      "standardDesc": "Balanced everyday comfort",
+      "premiumDesc": "Higher-spec finishes",
+      "note": "Illustrative rates include a 5% contingency. They are not supplier quotes or current verified market rates."
+    },
+    "coverage": {
+      "includedTitle": "INCLUDED IN THIS ESTIMATE",
+      "included1": "Civil structure and basic finishes",
+      "included2": "Electrical and plumbing works",
+      "included3": "Standard sanitary fixtures",
+      "included4": "5% contingency allowance",
+      "excludedTitle": "BUDGET SEPARATELY",
+      "excluded1": "Land and statutory approval fees",
+      "excluded2": "Architect and professional fees",
+      "excluded3": "Compound wall, landscaping, external works",
+      "excluded4": "Furniture, modular kitchen, lift and solar"
+    },
+    "summary": {
+      "ready": "READY TO ESTIMATE",
+      "building": "Building",
+      "totalBuiltUp": "Total built-up",
+      "plotArea": "Plot area",
+      "quality": "Quality",
+      "planningRate": "Planning rate",
+      "floorsValue_one": "G+{{above}} · {{count}} floor",
+      "floorsValue_other": "G+{{above}} · {{count}} floors",
+      "formula": "{{area}} sq ft × ₹{{rate}} / sq ft",
+      "totalNote": "Preliminary total, including contingency",
+      "assumptionTitle": "A sound starting assumption",
+      "assumptionBody": "Assumes a regular site, normal foundations and no basement. Soil conditions and access can affect costs."
+    },
+    "localities": {
+      "baner": "Baner (West Pune)",
+      "kothrud": "Kothrud (West Pune)",
+      "bavdhan": "Bavdhan (West Pune)",
+      "wagholi": "Wagholi (East Pune)",
+      "kharadi": "Kharadi (East Pune)",
+      "wakad": "Wakad (PCMC / North-West)",
+      "aundh": "Aundh (Central-West)"
+    },
+    "options": {
+      "walling": {
+        "aac_blocks": "AAC block masonry",
+        "red_clay": "Red clay brick",
+        "fly_ash": "Fly ash brick"
+      },
+      "flooring": {
+        "vitrified_standard": "Standard vitrified tiles",
+        "vitrified_large": "Large format vitrified tiles",
+        "ceramic": "Ceramic tiles"
+      },
+      "windows": {
+        "upvc_standard": "uPVC, standard glazing",
+        "aluminium_anodized": "Aluminium, anodized basic",
+        "wooden_teak": "Engineered wood frame"
+      }
+    },
+    "validation": {
+      "projectName": "Enter a project name",
+      "builtUpAreaRequired": "Enter an area greater than 0 sq ft",
+      "builtUpAreaRange": "Built-up area must be between 300 and 10,000 sq ft",
+      "floors": "Select number of floors",
+      "bedrooms": "Enter a bedroom count between 1 and 20",
+      "bathrooms": "Enter a bathroom count between 1 and 20",
+      "zone": "Choose a location zone"
+    }
+  },
+  "results": {
+    "estimateKicker": "ESTIMATE {{id}}",
+    "projectEstimateKicker": "{{project}} · ESTIMATE {{id}}",
+    "title": "Your home, in numbers.",
+    "subtitle": {
+      "floorCount_one": "{{count}} floor",
+      "floorCount_other": "{{count}} floors",
+      "area": "{{area}} sq ft total built-up",
+      "quality": "{{quality}} quality",
+      "zone": "{{zone}} zone"
+    },
+    "steps": {
+      "projectSite": "Project & site",
+      "preferences": "Preferences",
+      "estimate": "Your estimate"
+    },
+    "mockBadge": "Mock / stub data",
+    "download": "Download PDF",
+    "generating": "Generating PDF…",
+    "savedProjects": "Saved projects",
+    "pdfError": {
+      "title": "PDF export failed.",
+      "body": "The estimate above is still valid. Try the download again in a moment."
+    },
+    "mockWarning": {
+      "title": "Mock / stub data:",
+      "body": "These figures come from the development stub engine. They are placeholders, not real sourced rates, and must not be used for budgeting or contractor discussions."
+    },
+    "kpi": {
+      "indicative": "INDICATIVE · NOT A QUOTE",
+      "confidence": "Confidence: {{label}} · {{reason}}",
+      "planningRate": "PLANNING RATE",
+      "perSqFt": "/ sq ft",
+      "planningRange": "Planning range: {{low}} – {{high}}",
+      "rangeNote": "Range returned by the estimate service. A planning band, not a guaranteed price.",
+      "totalBuiltUp": "TOTAL BUILT-UP AREA",
+      "builtUpMeta_one": "{{count}} floor · {{construction}}",
+      "builtUpMeta_other": "{{count}} floors · {{construction}}"
+    },
+    "breakdown": {
+      "title": "Where the budget goes",
+      "meta": "{{count}} categories · {{share}}% allocated",
+      "chartAria": "Cost allocation chart across estimate categories",
+      "costCategory": "Cost Category",
+      "share": "Share",
+      "amount": "Amount",
+      "total": "Total indicative estimate",
+      "note": "Category amounts are returned by the estimate service and may include materials and labour allowances. They are not itemised contractor rates."
+    },
+    "materials": {
+      "title": "Material recommendations",
+      "openGuide": "Open the material guide",
+      "specification": "Specification",
+      "primary": "Primary",
+      "alternative": "Alternative",
+      "noSpec": "No specification fields were returned for this material.",
+      "none": "No material recommendations were returned for this estimate.",
+      "disclaimer": "Shown exactly as returned by the estimate service. Generic specifications, not a brand endorsement or a supplier quotation.",
+      "comparisonLabel": "{{category}} primary and alternative specification"
+    },
+    "serviceNote": "Estimate service note:",
+    "inputs": {
+      "title": "Estimate inputs",
+      "construction": "Construction",
+      "quality": "Quality tier",
+      "zone": "Zone",
+      "floors": "Floors",
+      "bedrooms": "Bedrooms",
+      "bathrooms": "Bathrooms",
+      "plotArea": "Plot area",
+      "budget": "Budget",
+      "prepared": "Prepared {{date}}",
+      "model": "Model {{version}} · Data {{dataVersion}}"
+    },
+    "drivers": {
+      "title": "Cost drivers"
+    },
+    "notIncluded": {
+      "title": "Not included",
+      "item1": "Land cost, approvals and statutory fees; architect, engineer and professional fees.",
+      "item2": "Compound wall, landscaping and other external site works.",
+      "item3": "Furniture, modular kitchen, lift, solar systems and major utility connections are also excluded."
+    },
+    "budget": {
+      "notProvided": "Not provided",
+      "within": "Within budget",
+      "above": "Above estimate by {{amount}}",
+      "short": "{{status}} · short by {{amount}}",
+      "status": {
+        "tight": "Tight",
+        "below_minimum": "Below Minimum"
+      }
+    },
+    "loading": "Loading estimate…",
+    "errors": {
+      "load": "Could not load this estimate",
+      "pdf": "Could not generate the PDF"
+    },
+    "backDashboard": "Back to dashboard",
+    "startNewEstimate": "Start a new estimate"
+  },
+  "dashboard": {
+    "kicker": "YOUR BUILDING NOTEBOOK",
+    "title": "A starting point for your building budget.",
+    "welcome": "Welcome back, {{name}}. Make room for the home you have in mind.",
+    "welcomePlain": "Make room for the home you have in mind.",
+    "loading": "Loading your projects…",
+    "errors": {
+      "load": "Could not load your projects"
+    },
+    "latest": {
+      "label": "LATEST PROJECT",
+      "noNotes": "No notes added to this project yet.",
+      "created": "Created",
+      "updated": "Last updated",
+      "estimate": "Estimate",
+      "notCalculated": "Not calculated yet",
+      "open": "Open project",
+      "imageCaption": "A home begins with a plan. Reference image, not your proposed design."
+    },
+    "empty": {
+      "title": "No saved projects yet.",
+      "body": "Start an estimate to create your first project. It will appear here once saved."
+    },
+    "cards": {
+      "projects": "Saved projects",
+      "projectsCount_one": "One project in your notebook",
+      "projectsCount_other": "Projects kept in your notebook",
+      "latest": "Latest project",
+      "noneYet": "None yet",
+      "updated": "Updated {{date}}",
+      "createPrompt": "Create a project to get started",
+      "dataSource": "Data source",
+      "mockApi": "Mock API",
+      "liveApi": "Live API",
+      "mockNote": "Demo projects from the local mock service",
+      "liveNote": "Synced with your BuildSmart account"
+    },
+    "recent": {
+      "title": "Recent projects",
+      "viewAll": "View all projects",
+      "empty": "Your saved projects will be listed here after you save your first estimate."
+    },
+    "tip": {
+      "title": "New to your notebook?",
+      "body": "Start with your total built-up area. You can refine material choices before saving a report."
+    },
+    "side": {
+      "title": "Before you commit",
+      "body": "Keep a contingency before you commit. Site conditions and final drawings can change your budget.",
+      "note": "Land, statutory approvals, professional fees and external works are outside these estimates.",
+      "link": "Read the material guide"
+    }
+  },
+  "projects": {
+    "kicker": "YOUR BUILDING NOTEBOOK / {{projectCount}} PROJECTS",
+    "title": "Every idea, kept in one place.",
+    "subtitle": "Return to your projects, review your notes and keep a record as plans take shape.",
+    "sampleData": "Sample data",
+    "startNewEstimate": "Start a new estimate",
+    "loading": "Loading your saved projects…",
+    "loadError": "Could not load your projects",
+    "searchLabel": "Search projects by name or notes",
+    "searchPlaceholder": "Search by name or notes",
+    "noNotes": "No notes added",
+    "created": "Created",
+    "updated": "Updated",
+    "openProject": "Open {{name}}",
+    "showing": "Showing {{shown}} of {{total}} saved projects",
+    "clearSearch": "Clear search",
+    "emptyTitle": "No saved projects yet.",
+    "emptyBody": "Start an estimate to create your first project. It will appear here once saved.",
+    "noMatchesTitle": "No projects match “{{query}}”.",
+    "noMatchesBody": "Try another name or piece of notes, or clear your search.",
+    "disclaimerTitle": "Your estimates are planning records, not quotations:",
+    "disclaimerBody": "Amounts use the area and quality selected when saved. Review assumptions and obtain fresh local quotations before making decisions.",
+    "delete": {
+      "aria": "Delete {{name}}",
+      "confirm": "Delete “{{name}}”? This removes it from your project list.",
+      "action": "Delete project",
+      "deleting": "Deleting…",
+      "error": "Could not delete this project"
+    }
+  },
+  "projectDetail": {
+    "kicker": "SAVED PROJECTS / {{id}}",
+    "createdUpdated": "Created {{created}} · Updated {{updated}}",
+    "allProjects": "All projects",
+    "record": "PROJECT RECORD",
+    "projectName": "Project name",
+    "created": "Created",
+    "lastUpdated": "Last updated",
+    "notes": "Notes",
+    "noNotes": "No notes have been added to this project yet.",
+    "loading": "Loading project…",
+    "backToProjects": "Back to saved projects",
+    "costEstimate": "Cost estimate",
+    "notCalculated": "Not calculated",
+    "noEstimateTitle": "No estimate has been generated for this project.",
+    "noEstimateBody": "Project details are saved, but cost estimation is not connected to this page yet. Start a new estimate when the estimation engine is available.",
+    "recordNoteTitle": "This record stays with your project:",
+    "recordNoteBody": "Project names and notes are stored against your account. Estimates and revisions will appear here once the estimation flow is wired to the backend.",
+    "schematicNote": "Schematic illustration only. Area, floors and setbacks are not stored on this project yet.",
+    "scopeTitle": "Scope stays important",
+    "scopeBody": "Assumes normal foundations, regular site access and no basement. Structural design and material specifications need professional review.",
+    "scopeExcluded": "Excluded: land, approvals and statutory fees, professional fees, external works, major utility connections, furniture, modular kitchen, lift and solar."
+  },
+  "landing": {
+    "kicker": "YOUR BUILDING NOTEBOOK · PUNE REGION",
+    "titleLead": "Intelligent Construction Cost Estimation for",
+    "titleAccent": "Pune Homes.",
+    "subtitle": "Enter your built-up area, floors, zone, and quality tier. Get a transparent total cost estimate with honest ranges, a 9-category breakdown, practical material recommendations, and a downloadable PDF.",
+    "cta": {
+      "start": "Start 4-Step Estimate Wizard",
+      "overview": "View Project Overview",
+      "methodology": "Methodology & Data"
+    },
+    "highlights": {
+      "categories": "9 Cost Categories",
+      "formatting": "Indian ₹ Formatting",
+      "ranges": "P10–P90 Range Bands"
+    },
+    "how": {
+      "kicker": "HOW BUILDSMART WORKS",
+      "title": "Three approaches, one sound foundation."
+    },
+    "features": {
+      "allocation": {
+        "title": "9-Category Cost Allocation",
+        "body": "Predicts realistic cost distributions across Foundation, RCC Structure, Masonry, Openings, Flooring, Services, and Contingency."
+      },
+      "zone": {
+        "title": "Pune Zone Calibration",
+        "body": "Accounts for local micro-market logistics and rate factors across Baner, Kothrud, Wagholi, Bavdhan, and PCMC."
+      },
+      "ranges": {
+        "title": "Honest Planning Ranges",
+        "body": "Displays statistical confidence intervals (P10 to P90), so you understand possible cost variations before drawings are finalized."
+      }
+    },
+    "notice": {
+      "title": "Before you commit to a budget",
+      "body": "Keep a contingency before you commit. Site conditions, soil tests, and final architectural drawings can change costs. Land, statutory approvals, professional fees, and external works are outside these estimates.",
+      "link": "Read material guide"
+    }
+  },
+  "materials": {
+    "kicker": "MATERIAL NOTEBOOK / DESHMUKH RESIDENCE",
+    "title": "Choose for the way you'll live.",
+    "subtitle": "Practical material recommendations for your Standard-quality home in Baner, Pune.",
+    "back": "Back to estimate",
+    "intro": {
+      "title": "Spend on the things you won't want to replace.",
+      "body": "Structure, concealed services and waterproofing deserve care at every budget. Let tiles, hardware and decorative finishes flex with your priorities."
+    },
+    "badges": {
+      "standard": "STANDARD SELECTED",
+      "spec": "G+1 · 1,800 SQ FT",
+      "total": "₹43,20,000 PLANNING TOTAL"
+    },
+    "monsoon": {
+      "title": "For Pune's monsoon and summer:",
+      "body": "Ask for terrace slopes, drainage and wet-area waterproofing details. Compare shaded windows and cross-ventilation before paying for decorative upgrades."
+    },
+    "moodboard": {
+      "wood": "Wood / Teak",
+      "clay": "Clay / Brick",
+      "upvc": "uPVC / Glass",
+      "caption": "Material study · Illustrative samples, not product specifications"
+    },
+    "table": {
+      "title": "Three approaches, one sound foundation",
+      "note": "Planning assumptions · not supplier availability",
+      "material": "Material / System",
+      "selected": "SELECTED",
+      "rate": "₹{{rate}}/sq ft · {{total}}",
+      "rateEconomy": "₹2,000/sq ft · ₹36L",
+      "rateStandard": "₹2,400/sq ft · ₹43.2L",
+      "ratePremium": "₹3,100/sq ft · ₹55.8L"
+    },
+    "rows": {
+      "structure": "Structure",
+      "walling": "Walling",
+      "flooring": "Flooring",
+      "doors": "Doors",
+      "windows": "Windows",
+      "electrical": "Electrical",
+      "plumbing": "Plumbing",
+      "paint": "Paint",
+      "waterproofing": "Waterproofing"
+    },
+    "cells": {
+      "structure": { "economy": "Engineered RCC; approved steel", "standard": "Engineered RCC; approved steel", "premium": "Engineered RCC; approved steel" },
+      "walling": { "economy": "Fly-ash bricks", "standard": "AAC blocks", "premium": "AAC blocks with upgraded detailing" },
+      "flooring": { "economy": "Basic ceramic / vitrified", "standard": "Standard vitrified", "premium": "Large-format vitrified / stone" },
+      "doors": { "economy": "Flush doors, basic hardware", "standard": "Flush doors, durable hardware", "premium": "Veneered doors, upgraded hardware" },
+      "windows": { "economy": "Aluminium, basic glazing", "standard": "uPVC, standard glazing", "premium": "Higher-spec fixative and glazing" },
+      "electrical": { "economy": "Copper wiring, basic switches", "standard": "Copper wiring, modular switches", "premium": "Copper wiring, embossed plates" },
+      "plumbing": { "economy": "CPVC / uPVC, basic fixtures", "standard": "CPVC / uPVC, standard fixtures", "premium": "CPVC / uPVC, premium fixtures" },
+      "paint": { "economy": "Basic interior emulsion", "standard": "Washable interior emulsion", "premium": "Higher-spec washable finishes" },
+      "waterproofing": { "economy": "Specified wet-area system", "standard": "Specified wet-area + roof detailing", "premium": "Specified system + embossed detailing" }
+    },
+    "footnote": "Each scenario includes a 5% contingency and the same emissions. Higher quality means finish and specification allowances—not a license to compromise structural safety at a lower budget.",
+    "reviews": {
+      "badge": "REVIEW",
+      "aac": {
+        "title": "AAC block walling",
+        "body": "Lower weight than conventional brick and useful thermal performance. Needs appropriate mortar, joint treatment and experienced workmanship.",
+        "note": "Ask your engineer about wall thickness, fixings and lintel-pocket detailing. Compare delivered and cost/piece locally."
+      },
+      "vitrified": {
+        "title": "Vitrified, not oversized",
+        "body": "Standard size vitrified tiles balance upkeep and cost. Large formats can add wastage and need flatter substrates and skilled installation.",
+        "note": "Choose slip-resistant surfaces for bathrooms and balconies. Review samples in daylight before selecting."
+      },
+      "details": {
+        "title": "Details before brands",
+        "body": "uPVC can be a low-maintenance window option. Frame quality, reinforcement, seals and installation matter as much as the material.",
+        "note": "Check drainage paths, shading and ventilation. Gather written specifications and warranties with your vendor."
+      }
+    },
+    "disclaimer": {
+      "title": "A recommendation is not a purchase specification:",
+      "body": "No supplier stock or availability is claimed. Obtain local quotations, verify codes, certifications, installation details and suitability with your architect or engineer before ordering."
+    }
+  },
+  "methodology": {
+    "kicker": "DOCUMENTATION & TRANSPARENCY",
+    "title": "Estimation Methodology & Data Strategy",
+    "subtitle": "Learn how BuildSmart AI models residential construction costs, allocates 9-category breakdowns, and maintains provenance without fabricating market data.",
+    "engine": {
+      "title": "Estimation Engine Architecture",
+      "bodyBefore": "The core prediction pipeline models",
+      "bodyAfter": "from primary architectural attributes: total built-up area, number of floors, Pune micro-zone location multiplier, and selected quality tier. It produces an indicative median estimate (P50) alongside 80% empirical quantile bounds (P10 to P90)."
+    },
+    "data": {
+      "title": "Data Strategy & Provenance Tags",
+      "intro": "In strict accordance with project honesty rules, every record in our datasets carries explicit provenance metadata:"
+    },
+    "tags": {
+      "real": "real_project",
+      "realBody": "Actual completed Pune residential projects used exclusively for gold evaluation holdout.",
+      "published": "published_rate_derived",
+      "publishedBody": "Rates derived from published municipal Schedule of Rates (SoR) and verified CPWD/PMC publications.",
+      "synthetic": "synthetic",
+      "syntheticBody": "Transparently labeled noise augmentation for range bounds validation (never presented as real)."
+    },
+    "categories": {
+      "title": "Nine Cost Breakdown Categories",
+      "total": "100% Total Sum",
+      "foundation": { "name": "Foundation", "desc": "Site clearance, excavation, footings, plinth beam and backfilling" },
+      "structure": { "name": "Structure", "desc": "Columns, beams, slabs, concrete grades and reinforcement steel" },
+      "masonry": { "name": "Masonry", "desc": "External & internal walls, AAC blockwork or brickwork, and plastering" },
+      "flooring": { "name": "Flooring", "desc": "Vitrified tiles, ceramic floor tiles, skirting, and waterproofing substrates" },
+      "roofing": { "name": "Roofing & Openings", "desc": "uPVC/aluminium windows, flush doors, hardware, and terrace parapet" },
+      "electrical": { "name": "Electrical", "desc": "Concealed copper wiring, distribution boards, modular switches, and earthing" },
+      "plumbing": { "name": "Plumbing", "desc": "CPVC water supply, PVC drainage, soil waste pipes, and sanitary fixtures" },
+      "finishing": { "name": "Finishing", "desc": "Interior primer and washable emulsion, exterior weather coat, and touch-ups" },
+      "labour": { "name": "Labour & Contingency", "desc": "General site allowance, minor variation reserve, and unexpected contingencies" }
+    },
+    "scope": {
+      "title": "Scope Boundaries & Professional Disclaimer",
+      "body": "BuildSmart AI provides preliminary planning guidance for Pune residential builds. It is strictly not a replacement for professional civil/structural calculations, architectural working drawings, soil tests, or binding contractor quotations.",
+      "cta": "Try estimate wizard"
+    }
+  },
+  "notFound": {
+    "title": "Page not found in your notebook.",
+    "body": "The requested page does not exist or has been moved. Use the options below to return to your saved estimates.",
+    "overview": "Project overview",
+    "newEstimate": "New estimate"
+  },
+  "errors": {
+    "pageTitle": "Could not load this page",
+    "tryAgain": "Try again",
+    "loading": "Loading…",
+    "loadZones": "Could not load location zones",
+    "calculateTitle": "Could not calculate the estimate",
+    "calculate": "Could not calculate this estimate. Please try again.",
+    "loginFailed": "Login failed",
+    "registrationFailed": "Registration failed",
+    "loadEstimate": "Could not load this estimate",
+    "pdf": "Could not generate the PDF",
+    "loadProjects": "Could not load your projects",
+    "loadProject": "Could not load this project",
+    "projectNotFound": "Project not found",
+    "deleteProject": "Could not delete this project"
+  },
+  "enum": {
+    "categories": {
+      "foundation": "Foundation",
+      "structure": "Structure",
+      "masonry": "Masonry",
+      "roofing": "Roofing",
+      "flooring": "Flooring",
+      "plumbing": "Plumbing",
+      "electrical": "Electrical",
+      "finishing": "Finishing",
+      "labour": "Labour",
+      "roofing_openings": "Roofing & Openings",
+      "labour_contingency": "Labour & Contingency"
+    },
+    "construction": {
+      "rcc_framed": "RCC framed structure",
+      "load_bearing": "Load-bearing masonry"
+    },
+    "quality": {
+      "economy": "Economy",
+      "standard": "Standard",
+      "premium": "Premium"
+    },
+    "zones": {
+      "pune_central": "Pune Central",
+      "pune_east": "East Pune",
+      "pune_west": "West & North-West Pune",
+      "pcmc": "Pimpri-Chinchwad (PCMC)",
+      "pune_south_peripheral": "South & Peripheral Pune"
+    },
+    "materialCategories": {
+      "cement": "Cement",
+      "steel_reinforcement": "Steel Reinforcement",
+      "masonry_blocks": "Masonry Blocks",
+      "flooring": "Flooring",
+      "paint_and_finishes": "Paint & Finishes",
+      "bricks_blocks": "Bricks / Blocks"
+    },
+    "budgetStatus": {
+      "not_provided": "Not provided",
+      "within": "Within budget",
+      "tight": "Tight",
+      "below_minimum": "Below Minimum"
+    }
+  }
+}

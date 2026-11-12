@@ -1,6 +1,8 @@
 import { AlertTriangle, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-export function LoadingState({ label = 'Loading…' }: { label?: string }) {
+export function LoadingState({ label }: { label?: string }) {
+  const { t } = useTranslation();
   return (
     <div
       role="status"
@@ -8,7 +10,7 @@ export function LoadingState({ label = 'Loading…' }: { label?: string }) {
       className="flex items-center justify-center gap-2 rounded-lg border border-ink/14 bg-paper-deep/40 px-4 py-10 text-sm text-ink-soft"
     >
       <Loader2 className="w-4 h-4 animate-spin text-forest" aria-hidden="true" />
-      <span>{label}</span>
+      <span>{label ?? t('common.loading')}</span>
     </div>
   );
 }
@@ -20,6 +22,7 @@ export function ErrorState({
   message: string;
   onRetry?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       role="alert"
@@ -28,7 +31,7 @@ export function ErrorState({
       <div className="flex items-start gap-2">
         <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div>
-          <p className="font-semibold">Could not load this page</p>
+          <p className="font-semibold">{t('errors.pageTitle')}</p>
           <p className="mt-0.5">{message}</p>
         </div>
       </div>
@@ -38,7 +41,7 @@ export function ErrorState({
           onClick={onRetry}
           className="self-start sm:self-auto px-3 py-1.5 rounded-md border border-error/40 bg-paper text-error text-xs font-medium hover:bg-error/5 focus-ring"
         >
-          Try again
+          {t('errors.tryAgain')}
         </button>
       )}
     </div>

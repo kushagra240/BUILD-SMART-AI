@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { Home, LogIn, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { z } from 'zod';
 import { ApiError, isMockApi } from '../services/apiClient';
 import { useAuth } from '../auth/useAuth';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
-const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(10, 'Password must be at least 10 characters long'),
-});
+function createLoginSchema(t: TFunction) {
+  return z.object({
+    email: z.string().email(t('auth.shared.errors.emailInvalid')),
+    password: z.string().min(10, t('auth.shared.errors.passwordMin')),
+  });
+}
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = z.infer<ReturnType<typeof createLoginSchema>>;
 
 const mockDefaults: LoginFormData = {
   email: 'aniket@buildsmart.local',
@@ -23,13 +27,17 @@ export function LoginPage() {
   const location = useLocation();
   const { login, status } = useAuth();
   const mock = isMockApi();
+  const { t } = useTranslation();
+  const loginSchema = createLoginSchema(t);
 
   const from = (
     location.state as {
       from?: { pathname?: string; search?: string };
     } | null
   )?.from;
-  const redirectTo = from?.pathname ? `${from.pathname}${from.search ?? ''}` : '/app';
+  const redirectTo = from?.pathname
+    ? `${from.pathname}${from.search ?? ''}`
+    : '/app/projects';
 
   const [formData, setFormData] = useState<LoginFormData>(() =>
     mock ? mockDefaults : { email: '', password: '' }
@@ -57,7 +65,7 @@ export function LoginPage() {
       setApiError(error.message);
       return;
     }
-    setApiError(error instanceof Error ? error.message : 'Login failed');
+    setApiError(error instanceof Error ? error.message : t('auth.login.failed'));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,13 +105,11 @@ export function LoginPage() {
           </div>
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
-              Welcome back.
+              {t('auth.login.title')}
             </h1>
-            {mock && <SampleDataBadge text="Mock auth" variant="subtle" />}
+            {mock && <SampleDataBadge text={t('common.mockAuth')} variant="subtle" />}
           </div>
-          <p className="text-xs text-ink-soft">
-            Sign in to access your saved building notebook and project estimates.
-          </p>
+          <p className="text-xs text-ink-soft">{t('auth.login.subtitle')}</p>
         </div>
 
         {/* Card */}
@@ -120,7 +126,7 @@ export function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-1.5">
               <label htmlFor="email" className="block text-xs font-medium text-ink">
-                Email address
+                {t('auth.shared.emailLabel')}
               </label>
               <input
                 id="email"
@@ -130,7 +136,7 @@ export function LoginPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
                   errors.email ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="name@example.com"
+                placeholder={t('auth.shared.emailPlaceholder')}
                 autoComplete="email"
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? 'email-error' : undefined}
@@ -145,9 +151,11 @@ export function LoginPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <label htmlFor="password" className="block text-xs font-medium text-ink">
-                  Password
+                  {t('auth.shared.passwordLabel')}
                 </label>
-                <span className="text-[10px] text-ink-soft font-mono">Min 10 characters</span>
+                <span className="text-[10px] text-ink-soft font-mono">
+                  {t('auth.shared.passwordMinHint')}
+                </span>
               </div>
               <input
                 id="password"
@@ -157,7 +165,7 @@ export function LoginPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
                   errors.password ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="••••••••••"
+                placeholder={t('auth.shared.passwordPlaceholder')}
                 autoComplete="current-password"
                 aria-invalid={Boolean(errors.password)}
                 aria-describedby={errors.password ? 'password-error' : undefined}
@@ -175,13 +183,13 @@ export function LoginPage() {
               className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <LogIn className="w-4 h-4" />
-              <span>{loading ? 'Authenticating...' : 'Sign in to notebook'}</span>
+              <span>{loading ? t('auth.login.submitting') : t('auth.login.submit')}</span>
             </button>
           </form>
 
           {mock && (
             <div className="pt-3 border-t border-ink/10 text-[11px] text-ink-soft flex items-center justify-between">
-              <span>Demo mode active</span>
+              <span>{t('auth.login.demoMode')}</span>
               <span className="font-mono text-ink">{mockDefaults.email}</span>
             </div>
           )}
@@ -190,14 +198,14 @@ export function LoginPage() {
         {/* Footer Link */}
         <div className="text-center text-xs text-ink-soft space-y-2">
           <div>
-            Don&apos;t have a building notebook yet?{' '}
+            {t('auth.login.footerPrompt')}{' '}
             <Link to="/register" className="font-semibold text-brick hover:underline">
-              Create an account
+              {t('auth.login.footerLink')}
             </Link>
           </div>
           <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-ink-soft">
             <ShieldCheck className="w-3.5 h-3.5 text-forest" />
-            <span>Argon2id password hashing · HTTP-only cookie rotation</span>
+            <span>{t('auth.shared.securityLogin')}</span>
           </div>
         </div>
       </div>

@@ -1,24 +1,28 @@
 import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { Home, UserPlus, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { z } from 'zod';
 import { ApiError, isMockApi } from '../services/apiClient';
 import { useAuth } from '../auth/useAuth';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
-const registerSchema = z
-  .object({
-    full_name: z.string().min(2, 'Full name must be at least 2 characters'),
-    email: z.string().email('Please enter a valid email address'),
-    password: z.string().min(10, 'Password must be at least 10 characters long'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+function createRegisterSchema(t: TFunction) {
+  return z
+    .object({
+      full_name: z.string().min(2, t('auth.register.errors.fullNameMin')),
+      email: z.string().email(t('auth.shared.errors.emailInvalid')),
+      password: z.string().min(10, t('auth.shared.errors.passwordMin')),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t('auth.register.errors.passwordMismatch'),
+      path: ['confirmPassword'],
+    });
+}
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+type RegisterFormData = z.infer<ReturnType<typeof createRegisterSchema>>;
 
 const mockDefaults: RegisterFormData = {
   full_name: 'Aniket Deshmukh',
@@ -31,6 +35,8 @@ export function RegisterPage() {
   const navigate = useNavigate();
   const { register, status } = useAuth();
   const mock = isMockApi();
+  const { t } = useTranslation();
+  const registerSchema = createRegisterSchema(t);
 
   const [formData, setFormData] = useState<RegisterFormData>(() =>
     mock ? mockDefaults : { full_name: '', email: '', password: '', confirmPassword: '' }
@@ -40,7 +46,7 @@ export function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   if (status === 'authenticated') {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/app/projects" replace />;
   }
 
   const applyApiError = (error: unknown) => {
@@ -58,7 +64,7 @@ export function RegisterPage() {
       setApiError(error.message);
       return;
     }
-    setApiError(error instanceof Error ? error.message : 'Registration failed');
+    setApiError(error instanceof Error ? error.message : t('auth.register.failed'));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,7 +90,7 @@ export function RegisterPage() {
         password: formData.password,
         full_name: formData.full_name,
       });
-      navigate('/app', { replace: true });
+      navigate('/app/projects', { replace: true });
     } catch (err) {
       applyApiError(err);
     } finally {
@@ -102,13 +108,11 @@ export function RegisterPage() {
           </div>
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
-              Create your notebook.
+              {t('auth.register.title')}
             </h1>
-            {mock && <SampleDataBadge text="Mock auth" variant="subtle" />}
+            {mock && <SampleDataBadge text={t('common.mockAuth')} variant="subtle" />}
           </div>
-          <p className="text-xs text-ink-soft">
-            Save estimates, compare quality tiers, and track your house project plans.
-          </p>
+          <p className="text-xs text-ink-soft">{t('auth.register.subtitle')}</p>
         </div>
 
         {/* Card */}
@@ -125,7 +129,7 @@ export function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-1.5">
               <label htmlFor="full_name" className="block text-xs font-medium text-ink">
-                Full name
+                {t('auth.register.fullNameLabel')}
               </label>
               <input
                 id="full_name"
@@ -135,7 +139,7 @@ export function RegisterPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
                   errors.full_name ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="e.g. Aniket Deshmukh"
+                placeholder={t('auth.register.fullNamePlaceholder')}
                 autoComplete="name"
                 aria-invalid={Boolean(errors.full_name)}
                 aria-describedby={errors.full_name ? 'full_name-error' : undefined}
@@ -149,7 +153,7 @@ export function RegisterPage() {
 
             <div className="space-y-1.5">
               <label htmlFor="email" className="block text-xs font-medium text-ink">
-                Email address
+                {t('auth.shared.emailLabel')}
               </label>
               <input
                 id="email"
@@ -159,7 +163,7 @@ export function RegisterPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
                   errors.email ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="name@example.com"
+                placeholder={t('auth.shared.emailPlaceholder')}
                 autoComplete="email"
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? 'email-error' : undefined}
@@ -174,9 +178,11 @@ export function RegisterPage() {
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <label htmlFor="password" className="block text-xs font-medium text-ink">
-                  Password
+                  {t('auth.shared.passwordLabel')}
                 </label>
-                <span className="text-[10px] text-ink-soft font-mono">Min 10 characters</span>
+                <span className="text-[10px] text-ink-soft font-mono">
+                  {t('auth.shared.passwordMinHint')}
+                </span>
               </div>
               <input
                 id="password"
@@ -186,7 +192,7 @@ export function RegisterPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
                   errors.password ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="••••••••••"
+                placeholder={t('auth.shared.passwordPlaceholder')}
                 autoComplete="new-password"
                 aria-invalid={Boolean(errors.password)}
                 aria-describedby={errors.password ? 'password-error' : undefined}
@@ -200,7 +206,7 @@ export function RegisterPage() {
 
             <div className="space-y-1.5">
               <label htmlFor="confirmPassword" className="block text-xs font-medium text-ink">
-                Confirm password
+                {t('auth.register.confirmPasswordLabel')}
               </label>
               <input
                 id="confirmPassword"
@@ -210,7 +216,7 @@ export function RegisterPage() {
                 className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
                   errors.confirmPassword ? 'border-2 border-error' : 'border border-ink/14'
                 }`}
-                placeholder="••••••••••"
+                placeholder={t('auth.shared.passwordPlaceholder')}
                 autoComplete="new-password"
                 aria-invalid={Boolean(errors.confirmPassword)}
                 aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
@@ -228,7 +234,7 @@ export function RegisterPage() {
               className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <UserPlus className="w-4 h-4" />
-              <span>{loading ? 'Creating notebook...' : 'Register notebook'}</span>
+              <span>{loading ? t('auth.register.submitting') : t('auth.register.submit')}</span>
             </button>
           </form>
         </div>
@@ -236,14 +242,14 @@ export function RegisterPage() {
         {/* Footer Link */}
         <div className="text-center text-xs text-ink-soft space-y-2">
           <div>
-            Already have a notebook?{' '}
+            {t('auth.register.footerPrompt')}{' '}
             <Link to="/login" className="font-semibold text-brick hover:underline">
-              Sign in
+              {t('auth.register.footerLink')}
             </Link>
           </div>
           <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-ink-soft">
             <ShieldCheck className="w-3.5 h-3.5 text-forest" />
-            <span>Strict privacy: No telemetry, no selling of site queries</span>
+            <span>{t('auth.shared.securityRegister')}</span>
           </div>
         </div>
       </div>
