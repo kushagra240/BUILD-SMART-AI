@@ -390,7 +390,8 @@ class ApiClient {
   }
 
   // Projects flows
-  async listProjects(): Promise<ProjectListResponse> {
+  /** GET /projects -> the signed-in user's saved projects. */
+  async getProjects(): Promise<ProjectListResponse> {
     if (isMockApi()) {
       return {
         items: MOCK_PROJECTS,
@@ -400,6 +401,11 @@ class ApiClient {
     return this.request<ProjectListResponse>('/projects', {
       method: 'GET',
     });
+  }
+
+  /** Older name for {@link getProjects}; kept so existing callers keep working. */
+  async listProjects(): Promise<ProjectListResponse> {
+    return this.getProjects();
   }
 
   async createProject(req: components['schemas']['ProjectCreate']): Promise<ProjectResponse> {

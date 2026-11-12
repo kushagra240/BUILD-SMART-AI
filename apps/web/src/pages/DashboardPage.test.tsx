@@ -34,7 +34,7 @@ describe('DashboardPage projects', () => {
   });
 
   it('loads and displays the real project list', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: [project], total: 1 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [project], total: 1 });
 
     renderDashboard();
 
@@ -45,7 +45,7 @@ describe('DashboardPage projects', () => {
 
   it('shows an error and retries loading', async () => {
     const listSpy = vi
-      .spyOn(apiClient, 'listProjects')
+      .spyOn(apiClient, 'getProjects')
       .mockRejectedValueOnce(new ApiError(500, 'INTERNAL_SERVER_ERROR', 'Server unavailable'))
       .mockResolvedValueOnce({ items: [], total: 0 });
 
@@ -59,7 +59,7 @@ describe('DashboardPage projects', () => {
   });
 
   it('deletes a project after confirmation and updates the list', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: [project], total: 1 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [project], total: 1 });
     const deleteSpy = vi.spyOn(apiClient, 'deleteProject').mockResolvedValue();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
@@ -73,7 +73,7 @@ describe('DashboardPage projects', () => {
   });
 
   it('does not delete when the confirmation is cancelled', async () => {
-    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: [project], total: 1 });
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [project], total: 1 });
     const deleteSpy = vi.spyOn(apiClient, 'deleteProject').mockResolvedValue();
     vi.spyOn(window, 'confirm').mockReturnValue(false);
 

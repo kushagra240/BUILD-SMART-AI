@@ -40,7 +40,7 @@ export function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   if (status === 'authenticated') {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/app/projects" replace />;
   }
 
   const applyApiError = (error: unknown) => {
@@ -84,7 +84,7 @@ export function RegisterPage() {
         password: formData.password,
         full_name: formData.full_name,
       });
-      navigate('/app', { replace: true });
+      navigate('/app/projects', { replace: true });
     } catch (err) {
       applyApiError(err);
     } finally {

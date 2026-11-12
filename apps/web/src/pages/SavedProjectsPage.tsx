@@ -94,70 +94,70 @@ export function SavedProjectsPage() {
               </div>
             </div>
 
-            {/* Projects Table or Empty State */}
+            {/* Projects grid or Empty State */}
             {filtered.length > 0 ? (
-              <div className="border border-ink/14 rounded-lg overflow-hidden bg-paper shadow-card">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-paper-deep/70 text-ink-soft font-mono uppercase text-[10px] tracking-wider border-b border-ink/14">
-                      <tr>
-                        <th scope="col" className="py-3 px-4 font-semibold">Project</th>
-                        <th scope="col" className="py-3 px-4 font-semibold">Created</th>
-                        <th scope="col" className="py-3 px-4 font-semibold">Updated</th>
-                        <th scope="col" className="py-3 px-4 text-center font-semibold">Open</th>
-                        <th scope="col" className="py-3 px-4 text-center font-semibold">Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ink/10 font-sans">
-                      {filtered.map((project) => (
-                        <tr
-                          key={project.id}
-                          className="hover:bg-paper-deep/40 transition-colors group"
-                        >
-                          <td className="py-3.5 px-4">
-                            <Link
-                              to={`/app/projects/${project.id}`}
-                              className="block focus-ring rounded"
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {filtered.map((project) => {
+                    const nameId = `project-name-${project.id}`;
+                    return (
+                      <article
+                        key={project.id}
+                        aria-labelledby={nameId}
+                        className="group flex flex-col justify-between rounded-lg border border-ink/14 bg-paper p-4 shadow-card transition-colors hover:border-brick/40"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 space-y-1">
+                            <h2
+                              id={nameId}
+                              className="break-words font-headline text-sm font-semibold text-ink"
                             >
-                              <div className="font-semibold text-sm text-ink group-hover:text-brick transition-colors">
+                              <Link
+                                to={`/app/projects/${project.id}`}
+                                className="rounded transition-colors group-hover:text-brick focus-ring"
+                              >
                                 {project.name}
-                              </div>
-                              <div className="text-[11px] text-ink-soft max-w-md truncate">
-                                {project.notes || 'No notes added'}
-                              </div>
-                            </Link>
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-ink-soft">
-                            {formatDate(project.created_at)}
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-ink-soft">
-                            {formatDateTime(project.updated_at)}
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <Link
-                              to={`/app/projects/${project.id}`}
-                              className="inline-flex items-center justify-center p-1.5 rounded hover:bg-paper-deep text-ink-soft hover:text-brick transition-colors focus-ring"
-                              aria-label={`Open ${project.name}`}
-                            >
-                              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-                            </Link>
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <DeleteProjectButton
-                              projectId={project.id}
-                              projectName={project.name}
-                              onDelete={handleDelete}
-                              onError={setActionError}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              </Link>
+                            </h2>
+                            <p className="line-clamp-2 break-words text-xs text-ink-soft">
+                              {project.notes || 'No notes added'}
+                            </p>
+                          </div>
+                          <Link
+                            to={`/app/projects/${project.id}`}
+                            className="inline-flex shrink-0 items-center justify-center rounded p-1.5 text-ink-soft transition-colors hover:bg-paper-deep hover:text-brick focus-ring"
+                            aria-label={`Open ${project.name}`}
+                          >
+                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                          </Link>
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-ink/10 pt-3">
+                          <dl className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px] text-ink-soft">
+                            <div>
+                              <dt className="uppercase tracking-wider">Created</dt>
+                              <dd className="text-ink">{formatDate(project.created_at)}</dd>
+                            </div>
+                            <div>
+                              <dt className="uppercase tracking-wider">Updated</dt>
+                              <dd className="text-ink">{formatDateTime(project.updated_at)}</dd>
+                            </div>
+                          </dl>
+                          <DeleteProjectButton
+                            projectId={project.id}
+                            projectName={project.name}
+                            onDelete={handleDelete}
+                            onError={setActionError}
+                            variant="button"
+                          />
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
 
-                {/* Table Footer */}
-                <div className="bg-paper-deep/40 border-t border-ink/14 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-soft font-mono">
+                {/* Results footer */}
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-ink/14 bg-paper-deep/40 px-4 py-2.5 font-mono text-xs text-ink-soft">
                   <span>
                     Showing {filtered.length} of {total} saved projects
                   </span>
@@ -165,7 +165,7 @@ export function SavedProjectsPage() {
                     <button
                       type="button"
                       onClick={() => setSearch('')}
-                      className="text-brick hover:underline focus-ring rounded"
+                      className="rounded text-brick hover:underline focus-ring"
                     >
                       Clear search
                     </button>

@@ -239,12 +239,12 @@ describe('apiClient projects wiring', () => {
     vi.restoreAllMocks();
   });
 
-  it('lists projects from the real endpoint with the bearer token', async () => {
+  it('gets projects from the real endpoint with the bearer token', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
     const fetchMock = vi.fn(async () => jsonResponse({ items: [project], total: 1 }));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(apiClient.listProjects()).resolves.toMatchObject({
+    await expect(apiClient.getProjects()).resolves.toMatchObject({
       total: 1,
       items: [{ name: project.name }],
     });
@@ -254,6 +254,15 @@ describe('apiClient projects wiring', () => {
     expect(init.method).toBe('GET');
     expect(init.credentials).toBe('include');
     expect(init.headers).toMatchObject({ Authorization: 'Bearer access-1' });
+  });
+
+  it('keeps listProjects as a delegating alias for getProjects', async () => {
+    const getSpy = vi
+      .spyOn(apiClient, 'getProjects')
+      .mockResolvedValue({ items: [project], total: 1 });
+
+    await expect(apiClient.listProjects()).resolves.toMatchObject({ total: 1 });
+    expect(getSpy).toHaveBeenCalledTimes(1);
   });
 
   it('deletes a project with DELETE and accepts an empty 204 response', async () => {
