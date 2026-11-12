@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiClient, type ProjectResponse } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
 
@@ -6,6 +7,7 @@ export type LoadStatus = 'loading' | 'success' | 'error';
 
 /** Loads the signed-in user's projects and keeps the list in sync after deletes. */
 export function useProjects() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<ProjectResponse[]>([]);
   const [total, setTotal] = useState(0);
   const [status, setStatus] = useState<LoadStatus>('loading');
@@ -28,13 +30,13 @@ export function useProjects() {
       .catch((cause: unknown) => {
         if (!active) return;
         setStatus('error');
-        setError(apiErrorMessage(cause, 'Could not load your projects'));
+        setError(apiErrorMessage(cause, t('errors.loadProjects')));
       });
 
     return () => {
       active = false;
     };
-  }, [reloadKey]);
+  }, [reloadKey, t]);
 
   const reload = useCallback(() => {
     setReloadKey((key) => key + 1);
@@ -51,6 +53,7 @@ export function useProjects() {
 
 /** Loads a single project by id and exposes a delete that reports failures to the caller. */
 export function useProject(projectId: string | undefined) {
+  const { t } = useTranslation();
   const [project, setProject] = useState<ProjectResponse | null>(null);
   const [status, setStatus] = useState<LoadStatus>('loading');
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +67,7 @@ export function useProject(projectId: string | undefined) {
 
     if (!projectId) {
       setStatus('error');
-      setError('Project not found');
+      setError(t('errors.projectNotFound'));
       return () => {
         active = false;
       };
@@ -80,13 +83,13 @@ export function useProject(projectId: string | undefined) {
       .catch((cause: unknown) => {
         if (!active) return;
         setStatus('error');
-        setError(apiErrorMessage(cause, 'Could not load this project'));
+        setError(apiErrorMessage(cause, t('errors.loadProject')));
       });
 
     return () => {
       active = false;
     };
-  }, [projectId, reloadKey]);
+  }, [projectId, reloadKey, t]);
 
   const reload = useCallback(() => {
     setReloadKey((key) => key + 1);

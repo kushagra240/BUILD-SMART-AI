@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface HouseSchematicProps {
   className?: string;
   groundArea?: string;
@@ -8,15 +10,20 @@ interface HouseSchematicProps {
 
 export function HouseSchematic({
   className = '',
-  groundArea = '900 sq ft',
-  firstFloorArea = '900 sq ft',
-  totalArea = '1,800 sq ft',
+  groundArea,
+  firstFloorArea,
+  totalArea,
   showFloorTable = true,
 }: HouseSchematicProps) {
+  const { t } = useTranslation();
+  const ground = groundArea ?? t('schematic.defaultGround');
+  const firstFloor = firstFloorArea ?? t('schematic.defaultFirst');
+  const total = totalArea ?? t('schematic.defaultTotal');
+
   return (
     <div className={`space-y-3 ${className}`}>
       <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-        <span>SCHEMATIC ONLY · NOT A FLOOR PLAN</span>
+        <span>{t('schematic.only')}</span>
       </div>
 
       <div className="bg-paper-deep/50 rounded-lg p-4 border border-ink/14 flex flex-col items-center justify-center">
@@ -26,7 +33,7 @@ export function HouseSchematic({
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          aria-label="Schematic two-floor house elevation"
+          aria-label={t('schematic.aria')}
           role="img"
         >
           {/* Ground baseline */}
@@ -80,16 +87,16 @@ export function HouseSchematic({
       {showFloorTable && (
         <div className="space-y-1.5 pt-1 text-xs border-t border-ink/14 font-mono">
           <div className="flex justify-between text-ink-soft">
-            <span className="font-sans">Ground floor</span>
-            <span>{groundArea}</span>
+            <span className="font-sans">{t('schematic.groundFloor')}</span>
+            <span>{ground}</span>
           </div>
           <div className="flex justify-between text-ink-soft">
-            <span className="font-sans">First floor</span>
-            <span>{firstFloorArea}</span>
+            <span className="font-sans">{t('schematic.firstFloor')}</span>
+            <span>{firstFloor}</span>
           </div>
           <div className="flex justify-between font-bold text-ink pt-1 border-t border-ink/10">
-            <span className="font-sans">Total built-up</span>
-            <span>{totalArea}</span>
+            <span className="font-sans">{t('schematic.totalBuiltUp')}</span>
+            <span>{total}</span>
           </div>
         </div>
       )}
