@@ -70,6 +70,9 @@ async def create_estimate(
             },
         ) from exc
 
+    # Apply secondary ML calibration layer to adjust variance and contingency
+    result = estimation.apply_ml_calibration(result, engine_input)
+
     # Persist immutable estimate snapshot in database
     estimate = Estimate(
         project_id=project.id,

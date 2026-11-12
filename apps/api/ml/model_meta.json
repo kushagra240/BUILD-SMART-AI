@@ -1,0 +1,24 @@
+{
+  "model_type": "RandomForestRegressor",
+  "version": "1.0.0",
+  "feature_columns": [
+    "built_up_area",
+    "floors",
+    "quality_tier_encoded",
+    "zone_id_encoded"
+  ],
+  "target_column": "variance_pct",
+  "hyperparameters": {
+    "n_estimators": 100,
+    "max_depth": 10,
+    "random_state": 42
+  },
+  "metrics": {
+    "mae": 0.005575,
+    "rmse": 0.007014,
+    "r2_score": 0.893427,
+    "samples_total": 3000,
+    "samples_train": 2400,
+    "samples_test": 600
+  }
+}
