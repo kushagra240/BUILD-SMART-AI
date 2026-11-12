@@ -1,4 +1,5 @@
 import uuid
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import select
@@ -160,6 +161,10 @@ async def get_estimate(
 async def export_estimate_pdf(
     project_id: uuid.UUID,
     estimate_id: uuid.UUID,
+    lang: Literal["en", "hi", "mr"] = Query(
+        default="en",
+        description="PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+    ),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Response:
@@ -182,7 +187,7 @@ async def export_estimate_pdf(
             detail="Estimate not found or does not belong to project",
         )
 
-    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate)
+    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate, lang=lang)
     filename = f"buildsmart-estimate-{estimate_id}.pdf"
 
     return Response(
@@ -208,6 +213,10 @@ async def export_estimate_pdf(
 )
 async def export_estimate_pdf_direct(
     estimate_id: uuid.UUID,
+    lang: Literal["en", "hi", "mr"] = Query(
+        default="en",
+        description="PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+    ),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Response:
@@ -229,7 +238,7 @@ async def export_estimate_pdf_direct(
             detail="Estimate not found",
         )
 
-    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate)
+    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate, lang=lang)
     filename = f"buildsmart-estimate-{estimate_id}.pdf"
 
     return Response(
