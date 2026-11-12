@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, MapPin, Menu, X, ChevronDown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth/useAuth';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 function initialsFor(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -20,6 +22,7 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, status, logout } = useAuth();
+  const { t } = useTranslation();
 
   const isActive = (path: string) => {
     if (path === '/app') {
@@ -53,7 +56,7 @@ export function Navbar() {
           <Link
             to="/"
             className="flex items-center gap-2.5 group rounded p-1 focus-ring"
-            aria-label="BuildSmart AI home"
+            aria-label={t('nav.homeAria')}
           >
             <div className="w-8 h-8 rounded-md bg-paper-deep border border-ink/14 flex items-center justify-center text-forest group-hover:border-forest transition-colors">
               <Home className="w-4 h-4 stroke-[2]" aria-hidden="true" />
@@ -70,11 +73,12 @@ export function Navbar() {
 
           {/* Center Context Label (Figma Header) */}
           <div className="hidden md:flex items-center text-[10px] uppercase font-mono tracking-widest text-ink-soft">
-            <span>HOUSE CONSTRUCTION / PUNE, INDIA</span>
+            <span>{t('nav.context')}</span>
           </div>
 
           {/* Right Action / User Profile */}
           <div className="hidden sm:flex items-center gap-3">
+            <LanguageSwitcher />
             {user ? (
               <div className="relative">
                 <button
@@ -93,47 +97,47 @@ export function Navbar() {
                 {profileDropdownOpen && (
                   <div className="absolute right-0 mt-1 w-48 bg-paper border border-ink/14 rounded-lg shadow-subtle py-1 z-50 text-xs">
                     <div className="px-3 py-2 border-b border-ink/10 text-ink-soft font-mono">
-                      Signed in as {user.full_name}
+                      {t('nav.signedInAs', { name: user.full_name })}
                     </div>
                     <Link
                       to="/app"
                       onClick={() => setProfileDropdownOpen(false)}
                       className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
                     >
-                      Project overview
+                      {t('nav.projectOverview')}
                     </Link>
                     <Link
                       to="/app/projects"
                       onClick={() => setProfileDropdownOpen(false)}
                       className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
                     >
-                      Saved projects
+                      {t('nav.savedProjects')}
                     </Link>
                     <button
                       type="button"
                       onClick={() => void handleLogout()}
                       className="block w-full text-left px-3 py-1.5 hover:bg-paper-deep text-brick border-t border-ink/10"
                     >
-                      Log out
+                      {t('nav.logout')}
                     </button>
                   </div>
                 )}
               </div>
             ) : status === 'loading' ? (
-              <span className="text-xs text-ink-soft font-mono">Checking session…</span>
+              <span className="text-xs text-ink-soft font-mono">{t('nav.checkingSession')}</span>
             ) : (
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
                   className="px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-ink rounded hover:bg-paper-deep"
                 >
-                  Log in
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
                   className="px-3 py-1.5 text-xs font-semibold text-paper bg-brick hover:bg-brick-hover rounded shadow-sm"
                 >
-                  Register
+                  {t('nav.register')}
                 </Link>
               </div>
             )}
@@ -145,7 +149,7 @@ export function Navbar() {
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-1.5 rounded text-ink-soft hover:text-ink hover:bg-paper-deep focus-ring"
-              aria-label="Toggle navigation menu"
+              aria-label={t('nav.toggleMenu')}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -154,7 +158,10 @@ export function Navbar() {
 
         {/* Sub-Navigation Tabs Row (Figma Screenshot 1, 2, 3, 4) */}
         <div className="flex items-center justify-between text-xs overflow-x-auto scrollbar-none py-1">
-          <nav className="flex items-center space-x-1 sm:space-x-6 whitespace-nowrap" aria-label="Sub navigation">
+          <nav
+            className="flex items-center space-x-1 sm:space-x-6 whitespace-nowrap"
+            aria-label={t('nav.subNavigation')}
+          >
             <Link
               to="/app"
               className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
@@ -163,7 +170,7 @@ export function Navbar() {
                   : 'border-transparent text-ink-soft hover:text-ink'
               }`}
             >
-              Overview
+              {t('nav.overview')}
             </Link>
             <Link
               to="/app/new"
@@ -173,7 +180,7 @@ export function Navbar() {
                   : 'border-transparent text-ink-soft hover:text-ink'
               }`}
             >
-              New estimate
+              {t('nav.newEstimate')}
             </Link>
             <Link
               to="/app/projects"
@@ -183,7 +190,7 @@ export function Navbar() {
                   : 'border-transparent text-ink-soft hover:text-ink'
               }`}
             >
-              Saved projects
+              {t('nav.savedProjects')}
             </Link>
             <Link
               to="/materials"
@@ -193,13 +200,13 @@ export function Navbar() {
                   : 'border-transparent text-ink-soft hover:text-ink'
               }`}
             >
-              Materials guide
+              {t('nav.materialsGuide')}
             </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-1.5 text-xs text-ink-soft whitespace-nowrap pl-4">
             <MapPin className="w-3.5 h-3.5 text-forest" aria-hidden="true" />
-            <span>Planning for Pune</span>
+            <span>{t('nav.planningForPune')}</span>
           </div>
         </div>
       </div>
@@ -214,7 +221,7 @@ export function Navbar() {
               isActive('/app') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Overview
+            {t('nav.overview')}
           </Link>
           <Link
             to="/app/new"
@@ -223,7 +230,7 @@ export function Navbar() {
               isActive('/app/new') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            New estimate
+            {t('nav.newEstimate')}
           </Link>
           <Link
             to="/app/projects"
@@ -232,7 +239,7 @@ export function Navbar() {
               isActive('/app/projects') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Saved projects
+            {t('nav.savedProjects')}
           </Link>
           <Link
             to="/materials"
@@ -241,7 +248,7 @@ export function Navbar() {
               isActive('/materials') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Materials guide
+            {t('nav.materialsGuide')}
           </Link>
           <Link
             to="/methodology"
@@ -250,8 +257,11 @@ export function Navbar() {
               isActive('/methodology') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
             }`}
           >
-            Methodology
+            {t('nav.methodology')}
           </Link>
+          <div className="pt-2 border-t border-ink/10">
+            <LanguageSwitcher />
+          </div>
           <div className="pt-2 border-t border-ink/10 flex justify-between gap-2">
             {user ? (
               <>
@@ -263,7 +273,7 @@ export function Navbar() {
                   onClick={() => void handleLogout()}
                   className="flex-1 text-center py-2 text-xs font-semibold rounded border border-brick/40 text-brick bg-paper"
                 >
-                  Log out
+                  {t('nav.logout')}
                 </button>
               </>
             ) : (
@@ -273,14 +283,14 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex-1 text-center py-2 text-xs font-medium rounded border border-ink/14 bg-paper"
                 >
-                  Log in
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex-1 text-center py-2 text-xs font-semibold rounded bg-brick text-paper"
                 >
-                  Register
+                  {t('nav.register')}
                 </Link>
               </>
             )}

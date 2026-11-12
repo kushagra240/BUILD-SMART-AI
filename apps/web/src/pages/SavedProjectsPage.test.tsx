@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SavedProjectsPage } from './SavedProjectsPage';
 import { apiClient, ApiError } from '../services/apiClient';
+import i18n from '../i18n';
 
 const projects = [
   {
@@ -110,6 +111,23 @@ describe('SavedProjectsPage projects', () => {
     renderPage();
 
     expect(await screen.findByText('No saved projects yet.')).toBeInTheDocument();
+  });
+
+  it('translates the dashboard empty state into Hindi', async () => {
+    await i18n.changeLanguage('hi');
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [], total: 0 });
+
+    renderPage();
+
+    expect(
+      await screen.findByText('अभी कोई सहेजा हुआ प्रोजेक्ट नहीं है।')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('प्रोजेक्ट्स को नाम या नोट्स से खोजें')
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('link', { name: 'नया अनुमान शुरू करें' })
+    ).toHaveLength(2);
   });
 
   it('keeps the row and reports a failed delete', async () => {

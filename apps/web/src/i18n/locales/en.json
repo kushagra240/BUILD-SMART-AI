@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "homeAria": "BuildSmart AI home",
+    "context": "HOUSE CONSTRUCTION / PUNE, INDIA",
+    "overview": "Overview",
+    "newEstimate": "New estimate",
+    "savedProjects": "Saved projects",
+    "materialsGuide": "Materials guide",
+    "methodology": "Methodology",
+    "planningForPune": "Planning for Pune",
+    "subNavigation": "Sub navigation",
+    "toggleMenu": "Toggle navigation menu",
+    "projectOverview": "Project overview",
+    "signedInAs": "Signed in as {{name}}",
+    "logout": "Log out",
+    "login": "Log in",
+    "register": "Register",
+    "checkingSession": "Checking session…"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिंदी",
+    "mr": "मराठी"
+  },
+  "projects": {
+    "sampleData": "Sample data",
+    "kicker": "YOUR BUILDING NOTEBOOK / {{projectCount}} PROJECTS",
+    "title": "Every idea, kept in one place.",
+    "subtitle": "Return to your projects, review your notes and keep a record as plans take shape.",
+    "startNewEstimate": "Start a new estimate",
+    "loading": "Loading your saved projects…",
+    "loadError": "Could not load your projects",
+    "searchLabel": "Search projects by name or notes",
+    "searchPlaceholder": "Search by name or notes",
+    "noNotes": "No notes added",
+    "created": "Created",
+    "updated": "Updated",
+    "openProject": "Open {{name}}",
+    "showing": "Showing {{shown}} of {{total}} saved projects",
+    "clearSearch": "Clear search",
+    "emptyTitle": "No saved projects yet.",
+    "emptyBody": "Start an estimate to create your first project. It will appear here once saved.",
+    "noMatchesTitle": "No projects match “{{query}}”.",
+    "noMatchesBody": "Try another name or piece of notes, or clear your search.",
+    "disclaimerTitle": "Your estimates are planning records, not quotations:",
+    "disclaimerBody": "Amounts use the area and quality selected when saved. Review assumptions and obtain fresh local quotations before making decisions.",
+    "delete": {
+      "aria": "Delete {{name}}",
+      "confirm": "Delete “{{name}}”? This removes it from your project list.",
+      "action": "Delete project",
+      "deleting": "Deleting…",
+      "error": "Could not delete this project"
+    }
+  }
+}
