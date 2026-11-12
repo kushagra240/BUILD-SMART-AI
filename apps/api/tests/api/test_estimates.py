@@ -278,25 +278,35 @@ async def test_export_estimate_pdf_success(client: AsyncClient) -> None:
         assert est_res.status_code == 200
         est_id = est_res.json()["id"]
 
-    # 3. Download PDF via /projects/{project_id}/estimates/{estimate_id}/pdf
-    pdf_res = await client.get(
-        f"/api/v1/projects/{proj_id}/estimates/{est_id}/pdf",
-        headers=headers,
-    )
-    assert pdf_res.status_code == 200
-    assert "application/pdf" in pdf_res.headers["content-type"]
-    assert f"buildsmart-estimate-{est_id}.pdf" in pdf_res.headers["content-disposition"]
-    assert pdf_res.content.startswith(b"%PDF")
-    assert len(pdf_res.content) > 1000
+    # 3. Download PDF in English, Hindi, and Marathi via:
+    # /projects/{project_id}/estimates/{estimate_id}/pdf
+    for lang in ("en", "hi", "mr"):
+        pdf_res = await client.get(
+            f"/api/v1/projects/{proj_id}/estimates/{est_id}/pdf?lang={lang}",
+            headers=headers,
+        )
+        assert pdf_res.status_code == 200
+        assert "application/pdf" in pdf_res.headers["content-type"]
+        assert f"buildsmart-estimate-{est_id}.pdf" in pdf_res.headers["content-disposition"]
+        assert pdf_res.content.startswith(b"%PDF")
+        assert len(pdf_res.content) > 1000
 
-    # 4. Also verify direct route alias /estimates/{estimate_id}/pdf
-    direct_res = await client.get(
-        f"/api/v1/estimates/{est_id}/pdf",
+    # 4. Also verify direct route alias /estimates/{estimate_id}/pdf with lang
+    for lang in ("en", "hi", "mr"):
+        direct_res = await client.get(
+            f"/api/v1/estimates/{est_id}/pdf?lang={lang}",
+            headers=headers,
+        )
+        assert direct_res.status_code == 200
+        assert "application/pdf" in direct_res.headers["content-type"]
+        assert direct_res.content.startswith(b"%PDF")
+
+    # 5. Invalid language parameter returns 422 Unprocessable Entity
+    invalid_lang_res = await client.get(
+        f"/api/v1/estimates/{est_id}/pdf?lang=invalid_lang",
         headers=headers,
     )
-    assert direct_res.status_code == 200
-    assert "application/pdf" in direct_res.headers["content-type"]
-    assert direct_res.content.startswith(b"%PDF")
+    assert invalid_lang_res.status_code == 422
 
 
 @pytest.mark.asyncio
