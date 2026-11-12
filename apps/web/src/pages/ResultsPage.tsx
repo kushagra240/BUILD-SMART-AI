@@ -1,13 +1,23 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import { ArrowRight, Download, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { apiClient, type EstimateResponse } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { formatDateTime, formatINR, formatNumber } from '../lib/formatters';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
+import {
+  translateCategory,
+  translateConstruction,
+  translateMaterialCategory,
+  translateQuality,
+  translateZone,
+} from '../i18n/labels';
 
-// Colour mapping for the 9 v1 cost categories. Unknown categories fall back.
+// Colour mapping for the 9 v1 cost categories. Keys are the English contract
+// values: only the display text is translated, never the stored/API key.
 const CATEGORY_CHART_COLORS: Record<string, string> = {
   Foundation: '#6B4F3A',
   Structure: '#1F4D45',
@@ -24,6 +34,7 @@ function getCategoryColor(name: string): string {
   return CATEGORY_CHART_COLORS[name] ?? '#1F4D45';
 }
 
+/** Humanises a contract dictionary key such as `unit_rate_inr`. */
 function titleCase(value: string): string {
   return value
     .replace(/_/g, ' ')
@@ -39,18 +50,21 @@ function shortId(id: string): string {
  * (see apps/api/app/services/estimation.py). The stored-estimate read path returns
  * `gap_inr: 0`, so only show an amount when one is actually present.
  */
-function formatBudget(budget: EstimateResponse['budget']): string {
+function formatBudget(budget: EstimateResponse['budget'], t: TFunction): string {
   if (budget.status === 'not_provided') {
-    return 'Not provided';
+    return t('results.budget.notProvided');
   }
+  const statusLabel = t(`results.budget.status.${budget.status}`, {
+    defaultValue: t(`enum.budgetStatus.${budget.status}`, { defaultValue: budget.status }),
+  });
   if (budget.gap_inr <= 0) {
-    return budget.status === 'within' ? 'Within budget' : titleCase(budget.status);
+    return budget.status === 'within' ? t('results.budget.within') : statusLabel;
   }
   const amount = formatINR(budget.gap_inr);
   if (budget.status === 'within') {
-    return `Above estimate by ${amount}`;
+    return t('results.budget.above', { amount });
   }
-  return `${titleCase(budget.status)} · short by ${amount}`;
+  return t('results.budget.short', { status: statusLabel, amount });
 }
 
 type ResultsLocationState = {
@@ -105,7 +119,8 @@ function isEstimateResponse(value: unknown): value is EstimateResponse {
 /**
  * Compare two contract dictionaries (`primary` / `alternative`) as a table.
  * Keys are never hardcoded: rows are the union of the keys the API sent, so a
- * new backend field appears without a frontend change.
+ * new backend field appears without a frontend change. Key captions come from
+ * the API (technical field names) and are humanised, not translated.
  */
 function MaterialComparison({
   label,
@@ -116,12 +131,13 @@ function MaterialComparison({
   primary: Record<string, string | number>;
   alternative: Record<string, string | number>;
 }) {
+  const { t } = useTranslation();
   const keys = Array.from(new Set([...Object.keys(primary), ...Object.keys(alternative)]));
 
   if (keys.length === 0) {
     return (
       <p className="border-t border-ink/10 p-4 text-sm text-ink-soft">
-        No specification fields were returned for this material.
+        {t('results.materials.noSpec')}
       </p>
     );
   }
@@ -129,7 +145,7 @@ function MaterialComparison({
   const renderValue = (source: Record<string, string | number>, key: string) => {
     const value = source[key];
     if (value === undefined || value === '') {
-      return <span className="italic text-ink-soft">Not provided</span>;
+      return <span className="italic text-ink-soft">{t('common.notProvided')}</span>;
     }
     return typeof value === 'number' ? formatNumber(value) : value;
   };
@@ -144,19 +160,19 @@ function MaterialComparison({
               scope="col"
               className="w-[30%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
             >
-              Specification
+              {t('results.materials.specification')}
             </th>
             <th
               scope="col"
               className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
             >
-              Primary
+              {t('results.materials.primary')}
             </th>
             <th
               scope="col"
               className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
             >
-              Alternative
+              {t('results.materials.alternative')}
             </th>
           </tr>
         </thead>
@@ -184,6 +200,7 @@ function MaterialComparison({
 }
 
 export function ResultsPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const locationState = (location.state ?? null) as ResultsLocationState | null;
@@ -222,14 +239,14 @@ export function ResultsPage() {
       })
       .catch((cause: unknown) => {
         if (!active) return;
-        setError(apiErrorMessage(cause, 'Could not load this estimate'));
+        setError(apiErrorMessage(cause, t('results.errors.load')));
         setStatus('error');
       });
 
     return () => {
       active = false;
     };
-  }, [estimate, id, reloadKey]);
+  }, [estimate, id, reloadKey, t]);
 
   /**
    * Ask the API for the PDF and hand the bytes to the browser. Failures only
@@ -248,7 +265,7 @@ export function ResultsPage() {
       saveBlob(blob, `buildsmart-estimate-${shortId(estimate.id)}.pdf`);
       setPdfStatus('idle');
     } catch (cause: unknown) {
-      setPdfError(apiErrorMessage(cause, 'Could not generate the PDF'));
+      setPdfError(apiErrorMessage(cause, t('results.errors.pdf')));
       setPdfStatus('error');
     }
   };
@@ -261,7 +278,7 @@ export function ResultsPage() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center bg-paper px-4">
         <div className="w-full max-w-2xl">
-          <LoadingState label="Loading estimate…" />
+          <LoadingState label={t('results.loading')} />
         </div>
       </div>
     );
@@ -272,15 +289,15 @@ export function ResultsPage() {
       <div className="min-h-screen bg-paper text-ink px-4 py-10">
         <div className="max-w-2xl mx-auto space-y-5">
           <ErrorState
-            message={error ?? 'Could not load this estimate'}
+            message={error ?? t('results.errors.load')}
             onRetry={() => setReloadKey((key) => key + 1)}
           />
           <div className="flex flex-wrap items-center gap-4 text-xs">
             <Link to="/app" className="text-brick hover:underline focus-ring rounded">
-              Back to dashboard
+              {t('results.backDashboard')}
             </Link>
             <Link to="/app/new" className="text-brick hover:underline focus-ring rounded">
-              Start a new estimate
+              {t('results.startNewEstimate')}
             </Link>
           </div>
         </div>
@@ -299,13 +316,31 @@ export function ResultsPage() {
   const floors = estimate.inputs.floors;
   const subtitle = [
     locality,
-    floors ? `G+${Math.max(0, floors - 1)} · ${floors} floor${floors === 1 ? '' : 's'}` : null,
-    `${formatNumber(areaSqFt)} sq ft total built-up`,
-    `${titleCase(estimate.inputs.quality_tier)} quality`,
-    `${titleCase(estimate.inputs.zone_id)} zone`,
+    floors ? t('results.subtitle.floorCount', { count: floors }) : null,
+    t('results.subtitle.area', { area: formatNumber(areaSqFt) }),
+    t('results.subtitle.quality', {
+      quality: translateQuality(t, estimate.inputs.quality_tier),
+    }),
+    t('results.subtitle.zone', { zone: translateZone(t, estimate.inputs.zone_id) }),
   ]
     .filter(Boolean)
     .join(' · ');
+
+  const inputRows: Array<[string, string]> = [
+    [t('results.inputs.construction'), translateConstruction(t, estimate.inputs.construction_type)],
+    [t('results.inputs.quality'), translateQuality(t, estimate.inputs.quality_tier)],
+    [t('results.inputs.zone'), translateZone(t, estimate.inputs.zone_id)],
+    [t('results.inputs.floors'), String(estimate.inputs.floors)],
+    [t('results.inputs.bedrooms'), String(estimate.inputs.bedrooms)],
+    [t('results.inputs.bathrooms'), String(estimate.inputs.bathrooms)],
+    [
+      t('results.inputs.plotArea'),
+      estimate.inputs.plot_area_sqft
+        ? `${formatNumber(estimate.inputs.plot_area_sqft)} ${t('common.sqFt')}`
+        : t('common.notProvided'),
+    ],
+    [t('results.inputs.budget'), formatBudget(estimate.budget, t)],
+  ];
 
   return (
     <div className="min-h-screen bg-paper text-ink pb-16">
@@ -314,17 +349,19 @@ export function ResultsPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
           <div className="flex items-center gap-2 text-xs font-mono">
             <span className="px-2 py-0.5 rounded bg-forest text-paper font-semibold">1</span>
-            <span className="text-ink">Project & site</span>
+            <span className="text-ink">{t('results.steps.projectSite')}</span>
             <span className="text-ink-soft">›</span>
             <span className="px-2 py-0.5 rounded bg-forest text-paper font-semibold">2</span>
-            <span className="text-ink">Preferences</span>
+            <span className="text-ink">{t('results.steps.preferences')}</span>
             <span className="text-ink-soft">›</span>
             <span className="px-2 py-0.5 rounded bg-brick text-paper font-semibold">3</span>
-            <span className="font-semibold text-ink">Your estimate</span>
+            <span className="font-semibold text-ink">{t('results.steps.estimate')}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            {estimate.is_mock && <SampleDataBadge text="Mock / stub data" variant="contrast" />}
+            {estimate.is_mock && (
+              <SampleDataBadge text={t('results.mockBadge')} variant="contrast" />
+            )}
             <button
               type="button"
               onClick={handleDownloadPdf}
@@ -333,13 +370,15 @@ export function ResultsPage() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-forest hover:bg-forest-hover disabled:opacity-60 disabled:cursor-not-allowed text-paper text-xs font-medium transition-colors focus-ring"
             >
               <Download className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>{pdfStatus === 'loading' ? 'Generating PDF…' : 'Download PDF'}</span>
+              <span>
+                {pdfStatus === 'loading' ? t('results.generating') : t('results.download')}
+              </span>
             </button>
             <Link
               to="/app/projects"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
             >
-              <span>Saved projects</span>
+              <span>{t('results.savedProjects')}</span>
             </Link>
           </div>
         </div>
@@ -349,11 +388,9 @@ export function ResultsPage() {
             role="alert"
             className="rounded-lg border border-brick/40 bg-brick-light px-4 py-3 text-xs text-ink space-y-1"
           >
-            <strong className="text-brick">PDF export failed.</strong>
+            <strong className="text-brick">{t('results.pdfError.title')}</strong>
             <p className="leading-relaxed">{pdfError}</p>
-            <p className="text-ink-soft leading-relaxed">
-              The estimate above is still valid. Try the download again in a moment.
-            </p>
+            <p className="text-ink-soft leading-relaxed">{t('results.pdfError.body')}</p>
           </div>
         )}
 
@@ -365,9 +402,8 @@ export function ResultsPage() {
           >
             <Info className="w-4 h-4 text-ochre flex-shrink-0 mt-0.5" aria-hidden="true" />
             <p className="leading-relaxed">
-              <strong className="uppercase tracking-wide">Mock / stub data:</strong> These figures
-              come from the development stub engine. They are placeholders, not real sourced
-              rates, and must not be used for budgeting or contractor discussions.
+              <strong className="uppercase tracking-wide">{t('results.mockWarning.title')}</strong>{' '}
+              {t('results.mockWarning.body')}
             </p>
           </div>
         )}
@@ -375,10 +411,15 @@ export function ResultsPage() {
         {/* Title Header */}
         <div className="space-y-1">
           <div className="text-[11px] font-mono uppercase tracking-widest text-ink-soft">
-            {projectName ? `${projectName.toUpperCase()} · ` : ''}ESTIMATE {shortId(estimate.id)}
+            {projectName
+              ? t('results.projectEstimateKicker', {
+                  project: projectName.toUpperCase(),
+                  id: shortId(estimate.id),
+                })
+              : t('results.estimateKicker', { id: shortId(estimate.id) })}
           </div>
           <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
-            Your home, in numbers.
+            {t('results.title')}
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft font-sans">{subtitle}</p>
         </div>
@@ -389,46 +430,56 @@ export function ResultsPage() {
           <div className="md:col-span-5 space-y-1.5 md:border-r border-ink/10 md:pr-6">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-clay text-ink-soft border border-ink/14 font-semibold">
-                INDICATIVE · NOT A QUOTE
+                {t('results.kpi.indicative')}
               </span>
             </div>
             <div className="font-headline text-3xl sm:text-5xl font-bold text-brick tracking-tight">
               {formatINR(totalCost)}
             </div>
             <p className="text-xs text-ink-soft font-sans">
-              Confidence: <strong className="text-ink">{estimate.confidence.label}</strong> ·{' '}
-              {estimate.confidence.reason}
+              {t('results.kpi.confidence', {
+                label: estimate.confidence.label,
+                reason: estimate.confidence.reason,
+              })}
             </p>
           </div>
 
           {/* Planning Rate & Band */}
           <div className="md:col-span-4 space-y-1 md:border-r border-ink/10 md:pr-6">
             <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-              PLANNING RATE
+              {t('results.kpi.planningRate')}
             </div>
             <div className="font-headline text-xl sm:text-2xl font-bold text-ink">
               ₹{formatNumber(ratePerSqFt)}{' '}
-              <span className="text-sm font-sans font-normal text-ink-soft">/ sq ft</span>
+              <span className="text-sm font-sans font-normal text-ink-soft">
+                {t('results.kpi.perSqFt')}
+              </span>
             </div>
             <div className="text-xs text-forest font-semibold pt-0.5">
-              Planning range: {formatINR(estimate.total.p10)} – {formatINR(estimate.total.p90)}
+              {t('results.kpi.planningRange', {
+                low: formatINR(estimate.total.p10),
+                high: formatINR(estimate.total.p90),
+              })}
             </div>
-            <p className="text-[11px] text-ink-soft leading-tight">
-              Range returned by the estimate service. A planning band, not a guaranteed price.
-            </p>
+            <p className="text-[11px] text-ink-soft leading-tight">{t('results.kpi.rangeNote')}</p>
           </div>
 
           {/* Built-up Area */}
           <div className="md:col-span-3 space-y-1">
             <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-              TOTAL BUILT-UP AREA
+              {t('results.kpi.totalBuiltUp')}
             </div>
             <div className="font-headline text-xl sm:text-2xl font-bold text-ink">
               {formatNumber(areaSqFt)}{' '}
-              <span className="text-sm font-sans font-normal text-ink-soft">sq ft</span>
+              <span className="text-sm font-sans font-normal text-ink-soft">
+                {t('common.sqFt')}
+              </span>
             </div>
             <p className="text-[11px] text-ink-soft leading-tight">
-              {floors} floor{floors === 1 ? '' : 's'} · {titleCase(estimate.inputs.construction_type)}
+              {t('results.kpi.builtUpMeta', {
+                count: floors,
+                construction: translateConstruction(t, estimate.inputs.construction_type),
+              })}
             </p>
           </div>
         </div>
@@ -438,9 +489,14 @@ export function ResultsPage() {
           {/* Left Column: Where the budget goes */}
           <div className="lg:col-span-8 space-y-5">
             <div className="flex items-baseline justify-between border-b border-ink/14 pb-2">
-              <h2 className="font-headline text-xl font-bold text-ink">Where the budget goes</h2>
+              <h2 className="font-headline text-xl font-bold text-ink">
+                {t('results.breakdown.title')}
+              </h2>
               <span className="text-xs font-mono text-ink-soft">
-                {estimate.breakdown.length} categories · {shareTotal}% allocated
+                {t('results.breakdown.meta', {
+                  count: estimate.breakdown.length,
+                  share: shareTotal,
+                })}
               </span>
             </div>
 
@@ -449,7 +505,7 @@ export function ResultsPage() {
               <div
                 className="w-full h-5 rounded overflow-hidden flex border border-ink/14 shadow-inner"
                 role="img"
-                aria-label="Cost allocation chart across estimate categories"
+                aria-label={t('results.breakdown.chartAria')}
               >
                 {estimate.breakdown.map((item) => (
                   <div
@@ -458,7 +514,9 @@ export function ResultsPage() {
                       width: `${item.share_pct}%`,
                       backgroundColor: getCategoryColor(item.category),
                     }}
-                    title={`${item.category}: ${item.share_pct}% (${formatINR(item.amount)})`}
+                    title={`${translateCategory(t, item.category)}: ${item.share_pct}% (${formatINR(
+                      item.amount
+                    )})`}
                     className="h-full transition-opacity hover:opacity-90"
                   />
                 ))}
@@ -473,7 +531,7 @@ export function ResultsPage() {
                       style={{ backgroundColor: getCategoryColor(item.category) }}
                     />
                     <span>
-                      {item.category.split(' ')[0]} ({item.share_pct}%)
+                      {translateCategory(t, item.category).split(' ')[0]} ({item.share_pct}%)
                     </span>
                   </div>
                 ))}
@@ -486,13 +544,13 @@ export function ResultsPage() {
                 <thead className="bg-paper-deep/70 text-ink-soft font-mono uppercase text-[10px] tracking-wider border-b border-ink/14">
                   <tr>
                     <th scope="col" className="py-2.5 px-4 font-semibold">
-                      Cost Category
+                      {t('results.breakdown.costCategory')}
                     </th>
                     <th scope="col" className="py-2.5 px-4 text-center font-semibold">
-                      Share
+                      {t('results.breakdown.share')}
                     </th>
                     <th scope="col" className="py-2.5 px-4 text-right font-semibold">
-                      Amount
+                      {t('results.breakdown.amount')}
                     </th>
                   </tr>
                 </thead>
@@ -505,7 +563,9 @@ export function ResultsPage() {
                           style={{ backgroundColor: getCategoryColor(category.category) }}
                           aria-hidden="true"
                         />
-                        <span className="font-medium text-ink">{category.category}</span>
+                        <span className="font-medium text-ink">
+                          {translateCategory(t, category.category)}
+                        </span>
                       </td>
                       <td className="py-2.5 px-4 text-center font-mono text-ink-soft">
                         {category.share_pct}%
@@ -516,7 +576,9 @@ export function ResultsPage() {
                     </tr>
                   ))}
                   <tr className="bg-clay/40 font-bold border-t-2 border-ink/20">
-                    <td className="py-3 px-4 text-ink font-sans text-sm">Total indicative estimate</td>
+                    <td className="py-3 px-4 text-ink font-sans text-sm">
+                      {t('results.breakdown.total')}
+                    </td>
                     <td className="py-3 px-4 text-center font-mono text-ink">{shareTotal}%</td>
                     <td className="py-3 px-4 text-right font-mono text-brick text-sm">
                       {formatINR(totalCost)}
@@ -527,21 +589,20 @@ export function ResultsPage() {
             </div>
 
             <p className="text-[11px] text-ink-soft leading-relaxed font-sans">
-              Category amounts are returned by the estimate service and may include materials and
-              labour allowances. They are not itemised contractor rates.
+              {t('results.breakdown.note')}
             </p>
 
             {/* Material recommendations from the API */}
             <div className="overflow-hidden rounded-lg border border-ink/14 bg-paper-deep/60">
               <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <h3 className="font-headline text-base font-bold text-ink">
-                  Material recommendations
+                  {t('results.materials.title')}
                 </h3>
                 <Link
                   to="/materials"
                   className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-brick hover:underline focus-ring rounded sm:self-auto"
                 >
-                  <span>Open the material guide</span>
+                  <span>{t('results.materials.openGuide')}</span>
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </Link>
               </div>
@@ -552,14 +613,16 @@ export function ResultsPage() {
                     <section key={material.category} className="bg-paper">
                       <div className="space-y-1 p-4">
                         <h4 className="break-words text-sm font-semibold text-ink">
-                          {titleCase(material.category)}
+                          {translateMaterialCategory(t, material.category)}
                         </h4>
                         <p className="break-words text-sm leading-relaxed text-ink-soft">
                           {material.reason}
                         </p>
                       </div>
                       <MaterialComparison
-                        label={`${titleCase(material.category)} primary and alternative specification`}
+                        label={t('results.materials.comparisonLabel', {
+                          category: translateMaterialCategory(t, material.category),
+                        })}
                         primary={material.primary}
                         alternative={material.alternative}
                       />
@@ -568,19 +631,18 @@ export function ResultsPage() {
                 </div>
               ) : (
                 <p className="border-t border-ink/14 p-4 text-sm text-ink-soft">
-                  No material recommendations were returned for this estimate.
+                  {t('results.materials.none')}
                 </p>
               )}
 
               <p className="border-t border-ink/14 bg-paper-deep/40 px-4 py-2.5 text-xs leading-relaxed text-ink-soft">
-                Shown exactly as returned by the estimate service. Generic specifications, not a
-                brand endorsement or a supplier quotation.
+                {t('results.materials.disclaimer')}
               </p>
             </div>
 
             {/* Service disclaimer */}
             <div className="bg-clay/40 border border-ink/14 rounded-lg p-4 text-[11px] text-ink-soft leading-relaxed">
-              <strong className="text-ink font-sans">Estimate service note:</strong>{' '}
+              <strong className="text-ink font-sans">{t('results.serviceNote')}</strong>{' '}
               {estimate.disclaimer}
             </div>
           </div>
@@ -588,23 +650,11 @@ export function ResultsPage() {
           {/* Right Column: contract inputs */}
           <div className="lg:col-span-4 space-y-5">
             <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
-              <h3 className="font-headline font-bold text-base text-ink">Estimate inputs</h3>
+              <h3 className="font-headline font-bold text-base text-ink">
+                {t('results.inputs.title')}
+              </h3>
               <div className="space-y-2 text-xs font-sans">
-                {[
-                  ['Construction', titleCase(estimate.inputs.construction_type)],
-                  ['Quality tier', titleCase(estimate.inputs.quality_tier)],
-                  ['Zone', titleCase(estimate.inputs.zone_id)],
-                  ['Floors', String(estimate.inputs.floors)],
-                  ['Bedrooms', String(estimate.inputs.bedrooms)],
-                  ['Bathrooms', String(estimate.inputs.bathrooms)],
-                  [
-                    'Plot area',
-                    estimate.inputs.plot_area_sqft
-                      ? `${formatNumber(estimate.inputs.plot_area_sqft)} sq ft`
-                      : 'Not provided',
-                  ],
-                  ['Budget', formatBudget(estimate.budget)],
-                ].map(([label, value]) => (
+                {inputRows.map(([label, value]) => (
                   <div
                     key={label}
                     className="flex justify-between gap-3 border-b border-ink/10 pb-1.5"
@@ -615,16 +665,23 @@ export function ResultsPage() {
                 ))}
               </div>
               <div className="pt-2 border-t border-ink/10 text-[10px] font-mono text-ink-soft space-y-1">
-                <div>Prepared {formatDateTime(estimate.created_at)}</div>
                 <div>
-                  Model {estimate.model.version} · Data {estimate.model.data_version}
+                  {t('results.inputs.prepared', { date: formatDateTime(estimate.created_at) })}
+                </div>
+                <div>
+                  {t('results.inputs.model', {
+                    version: estimate.model.version,
+                    dataVersion: estimate.model.data_version,
+                  })}
                 </div>
               </div>
             </div>
 
             {estimate.drivers.length > 0 && (
               <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
-                <h3 className="font-headline font-bold text-base text-ink">Cost drivers</h3>
+                <h3 className="font-headline font-bold text-base text-ink">
+                  {t('results.drivers.title')}
+                </h3>
                 <div className="space-y-2 text-xs font-sans">
                   {estimate.drivers.map((driver) => (
                     <div
@@ -642,16 +699,13 @@ export function ResultsPage() {
             )}
 
             <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2.5">
-              <h3 className="font-headline font-bold text-base text-ink">Not included</h3>
+              <h3 className="font-headline font-bold text-base text-ink">
+                {t('results.notIncluded.title')}
+              </h3>
               <ul className="text-xs text-ink-soft space-y-2 list-disc list-inside font-sans">
-                <li>
-                  Land cost, approvals and statutory fees; architect, engineer and professional fees.
-                </li>
-                <li>Compound wall, landscaping and other external site works.</li>
-                <li>
-                  Furniture, modular kitchen, lift, solar systems and major utility connections are
-                  also excluded.
-                </li>
+                <li>{t('results.notIncluded.item1')}</li>
+                <li>{t('results.notIncluded.item2')}</li>
+                <li>{t('results.notIncluded.item3')}</li>
               </ul>
             </div>
           </div>

@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { MockBanner } from './components/layout/MockBanner';
@@ -17,6 +19,16 @@ import { AuthProvider } from './auth/AuthProvider';
 import { RequireAuth } from './auth/RequireAuth';
 
 export function App() {
+  const { t, i18n } = useTranslation();
+  const language = i18n.resolvedLanguage ?? i18n.language;
+
+  // Keep the document language and tab title in sync with the chosen locale so
+  // screen readers announce the right language and the browser tab follows it.
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = t('app.title');
+  }, [language, t]);
+
   return (
     <BrowserRouter>
       <AuthProvider>
