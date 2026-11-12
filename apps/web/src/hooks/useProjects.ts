@@ -18,7 +18,7 @@ export function useProjects() {
     setError(null);
 
     apiClient
-      .listProjects()
+      .getProjects()
       .then((response) => {
         if (!active) return;
         setItems(response.items);

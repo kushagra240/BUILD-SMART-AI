@@ -29,7 +29,9 @@ export function LoginPage() {
       from?: { pathname?: string; search?: string };
     } | null
   )?.from;
-  const redirectTo = from?.pathname ? `${from.pathname}${from.search ?? ''}` : '/app';
+  const redirectTo = from?.pathname
+    ? `${from.pathname}${from.search ?? ''}`
+    : '/app/projects';
 
   const [formData, setFormData] = useState<LoginFormData>(() =>
     mock ? mockDefaults : { email: '', password: '' }
