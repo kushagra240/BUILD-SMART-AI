@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Figma design system (see docs/DESIGN_SYSTEM.md).
+        // Figma design system (see docs/decisions/ADR-001-design-language-from-landing-export.md).
         // `paper` is the page canvas, `panel` the card surface, `night` the
         // signature dark CTA, `accent` the single interactive colour.
         paper: {

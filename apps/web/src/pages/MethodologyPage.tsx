@@ -1,151 +1,151 @@
 import { Link } from 'react-router-dom';
-import { Layers, ShieldCheck, Database, ArrowRight } from 'lucide-react';
+import { ArrowRight, Database, Layers, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
+/**
+ * Illustrative allocation, unchanged from the original page. These shares are
+ * static copy, not engine output, and are the known gap tracked by T41 (one
+ * category list, no hard-coded business numbers). Dot colours come from the
+ * shared `chart` palette so the legend matches the results donut.
+ */
 const CATEGORIES = [
-  { key: 'foundation', share: '12%', color: '#6B4F3A' },
-  { key: 'structure', share: '31%', color: '#1F4D45' },
-  { key: 'masonry', share: '18%', color: '#B4472B' },
-  { key: 'flooring', share: '10%', color: '#D9A441' },
-  { key: 'roofing', share: '10%', color: '#8A6FA0' },
-  { key: 'electrical', share: '7%', color: '#9BB05A' },
-  { key: 'plumbing', share: '7%', color: '#4F86A6' },
-  { key: 'finishing', share: '7%', color: '#D88C9A' },
-  { key: 'labour', share: '5%', color: '#3A3F3C' },
+  { key: 'foundation', share: '12%', dot: 'bg-chart-foundation' },
+  { key: 'structure', share: '31%', dot: 'bg-chart-structure' },
+  { key: 'masonry', share: '18%', dot: 'bg-chart-masonry' },
+  { key: 'flooring', share: '10%', dot: 'bg-chart-flooring' },
+  { key: 'roofing', share: '10%', dot: 'bg-chart-roofing' },
+  { key: 'electrical', share: '7%', dot: 'bg-chart-electrical' },
+  { key: 'plumbing', share: '7%', dot: 'bg-chart-plumbing' },
+  { key: 'finishing', share: '7%', dot: 'bg-chart-finishing' },
+  { key: 'labour', share: '5%', dot: 'bg-chart-labour' },
 ] as const;
 
 export function MethodologyPage() {
   const { t } = useTranslation();
   return (
-    <div className="min-h-screen bg-paper text-ink pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+    <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+      <div className="mx-auto max-w-4xl space-y-7 px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="space-y-3 border-b border-ink/10 pb-6">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
-              {t('methodology.kicker')}
-            </span>
+        <header className="max-w-2xl space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="eyebrow text-accent">{t('methodology.kicker')}</span>
             <SampleDataBadge text={t('common.sampleData')} />
           </div>
-          <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+          <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
             {t('methodology.title')}
           </h1>
-          <p className="text-xs sm:text-sm text-ink-soft leading-relaxed max-w-2xl font-sans">
-            {t('methodology.subtitle')}
-          </p>
-        </div>
+          <p className="text-sm leading-6 text-ink-soft">{t('methodology.subtitle')}</p>
+        </header>
 
-        {/* Estimation Engine Architecture */}
-        <section className="bg-paper-deep/50 border border-ink/14 rounded-lg p-6 sm:p-8 space-y-4">
+        {/* Estimation engine */}
+        <section className="surface-card space-y-4 p-6 sm:p-8">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-clay border border-ink/14 flex items-center justify-center text-forest">
-              <Layers className="w-4 h-4" />
-            </div>
-            <h2 className="font-headline text-xl font-bold text-ink">
-              {t('methodology.engine.title')}
-            </h2>
+            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-accent-soft text-accent">
+              <Layers className="h-4 w-4" aria-hidden="true" />
+            </span>
+            <h2 className="section-title">{t('methodology.engine.title')}</h2>
           </div>
-          <p className="text-xs sm:text-sm text-ink-soft leading-relaxed font-sans">
+          <p className="text-sm leading-6 text-ink-soft">
             {t('methodology.engine.bodyBefore')}{' '}
-            <code className="bg-paper px-1.5 py-0.5 rounded font-mono text-brick border border-ink/10">
+            <code className="rounded bg-paper-deep px-1.5 py-0.5 font-mono text-xs text-accent">
               log(total_cost_inr)
             </code>{' '}
             {t('methodology.engine.bodyAfter')}
           </p>
         </section>
 
-        {/* Data Provenance Section */}
-        <section className="bg-paper-deep/50 border border-ink/14 rounded-lg p-6 sm:p-8 space-y-4">
+        {/* Data provenance */}
+        <section className="surface-card space-y-4 p-6 sm:p-8">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-clay border border-ink/14 flex items-center justify-center text-forest">
-              <Database className="w-4 h-4" />
-            </div>
-            <h2 className="font-headline text-xl font-bold text-ink">
-              {t('methodology.data.title')}
-            </h2>
+            <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-accent-soft text-accent">
+              <Database className="h-4 w-4" aria-hidden="true" />
+            </span>
+            <h2 className="section-title">{t('methodology.data.title')}</h2>
           </div>
-          <p className="text-xs sm:text-sm text-ink-soft leading-relaxed font-sans">
-            {t('methodology.data.intro')}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            <div className="bg-paper border border-ink/14 rounded p-3 space-y-1">
-              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-forest text-paper">
+          <p className="text-sm leading-6 text-ink-soft">{t('methodology.data.intro')}</p>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="space-y-2 rounded-xl border border-line bg-paper p-4">
+              <span className="inline-block rounded bg-night px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-white">
                 {t('methodology.tags.real')}
               </span>
-              <p className="text-[11px] text-ink-soft">
-                {t('methodology.tags.realBody')}
-              </p>
+              <p className="text-[11px] leading-5 text-ink-soft">{t('methodology.tags.realBody')}</p>
             </div>
-            <div className="bg-paper border border-ink/14 rounded p-3 space-y-1">
-              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-clay text-ink border border-ink/14">
+            <div className="space-y-2 rounded-xl border border-line bg-paper p-4">
+              <span className="inline-block rounded bg-accent-soft px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-accent">
                 {t('methodology.tags.published')}
               </span>
-              <p className="text-[11px] text-ink-soft">
+              <p className="text-[11px] leading-5 text-ink-soft">
                 {t('methodology.tags.publishedBody')}
               </p>
             </div>
-            <div className="bg-paper border border-ink/14 rounded p-3 space-y-1">
-              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-ochre/30 text-ink">
+            <div className="space-y-2 rounded-xl border border-line bg-paper p-4">
+              <span className="inline-block rounded bg-ochre/25 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink">
                 {t('methodology.tags.synthetic')}
               </span>
-              <p className="text-[11px] text-ink-soft">
+              <p className="text-[11px] leading-5 text-ink-soft">
                 {t('methodology.tags.syntheticBody')}
               </p>
             </div>
           </div>
         </section>
 
-        {/* 9 Categories Allocation */}
-        <section className="bg-paper-deep/50 border border-ink/14 rounded-lg p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between border-b border-ink/10 pb-3">
-            <h2 className="font-headline text-xl font-bold text-ink">
-              {t('methodology.categories.title')}
-            </h2>
-            <span className="text-xs font-mono text-ink-soft">
+        {/* Nine-category allocation */}
+        <section className="surface-card overflow-hidden">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft px-6 py-5">
+            <h2 className="section-title">{t('methodology.categories.title')}</h2>
+            <span className="text-[11px] font-semibold text-ink-soft">
               {t('methodology.categories.total')}
             </span>
           </div>
-          <div className="space-y-2">
+          <ul className="divide-y divide-line-soft">
             {CATEGORIES.map((cat) => (
-              <div
+              <li
                 key={cat.key}
-                className="bg-paper border border-ink/14 rounded p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-sans"
+                className="flex flex-col justify-between gap-2 px-6 py-3.5 text-sm transition-colors hover:bg-paper-deep/30 sm:flex-row sm:items-center"
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: cat.color }}
+                    className={`h-2.5 w-2.5 flex-none rounded-full ${cat.dot}`}
+                    aria-hidden="true"
                   />
                   <span className="font-semibold text-ink">
                     {t(`methodology.categories.${cat.key}.name`)}
                   </span>
-                  <span className="text-ink-soft text-[11px] hidden sm:inline">
+                  <span className="hidden text-[11px] text-ink-soft sm:inline">
                     — {t(`methodology.categories.${cat.key}.desc`)}
                   </span>
                 </div>
-                <span className="font-mono font-bold text-ink text-right">{cat.share}</span>
-              </div>
+                <span className="font-mono text-sm font-bold text-ink">{cat.share}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
 
-        {/* Honest Limitations & Scope */}
-        <section className="bg-clay/50 border border-ink/14 rounded-lg p-6 sm:p-8 space-y-3 font-sans">
-          <h2 className="font-headline text-lg font-bold text-ink flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-forest" />
-            <span>{t('methodology.scope.title')}</span>
-          </h2>
-          <p className="text-xs text-ink-soft leading-relaxed">
-            {t('methodology.scope.body')}
-          </p>
-          <div className="pt-2">
-            <Link
-              to="/app/new"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
-            >
+        {/* Scope and limitations */}
+        <section className="relative overflow-hidden rounded-2xl bg-night p-6 text-white sm:p-8">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(circle at 86% 10%, rgba(49,94,251,0.36), transparent 46%)',
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-white/10 text-white">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <h2 className="text-xl font-extrabold tracking-[-0.04em] text-white">
+                {t('methodology.scope.title')}
+              </h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-6 text-white/65">{t('methodology.scope.body')}</p>
+            <Link to="/app/new" className="btn-primary bg-accent hover:bg-accent-hover">
               <span>{t('methodology.scope.cta')}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </section>
