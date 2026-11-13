@@ -71,7 +71,7 @@ T50, T53, T55 devops/qa run in parallel
 
 | ID | Task | Depends | Status | Claimed by | Acceptance |
 |---|---|---|---|---|---|
-| T40 | Apply Figma tokens: Tailwind theme, CSS variables, fonts with fallbacks, base components. Work from the screenshots and the token list. | none | todo | | tokens match `frontend-design.md` exactly; lint, typecheck, tests, build pass; screenshot comparison in the PR |
+| T40 | Apply Figma tokens: Tailwind theme, CSS variables, fonts with fallbacks, base components. Work from the screenshots and the token list. | none | review | OpenCode (DeepSeek V4.1 Flash) | tokens match `frontend-design.md` exactly; lint, typecheck, tests, build pass; screenshot comparison in the PR |
 | T41 | Single category list and one mock layer aligned to OpenAPI v1; delete the three conflicting rate tables; fake numbers are round placeholders with a visible badge. | none | todo | | grep finds one category source; mock response validates against generated types |
 | T42 | Auth context, route guards for `/app/*`, silent refresh (single-flight), real logout, remove the hard-coded user. | none | todo | | tests for guard redirect, refresh on 401, logout calls API |
 | T43 | Wizard with 4 steps using `/meta/options`; remove hard-coded zone and rooms; send only fields the API supports. | T41 | todo | | wizard tests; no literal zone ids in components |
@@ -95,7 +95,7 @@ T50, T53, T55 devops/qa run in parallel
 
 | ID | Requested by | Change | Why | Decision |
 |---|---|---|---|---|
-| | | | | |
+| RFC-01 | L5 (OpenCode) | Add `recharts` and `framer-motion` to `apps/web/package.json` | Results-page cost-breakdown chart and reduced-motion-aware fade-ins; pinned in the lockfile | pending human approval |
 
 ## Needs human
 

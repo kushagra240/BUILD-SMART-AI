@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CalendarDays, FileText, Info, Plus } from 'lucide-react';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { HouseSchematic } from '../components/common/HouseSchematic';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
@@ -17,6 +18,7 @@ export function SavedProjectDetailPage() {
   const [actionError, setActionError] = useState<string | null>(null);
   const mock = isMockApi();
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const handleDelete = async (projectId: string) => {
     setActionError(null);
@@ -24,10 +26,21 @@ export function SavedProjectDetailPage() {
     navigate('/app/projects', { replace: true });
   };
 
+  const containerVariants: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: reduceMotion ? 0 : 0.1 } },
+  };
+  const itemVariants: Variants = reduceMotion
+    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
+    : {
+        hidden: { opacity: 0, y: 16 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+      };
+
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-paper text-ink pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+      <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+        <div className="mx-auto max-w-shell px-4 sm:px-6 lg:px-8">
           <LoadingState label={t('projectDetail.loading')} />
         </div>
       </div>
@@ -36,14 +49,14 @@ export function SavedProjectDetailPage() {
 
   if (status === 'error' || !project) {
     return (
-      <div className="min-h-screen bg-paper text-ink pb-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-5">
+      <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+        <div className="mx-auto max-w-2xl space-y-5 px-4 sm:px-6 lg:px-8">
           <ErrorState message={error ?? t('errors.projectNotFound')} onRetry={reload} />
           <Link
             to="/app/projects"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-brick hover:underline focus-ring rounded"
+            className="inline-flex items-center gap-1.5 rounded text-sm font-semibold text-accent hover:underline focus-ring"
           >
-            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t('projectDetail.backToProjects')}</span>
           </Link>
         </div>
@@ -52,21 +65,29 @@ export function SavedProjectDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-paper text-ink pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
-        {/* Header and Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ink/10 pb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
+    <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+      <motion.div
+        className="mx-auto max-w-shell space-y-6 px-4 sm:px-6 lg:px-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Header */}
+        <motion.header
+          variants={itemVariants}
+          className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"
+        >
+          <div className="max-w-2xl space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow text-accent">
                 {t('projectDetail.kicker', { id: project.id.slice(0, 8).toUpperCase() })}
               </span>
               {mock && <SampleDataBadge text={t('common.sampleData')} />}
             </div>
-            <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+            <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
               {project.name}
             </h1>
-            <p className="text-xs sm:text-sm text-ink-soft font-sans">
+            <p className="text-sm leading-6 text-ink-soft">
               {t('projectDetail.createdUpdated', {
                 created: formatDate(project.created_at),
                 updated: formatDateTime(project.updated_at),
@@ -74,19 +95,13 @@ export function SavedProjectDetailPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Link
-              to="/app/projects"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 text-ink-soft" aria-hidden="true" />
+          <div className="flex flex-wrap items-center gap-2">
+            <Link to="/app/projects" className="btn-ghost h-10 px-3.5 text-xs">
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('projectDetail.allProjects')}</span>
             </Link>
-            <Link
-              to="/app/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
-            >
-              <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+            <Link to="/app/new" className="btn-primary h-10 px-4 text-xs">
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('projects.startNewEstimate')}</span>
             </Link>
             <DeleteProjectButton
@@ -97,130 +112,128 @@ export function SavedProjectDetailPage() {
               variant="button"
             />
           </div>
-        </div>
+        </motion.header>
 
         {actionError && (
           <div
             role="alert"
-            className="rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-xs text-error"
+            className="rounded-xl border border-error/25 bg-error/5 px-5 py-3 text-sm text-error"
           >
             {actionError}
           </div>
         )}
 
-        {/* Project Record */}
-        <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 sm:p-6 space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-            <span className="text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-              {t('projectDetail.record')}
-            </span>
-            <span className="px-2 py-0.5 rounded bg-clay border border-ink/14 text-[11px] text-ink">
+        {/* Record */}
+        <motion.section variants={itemVariants} className="surface-card p-6 sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="eyebrow">{t('projectDetail.record')}</span>
+            <span className="rounded-md bg-paper-deep px-2 py-1 text-[10px] font-bold tracking-[0.06em] text-ink-soft">
               {project.id.slice(0, 8).toUpperCase()}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <div className="md:col-span-5 space-y-1">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                {t('projectDetail.projectName')}
-              </div>
-              <div className="font-headline text-2xl sm:text-3xl font-bold text-ink">
+          <div className="mt-5 grid grid-cols-1 gap-6 border-y border-line-soft py-5 md:grid-cols-12">
+            <div className="space-y-1 md:col-span-5">
+              <div className="eyebrow">{t('projectDetail.projectName')}</div>
+              <div className="text-2xl font-extrabold tracking-[-0.04em] text-ink">
                 {project.name}
               </div>
             </div>
 
-            <div className="md:col-span-4 space-y-1">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                {t('projectDetail.created')}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-ink">
-                <CalendarDays className="w-4 h-4 text-forest" aria-hidden="true" />
+            <div className="space-y-1 md:col-span-4">
+              <div className="eyebrow">{t('projectDetail.created')}</div>
+              <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <CalendarDays className="h-4 w-4 text-accent" aria-hidden="true" />
                 <span>{formatDate(project.created_at)}</span>
               </div>
             </div>
 
-            <div className="md:col-span-3 space-y-1">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-                {t('projectDetail.lastUpdated')}
+            <div className="space-y-1 md:col-span-3">
+              <div className="eyebrow">{t('projectDetail.lastUpdated')}</div>
+              <div className="text-sm font-semibold text-ink">
+                {formatDateTime(project.updated_at)}
               </div>
-              <div className="text-sm text-ink">{formatDateTime(project.updated_at)}</div>
             </div>
           </div>
 
-          <div className="border-t border-ink/10 pt-4 space-y-1">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-              {t('projectDetail.notes')}
-            </div>
-            <p className="text-xs sm:text-sm text-ink leading-relaxed whitespace-pre-wrap">
+          <div className="mt-4 space-y-1">
+            <div className="eyebrow">{t('projectDetail.notes')}</div>
+            <p className="whitespace-pre-wrap text-sm leading-6 text-ink">
               {project.notes || t('projectDetail.noNotes')}
             </p>
           </div>
-        </div>
+        </motion.section>
 
-        {/* Main Grid: Estimate placeholder + guidance */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-8 space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-baseline justify-between border-b border-ink/14 pb-2">
-                <h2 className="font-headline text-xl font-bold text-ink">
-                  {t('projectDetail.costEstimate')}
-                </h2>
-                <span className="text-xs font-mono text-ink-soft">
+        {/* Estimate + guidance */}
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12"
+        >
+          <div className="space-y-5 lg:col-span-8">
+            <section className="surface-card overflow-hidden">
+              <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft px-6 py-5">
+                <h2 className="section-title">{t('projectDetail.costEstimate')}</h2>
+                <span className="text-[11px] font-semibold text-ink-soft">
                   {t('projectDetail.notCalculated')}
                 </span>
               </div>
 
-              <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-6 space-y-4">
-                <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-clay border border-ink/14 text-forest">
-                  <FileText className="w-5 h-5 stroke-[1.5]" aria-hidden="true" />
+              <div className="relative overflow-hidden bg-night p-6 text-white sm:p-8">
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 82% 8%, rgba(49,94,251,0.34), transparent 45%)',
+                  }}
+                  aria-hidden="true"
+                />
+                <div className="relative space-y-4">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-white">
+                    <FileText className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-extrabold tracking-[-0.04em] text-white">
+                      {t('projectDetail.noEstimateTitle')}
+                    </h3>
+                    <p className="max-w-lg text-sm leading-6 text-white/60">
+                      {t('projectDetail.noEstimateBody')}
+                    </p>
+                  </div>
+                  <Link to="/app/new" className="btn-primary bg-accent hover:bg-accent-hover">
+                    <span>{t('projects.startNewEstimate')}</span>
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-headline text-lg font-bold text-ink">
-                    {t('projectDetail.noEstimateTitle')}
-                  </h3>
-                  <p className="text-xs text-ink-soft leading-relaxed">
-                    {t('projectDetail.noEstimateBody')}
-                  </p>
-                </div>
-                <Link
-                  to="/app/new"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-brick hover:underline focus-ring rounded"
-                >
-                  <span>{t('projects.startNewEstimate')}</span>
-                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                </Link>
               </div>
-            </div>
+            </section>
 
-            <div className="bg-clay/40 border border-ink/14 rounded-lg p-3.5 flex gap-2.5 items-start text-xs text-ink-soft">
-              <Info className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <p className="leading-relaxed">
-                <strong className="text-ink">{t('projectDetail.recordNoteTitle')}</strong>{' '}
+            <div className="flex items-start gap-3 rounded-xl bg-accent-soft/70 px-5 py-4 text-xs leading-6 text-ink-soft">
+              <Info className="mt-0.5 h-4 w-4 flex-none text-accent" aria-hidden="true" />
+              <p>
+                <strong className="font-bold text-ink">{t('projectDetail.recordNoteTitle')}</strong>{' '}
                 {t('projectDetail.recordNoteBody')}
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-4 space-y-5">
-            <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
+          <div className="space-y-5 lg:col-span-4">
+            <section className="surface-card p-5">
               <HouseSchematic showFloorTable={false} />
-              <p className="text-[11px] text-ink-soft leading-relaxed pt-2 border-t border-ink/10">
+              <p className="mt-3 border-t border-line-soft pt-3 text-[11px] leading-5 text-ink-soft">
                 {t('projectDetail.schematicNote')}
               </p>
-            </div>
+            </section>
 
-            <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2 text-xs text-ink-soft leading-relaxed font-sans">
-              <h3 className="font-headline text-base font-bold text-ink">
-                {t('projectDetail.scopeTitle')}
-              </h3>
-              <p>{t('projectDetail.scopeBody')}</p>
-              <p className="border-t border-ink/10 pt-2 text-[11px]">
+            <section className="surface-card p-5 text-xs leading-6 text-ink-soft">
+              <h2 className="section-title">{t('projectDetail.scopeTitle')}</h2>
+              <p className="mt-2">{t('projectDetail.scopeBody')}</p>
+              <p className="mt-3 border-t border-line-soft pt-3 text-[11px]">
                 {t('projectDetail.scopeExcluded')}
               </p>
-            </div>
+            </section>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

@@ -4,26 +4,27 @@ Contents: 1 stack, 2 design language, 3 pages and routes, 4 behaviour rules, 5 m
 
 ## 1. Stack (apps/web)
 
-React 18, TypeScript (strict), Vite 6, React Router 6, Tailwind CSS v3 (stay on v3, decision D-06), Zod for forms in login and register. `chart.js` and `react-chartjs-2`, `@tanstack/react-query` and `react-hook-form` are installed but were **not used** at last review: either use them as planned or remove them in a separate PR. The API client is a typed `fetch` wrapper in `src/services/apiClient.ts` with the access token in memory. API types are generated (`src/types/api.generated.ts`, never hand-edited).
+React 18, TypeScript (strict), Vite 6, React Router 6, Tailwind CSS v3 (stay on v3, decision D-06), Zod for forms in login and register. `recharts` renders the results cost-breakdown chart and `framer-motion` the reduced-motion-aware entrances; `chart.js`/`react-chartjs-2` and `react-hook-form` are still installed but unused and should be removed in a separate PR. The API client is a typed `fetch` wrapper in `src/services/apiClient.ts` with the access token in memory. API types are generated (`src/types/api.generated.ts`, never hand-edited).
 
-## 2. Design language (from the owner's Figma; Figma MCP is not available on the free plan, so work from screenshots plus these tokens)
+## 2. Design language (from the owner's landing-page Figma export; see `docs/decisions/ADR-001-design-language-from-landing-export.md`)
 
-Feel: warm, trustworthy, grounded, like an architect's notebook on cream paper. Editorial, asymmetric layouts, generous whitespace. **Not** generic AI styling.
+Feel: calm, technical, trustworthy — a slate workspace with white floating cards, one blue accent and a near-black CTA slab. Editorial, asymmetric layouts, generous whitespace. **Not** generic AI styling, and no cream/brick palette (that earlier draft was never implemented and is superseded).
 
-Never use: purple or blue gradients, glassmorphism, neon glows, blurred blobs, 3D orbs, emoji as icons, sparkle or robot imagery, "AI-powered" badges, uniform pill cards, centred-everything layouts, lorem ipsum, hype words (revolutionary, seamless, unlock, leverage).
+Never use: emoji as icons, sparkle or robot imagery, "AI-powered" badges, uniform pill cards, centred-everything layouts, lorem ipsum, hype words (revolutionary, seamless, unlock, leverage), or a second accent colour alongside the blue.
 
-Colour tokens (define as Tailwind theme colours and CSS variables; use exactly):
-`paper #F6F1E7` (background), `paper-deep #EBE2D0` (panels), `ink #1F2421` (text), `ink-soft #5A615C`, `brick #B4472B` (primary accent), `forest #1F4D45` (secondary), `ochre #D9A441` (fills only, never text on paper), `clay #E8DCC7`, `success #3F7D4E`, `warning #C98B2B`, `error #A32D2D`. Hairline borders: ink at 14 percent opacity.
-Chart colours for the 9 categories: Foundation `#6B4F3A`, Structure `#1F4D45`, Masonry `#B4472B`, Roofing `#8A6FA0`, Flooring `#D9A441`, Plumbing `#4F86A6`, Electrical `#9BB05A`, Finishing `#D88C9A`, Labour `#3A3F3C`. Always label directly or add patterns; never rely on colour alone.
-Fonts (Google Fonts with fallbacks, `font-display: swap`): **Fraunces** for headlines and big numbers, **Instrument Sans** for UI and body, **IBM Plex Mono** (tabular numerals) for figures and IDs. Not Inter, not Roboto.
-Shape and motion: radii 6 to 10 px mixed with some sharp corners; focus ring 2 px forest with 2 px offset; restrained motion.
-Motifs, used sparingly: dimension lines with end ticks and small mono labels, single-stroke line drawings of houses (landing, empty states, 404), a very faint survey grid on the hero only.
+Colour tokens (Tailwind theme colours in `apps/web/tailwind.config.js`; use exactly):
+`paper #F2F4F7` (page canvas), `paper-deep #E8ECF2` (inset panels), `panel #FBFCFE` (card surface), `night #151820` (dark CTA slab), `accent #315EFB` (single interactive colour), `accent-soft #E8EDFF`, `line #DCE1E8` (hairline borders), `ink #17191F` (text), `ink-soft #747C88`, `success #3F7D4E`, `warning #C98B2B`, `error #A32D2D`. `brick`, `forest`, `clay` and `ochre` survive only as aliases and resolve to the palette above.
+Chart colours for the 9 categories: Foundation `#151820`, Structure `#315EFB`, Masonry `#6685F4`, Roofing `#2455E6`, Flooring `#8FA8F5`, Plumbing `#8F98A8`, Electrical `#B7C2D8`, Finishing `#5C6470`, Labour `#AFC4FB`. Always label directly or add patterns; never rely on colour alone.
+Fonts (Google Fonts with fallbacks, `font-display: swap`): **Manrope** for headlines, UI and body, **IBM Plex Mono** (tabular numerals) for figures and IDs. Not Inter, not Roboto.
+Shape and motion: radii 8 to 15 px, soft shadows (`shadow-panel`, `shadow-soft`), accent focus ring via `.focus-ring`, restrained fade-and-rise entrances disabled under `prefers-reduced-motion`.
+Shared primitives live in `apps/web/src/index.css`: `.app-surface`, `.surface-card`, `.surface-card-interactive`, `.section-title`, `.eyebrow`, `.btn-primary`, `.btn-ghost`, `.field-input`. `components/layout/AuthShell.tsx` is the dark split-panel shell for login and register.
+Motifs, used sparingly: the accent-lit dark slab (closing CTA, KPI panel, auth aside), a single-stroke house schematic on landing, dashboard and empty states, and mono eyebrows for section labels.
 Copy: plain, warm, specific. Currency in Indian format (`Intl.NumberFormat('en-IN')`, rupee sign, lakh/crore shorthand with exact value in tables). Square feet are the primary unit.
 
 ## 3. Pages and routes (target)
 
 `/` landing; `/login`, `/register`; `/app` dashboard (recent projects); `/app/new` **4-step wizard** (Basics -> Location and quality -> Budget (optional) -> Review); `/app/estimates/:id` results; `/app/projects`, `/app/projects/:id` (history, compare two estimates, rename, delete); `/app/profile`; `/methodology`; `/materials`; `/privacy`; `*` 404.
-Results page must show: headline estimate in Fraunces with range and confidence label; metric cards (cost per sq ft, confidence, budget status); 9-category doughnut with a table toggle; breakdown table (mono figures); materials per category (primary, alternative, one-line reason); budget verdict; drivers; Download PDF and Save; footer with engine and dataset version; the disclaimer; and the MOCK/DEV badge whenever `is_mock` is true.
+Results page must show: headline estimate in Manrope with range and confidence label; metric cards (cost per sq ft, confidence, budget status); 9-category doughnut with a table toggle; breakdown table (mono figures); materials per category (primary, alternative, one-line reason); budget verdict; drivers; Download PDF and Save; footer with engine and dataset version; the disclaimer; and the MOCK/DEV badge whenever `is_mock` is true.
 
 ## 4. Behaviour rules
 
@@ -45,7 +46,7 @@ Target WCAG 2.1 AA: keyboard navigation, visible focus, semantic landmarks, `ari
 
 ## 7. Known gaps at last review (verify)
 
-Wizard has 2 form steps, not 4; zone and rooms hard-coded; walling/flooring choices collected but not sent; the indicative total preview uses different rates from the results page; results read from router state and silently regenerate a default estimate if absent; "Save project" toggles local state only; "Download PDF" opens a static print page; saved projects and project detail are hard-coded and ignore the URL id; navbar shows a fake user and logout does not call the API; no route guards; no materials shown on results; Chart.js not rendered (a CSS bar is used); three different category name sets and three rate tables across the UI, mock API and methodology page; no profile page; Figma restyle status unknown.
+Wizard has 2 form steps, not 4; zone and rooms hard-coded; walling/flooring choices collected but not sent; the indicative total preview uses different rates from the results page; results read from router state and silently regenerate a default estimate if absent; "Save project" toggles local state only; "Download PDF" opens a static print page; saved projects and project detail are hard-coded and ignore the URL id; navbar shows a fake user and logout does not call the API; no route guards; no materials shown on results; Chart.js not rendered (a CSS bar is used); three different category name sets and three rate tables across the UI, mock API and methodology page; no profile page; the Figma restyle is applied across all views (T40) but has not been reviewed by the owner in a real browser at every breakpoint.
 
 ## 8. Testing
 

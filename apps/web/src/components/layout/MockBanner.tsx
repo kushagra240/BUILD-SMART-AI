@@ -12,11 +12,11 @@ export function MockBanner() {
     <div
       role="region"
       aria-label={t('mockBanner.aria')}
-      className="bg-paper-deep text-ink border-b border-ink/14 px-4 py-1.5 text-xs flex items-center justify-center gap-2 font-mono"
+      className="flex items-center justify-center gap-2 bg-night px-4 py-1.5 text-[11px] text-white/80"
     >
-      <span className="w-2 h-2 rounded-full bg-ochre inline-block" aria-hidden="true" />
-      <span>
-        <strong className="font-semibold uppercase tracking-wider text-brick">
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
+      <span className="truncate">
+        <strong className="font-bold uppercase tracking-[0.1em] text-white">
           {t('mockBanner.label')}
         </strong>{' '}
         {t('mockBanner.body')}

@@ -32,7 +32,7 @@ export function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="min-h-screen bg-paper text-ink flex flex-col font-sans selection:bg-ochre/30 selection:text-ink">
+        <div className="app-surface flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-accent/20 selection:text-ink">
           <MockBanner />
           <Navbar />
           <main className="flex-grow">

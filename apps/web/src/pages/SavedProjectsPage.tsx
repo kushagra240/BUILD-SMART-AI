@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, ChevronRight, FolderX } from 'lucide-react';
+import { ChevronRight, FolderX, Plus, Search } from 'lucide-react';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
@@ -15,6 +16,7 @@ export function SavedProjectsPage() {
   const { items, total, status, error, reload, remove } = useProjects();
   const mock = isMockApi();
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const query = search.trim().toLowerCase();
   const filtered = items.filter((project) => {
@@ -32,41 +34,55 @@ export function SavedProjectsPage() {
 
   const hasProjects = items.length > 0;
 
+  const containerVariants: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: reduceMotion ? 0 : 0.1 } },
+  };
+  const itemVariants: Variants = reduceMotion
+    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
+    : {
+        hidden: { opacity: 0, y: 16 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+      };
+
   return (
-    <div className="min-h-screen bg-paper text-ink pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
-        {/* Header & CTA */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ink/10 pb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
+    <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+      <motion.div
+        className="mx-auto max-w-shell space-y-6 px-4 sm:px-6 lg:px-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Header */}
+        <motion.header
+          variants={itemVariants}
+          className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"
+        >
+          <div className="max-w-2xl space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow text-accent">
                 {t('projects.kicker', {
                   projectCount: String(total).padStart(2, '0'),
                 })}
               </span>
               {mock && <SampleDataBadge text={t('projects.sampleData')} />}
             </div>
-            <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+            <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
               {t('projects.title')}
             </h1>
-            <p className="text-xs sm:text-sm text-ink-soft font-sans">
-              {t('projects.subtitle')}
-            </p>
+            <p className="text-sm leading-6 text-ink-soft">{t('projects.subtitle')}</p>
           </div>
 
-          <Link
-            to="/app/new"
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors whitespace-nowrap focus-ring"
-          >
-            <Plus className="w-4 h-4" />
+          <Link to="/app/new" className="btn-primary shrink-0">
+            <Plus className="h-4 w-4" aria-hidden="true" />
             <span>{t('projects.startNewEstimate')}</span>
           </Link>
-        </div>
+        </motion.header>
 
         {actionError && (
           <div
             role="alert"
-            className="rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-xs text-error"
+            className="rounded-xl border border-error/25 bg-error/5 px-5 py-3 text-sm text-error"
           >
             {actionError}
           </div>
@@ -80,11 +96,11 @@ export function SavedProjectsPage() {
 
         {status === 'success' && (
           <>
-            {/* Search Bar */}
-            <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-3 sm:p-4">
+            {/* Search */}
+            <motion.div variants={itemVariants} className="surface-card p-3 sm:p-4">
               <div className="relative max-w-md">
                 <Search
-                  className="w-4 h-4 text-ink-soft absolute left-3 top-2.5 pointer-events-none"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft"
                   aria-hidden="true"
                 />
                 <input
@@ -93,14 +109,13 @@ export function SavedProjectsPage() {
                   placeholder={t('projects.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-paper border border-ink/14 rounded-md text-xs text-ink placeholder:text-ink-soft focus-ring font-sans"
+                  className="field-input h-11 pl-10"
                 />
               </div>
-            </div>
+            </motion.div>
 
-            {/* Projects grid or Empty State */}
             {filtered.length > 0 ? (
-              <div className="space-y-3">
+              <motion.div variants={itemVariants} className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {filtered.map((project) => {
                     const nameId = `project-name-${project.id}`;
@@ -108,43 +123,47 @@ export function SavedProjectsPage() {
                       <article
                         key={project.id}
                         aria-labelledby={nameId}
-                        className="group flex flex-col justify-between rounded-lg border border-ink/14 bg-paper p-4 shadow-card transition-colors hover:border-brick/40"
+                        className="surface-card-interactive flex flex-col justify-between p-5"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 space-y-1">
+                          <div className="min-w-0 space-y-1.5">
                             <h2
                               id={nameId}
-                              className="break-words font-headline text-sm font-semibold text-ink"
+                              className="break-words text-base font-extrabold tracking-[-0.03em] text-ink"
                             >
                               <Link
                                 to={`/app/projects/${project.id}`}
-                                className="rounded transition-colors group-hover:text-brick focus-ring"
+                                className="rounded transition-colors hover:text-accent focus-ring"
                               >
                                 {project.name}
                               </Link>
                             </h2>
-                            <p className="line-clamp-2 break-words text-xs text-ink-soft">
+                            <p className="line-clamp-2 break-words text-xs leading-5 text-ink-soft">
                               {project.notes || t('projects.noNotes')}
                             </p>
                           </div>
                           <Link
                             to={`/app/projects/${project.id}`}
-                            className="inline-flex shrink-0 items-center justify-center rounded p-1.5 text-ink-soft transition-colors hover:bg-paper-deep hover:text-brick focus-ring"
+                            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-paper-deep text-ink-soft transition-colors hover:bg-accent hover:text-white focus-ring"
                             aria-label={t('projects.openProject', { name: project.name })}
                           >
                             <ChevronRight className="h-4 w-4" aria-hidden="true" />
                           </Link>
                         </div>
 
-                        <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-ink/10 pt-3">
-                          <dl className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px] text-ink-soft">
+                        <div className="mt-5 flex flex-wrap items-end justify-between gap-3 border-t border-line-soft pt-4">
+                          <dl className="grid grid-cols-2 gap-x-5 gap-y-2 text-[11px]">
                             <div>
-                              <dt className="uppercase tracking-wider">{t('projects.created')}</dt>
-                              <dd className="text-ink">{formatDate(project.created_at)}</dd>
+                              <dt className="eyebrow">{t('projects.created')}</dt>
+                              <dd className="mt-0.5 font-semibold text-ink">
+                                {formatDate(project.created_at)}
+                              </dd>
                             </div>
                             <div>
-                              <dt className="uppercase tracking-wider">{t('projects.updated')}</dt>
-                              <dd className="text-ink">{formatDateTime(project.updated_at)}</dd>
+                              <dt className="eyebrow">{t('projects.updated')}</dt>
+                              <dd className="mt-0.5 font-semibold text-ink">
+                                {formatDateTime(project.updated_at)}
+                              </dd>
                             </div>
                           </dl>
                           <DeleteProjectButton
@@ -160,79 +179,77 @@ export function SavedProjectsPage() {
                   })}
                 </div>
 
-                {/* Results footer */}
-                <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-ink/14 bg-paper-deep/40 px-4 py-2.5 font-mono text-xs text-ink-soft">
-                  <span>
-                    {t('projects.showing', { shown: filtered.length, total })}
-                  </span>
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-5 py-3 text-[11px] font-semibold text-ink-soft">
+                  <span>{t('projects.showing', { shown: filtered.length, total })}</span>
                   {query !== '' && (
                     <button
                       type="button"
                       onClick={() => setSearch('')}
-                      className="rounded text-brick hover:underline focus-ring"
+                      className="rounded text-accent hover:underline focus-ring"
                     >
                       {t('projects.clearSearch')}
                     </button>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-8 text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-clay border border-ink/14 text-ink-soft">
-                  <FolderX className="w-6 h-6 stroke-[1.5]" aria-hidden="true" />
-                </div>
-                <div className="space-y-1 max-w-sm mx-auto">
+              <motion.div
+                variants={itemVariants}
+                className="surface-card flex flex-col items-center gap-4 p-10 text-center"
+              >
+                <span className="grid h-14 w-14 place-items-center rounded-2xl bg-accent-soft text-accent">
+                  <FolderX className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <div className="max-w-sm space-y-1.5">
                   {query !== '' ? (
                     <>
-                      <h2 className="font-headline text-lg font-bold text-ink">
+                      <h2 className="text-lg font-bold tracking-[-0.03em] text-ink">
                         {t('projects.noMatchesTitle', { query: search })}
                       </h2>
-                      <p className="text-xs text-ink-soft">
+                      <p className="text-sm leading-6 text-ink-soft">
                         {t('projects.noMatchesBody')}
                       </p>
                     </>
                   ) : (
                     <>
-                      <h2 className="font-headline text-lg font-bold text-ink">
+                      <h2 className="text-lg font-bold tracking-[-0.03em] text-ink">
                         {t('projects.emptyTitle')}
                       </h2>
-                      <p className="text-xs text-ink-soft">
-                        {t('projects.emptyBody')}
-                      </p>
+                      <p className="text-sm leading-6 text-ink-soft">{t('projects.emptyBody')}</p>
                     </>
                   )}
                 </div>
                 {query !== '' ? (
-                  <button
-                    type="button"
-                    onClick={() => setSearch('')}
-                    className="px-4 py-2 rounded-md bg-paper border border-ink/14 text-xs font-medium text-ink hover:bg-paper-deep transition-colors focus-ring"
-                  >
+                  <button type="button" onClick={() => setSearch('')} className="btn-ghost h-10">
                     {t('projects.clearSearch')}
                   </button>
                 ) : (
-                  <Link
-                    to="/app/new"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brick hover:bg-brick-hover text-paper text-xs font-medium shadow-subtle transition-colors focus-ring"
-                  >
-                    <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Link to="/app/new" className="btn-primary h-10 px-4 text-xs">
+                    <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{t('projects.startNewEstimate')}</span>
                   </Link>
                 )}
-              </div>
+              </motion.div>
             )}
           </>
         )}
 
         {hasProjects && (
-          <div className="bg-clay/40 border border-ink/14 rounded-lg p-4 text-xs text-ink-soft leading-relaxed space-y-1">
-            <strong className="text-ink font-sans">
-              {t('projects.disclaimerTitle')}
-            </strong>{' '}
-            {t('projects.disclaimerBody')}
-          </div>
+          <motion.div
+            variants={itemVariants}
+            className="flex items-start gap-3 rounded-xl bg-accent-soft/70 px-5 py-4 text-xs leading-6 text-ink-soft"
+          >
+            <span
+              className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-accent"
+              aria-hidden="true"
+            />
+            <p>
+              <strong className="font-bold text-ink">{t('projects.disclaimerTitle')}</strong>{' '}
+              {t('projects.disclaimerBody')}
+            </p>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

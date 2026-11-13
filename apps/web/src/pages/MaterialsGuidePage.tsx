@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Info } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Info, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
@@ -20,147 +20,154 @@ const TIERS = ['economy', 'standard', 'premium'] as const;
 export function MaterialsGuidePage() {
   const { t } = useTranslation();
   return (
-    <div className="min-h-screen bg-paper text-ink pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
-        {/* Header and Back Button */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-ink/10 pb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-brick font-semibold">
-                {t('materials.kicker')}
-              </span>
+    <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
+      <div className="mx-auto max-w-shell space-y-7 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <header className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div className="max-w-2xl space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow text-accent">{t('materials.kicker')}</span>
               <SampleDataBadge text={t('common.sampleData')} />
             </div>
-            <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+            <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
               {t('materials.title')}
             </h1>
-            <p className="text-xs sm:text-sm text-ink-soft font-sans">
-              {t('materials.subtitle')}
-            </p>
+            <p className="text-sm leading-6 text-ink-soft">{t('materials.subtitle')}</p>
           </div>
 
-          <Link
-            to="/app/estimates/BS-2026-004"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors whitespace-nowrap focus-ring"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 text-ink-soft" />
+          <Link to="/app/estimates/BS-2026-004" className="btn-ghost h-10 shrink-0 px-3.5 text-xs">
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t('materials.back')}</span>
           </Link>
-        </div>
+        </header>
 
-        {/* Intro Section: Spend on what you won't want to replace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div className="lg:col-span-8 space-y-4 font-sans">
-            <h2 className="font-headline text-2xl font-bold text-ink">
+        {/* Intro + material moodboard */}
+        <section className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+          <div className="surface-card space-y-4 p-6 sm:p-8 lg:col-span-8">
+            <span className="eyebrow">{t('materials.table.material')}</span>
+            <h2 className="text-2xl font-extrabold tracking-[-0.045em] text-ink">
               {t('materials.intro.title')}
             </h2>
-            <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">
-              {t('materials.intro.body')}
-            </p>
+            <p className="text-sm leading-6 text-ink-soft">{t('materials.intro.body')}</p>
 
-            {/* Badges row */}
-            <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
-              <span className="px-2.5 py-1 rounded bg-forest text-paper font-semibold">
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-semibold">
+              <span className="rounded-md bg-night px-2.5 py-1 text-white">
                 {t('materials.badges.standard')}
               </span>
-              <span className="px-2.5 py-1 rounded bg-clay border border-ink/14 text-ink">
+              <span className="rounded-md bg-paper-deep px-2.5 py-1 text-ink-soft">
                 {t('materials.badges.spec')}
               </span>
-              <span className="px-2.5 py-1 rounded bg-paper-deep border border-ink/14 text-brick font-bold">
+              <span className="rounded-md bg-accent-soft px-2.5 py-1 text-accent">
                 {t('materials.badges.total')}
               </span>
             </div>
 
-            {/* Pune Monsoon Callout */}
-            <div className="bg-clay/50 border border-ink/14 rounded-lg p-4 space-y-1 text-xs">
-              <div className="font-semibold text-ink flex items-center gap-1.5">
-                <Info className="w-4 h-4 text-forest" />
-                <span>{t('materials.monsoon.title')}</span>
-              </div>
-              <p className="text-ink-soft leading-relaxed">
+            <div className="flex items-start gap-3 rounded-xl bg-accent-soft/70 px-4 py-3.5 text-xs leading-6 text-ink-soft">
+              <Info className="mt-0.5 h-4 w-4 flex-none text-accent" aria-hidden="true" />
+              <p>
+                <strong className="font-bold text-ink">{t('materials.monsoon.title')}</strong>{' '}
                 {t('materials.monsoon.body')}
               </p>
             </div>
           </div>
 
-          {/* Right Materials Moodboard Vignette */}
-          <div className="lg:col-span-4 bg-paper-deep/60 border border-ink/14 rounded-lg p-4 space-y-2">
-            <div className="w-full h-44 rounded bg-clay/60 border border-ink/14 p-3 flex flex-col justify-between">
-              <div className="grid grid-cols-3 gap-2 h-full">
-                <div className="bg-paper border border-ink/14 rounded p-2 flex flex-col justify-end text-[10px] font-mono text-ink">
-                  <span>{t('materials.moodboard.wood')}</span>
-                </div>
-                <div className="bg-brick/20 border border-brick/40 rounded p-2 flex flex-col justify-end text-[10px] font-mono text-brick">
-                  <span>{t('materials.moodboard.clay')}</span>
-                </div>
-                <div className="bg-forest/15 border border-forest/30 rounded p-2 flex flex-col justify-end text-[10px] font-mono text-forest">
-                  <span>{t('materials.moodboard.upvc')}</span>
-                </div>
+          <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-night p-6 text-white lg:col-span-4">
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(circle at 84% 10%, rgba(49,94,251,0.36), transparent 48%)',
+              }}
+              aria-hidden="true"
+            />
+            <div className="relative space-y-3">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-white">
+                <Layers className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9FB6FF]">
+                {t('materials.moodboard.caption')}
+              </p>
+            </div>
+
+            <div className="relative mt-6 grid grid-cols-3 gap-2">
+              <div className="flex h-24 flex-col justify-end rounded-lg border border-white/15 bg-white/95 p-2 text-[10px] font-semibold text-ink">
+                <span>{t('materials.moodboard.wood')}</span>
+              </div>
+              <div className="flex h-24 flex-col justify-end rounded-lg border border-accent/40 bg-accent/25 p-2 text-[10px] font-semibold text-white">
+                <span>{t('materials.moodboard.clay')}</span>
+              </div>
+              <div className="flex h-24 flex-col justify-end rounded-lg border border-white/20 bg-white/10 p-2 text-[10px] font-semibold text-white/80">
+                <span>{t('materials.moodboard.upvc')}</span>
               </div>
             </div>
-            <p className="text-[11px] text-ink-soft text-center italic">
-              {t('materials.moodboard.caption')}
-            </p>
           </div>
-        </div>
+        </section>
 
         {/* Three approaches table */}
-        <div className="space-y-3 font-sans">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-ink/14 pb-2">
-            <h2 className="font-headline text-xl font-bold text-ink">
-              {t('materials.table.title')}
-            </h2>
-            <span className="text-xs font-mono text-ink-soft">
+        <section className="space-y-3">
+          <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-baseline">
+            <h2 className="section-title">{t('materials.table.title')}</h2>
+            <span className="text-[11px] font-semibold text-ink-soft">
               {t('materials.table.note')}
             </span>
           </div>
 
-          <div className="border border-ink/14 rounded-lg overflow-hidden bg-paper shadow-card">
+          <div className="surface-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-paper-deep/70 text-ink-soft font-mono uppercase text-[10px] tracking-wider border-b border-ink/14">
+                <thead className="border-b border-line bg-paper-deep/70 text-ink-soft">
                   <tr>
-                    <th scope="col" className="py-3 px-4 font-semibold w-1/4">
+                    <th
+                      scope="col"
+                      className="w-1/4 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em]"
+                    >
                       {t('materials.table.material')}
                     </th>
-                    <th scope="col" className="py-3 px-4 font-semibold w-1/4">
+                    <th
+                      scope="col"
+                      className="w-1/4 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em]"
+                    >
                       <div>{t('enum.quality.economy')}</div>
-                      <div className="text-[10px] lowercase font-normal text-ink-soft">
+                      <div className="mt-0.5 text-[10px] font-medium normal-case tracking-normal text-ink-soft">
                         {t('materials.table.rateEconomy')}
                       </div>
                     </th>
-                    <th scope="col" className="py-3 px-4 font-semibold w-1/4 bg-clay/50 text-ink border-l border-r border-ink/14">
+                    <th
+                      scope="col"
+                      className="w-1/4 border-x border-accent/20 bg-accent-soft/60 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em] text-ink"
+                    >
                       <div className="flex items-center gap-1.5">
                         <span>{t('enum.quality.standard')}</span>
-                        <span className="px-1.5 py-0.2 rounded bg-forest text-paper text-[9px]">
+                        <span className="rounded bg-accent px-1.5 py-0.5 text-[9px] font-bold text-white">
                           {t('materials.table.selected')}
                         </span>
                       </div>
-                      <div className="text-[10px] lowercase font-normal text-ink-soft">
+                      <div className="mt-0.5 text-[10px] font-medium normal-case tracking-normal text-ink-soft">
                         {t('materials.table.rateStandard')}
                       </div>
                     </th>
-                    <th scope="col" className="py-3 px-4 font-semibold w-1/4">
+                    <th
+                      scope="col"
+                      className="w-1/4 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.14em]"
+                    >
                       <div>{t('enum.quality.premium')}</div>
-                      <div className="text-[10px] lowercase font-normal text-ink-soft">
+                      <div className="mt-0.5 text-[10px] font-medium normal-case tracking-normal text-ink-soft">
                         {t('materials.table.ratePremium')}
                       </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-ink/10 font-sans">
+                <tbody className="divide-y divide-line-soft">
                   {ROWS.map((row) => (
-                    <tr key={row}>
-                      <td className="py-3 px-4 font-medium text-ink">
-                        {t(`materials.rows.${row}`)}
-                      </td>
+                    <tr key={row} className="transition-colors hover:bg-paper-deep/30">
+                      <td className="px-4 py-3 font-semibold text-ink">{t(`materials.rows.${row}`)}</td>
                       {TIERS.map((tier) => (
                         <td
                           key={tier}
                           className={
                             tier === 'standard'
-                              ? 'py-3 px-4 bg-clay/20 font-medium text-ink border-l border-r border-ink/14'
-                              : 'py-3 px-4 text-ink-soft'
+                              ? 'border-x border-accent/20 bg-accent-soft/40 px-4 py-3 font-semibold text-ink'
+                              : 'px-4 py-3 text-ink-soft'
                           }
                         >
                           {t(`materials.cells.${row}.${tier}`)}
@@ -173,61 +180,63 @@ export function MaterialsGuidePage() {
             </div>
           </div>
 
-          <p className="text-[11px] text-ink-soft leading-relaxed">
-            {t('materials.footnote')}
-          </p>
-        </div>
+          <p className="text-[11px] leading-5 text-ink-soft">{t('materials.footnote')}</p>
+        </section>
 
-        {/* 3 Review Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-sans">
-          <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <h3 className="font-headline text-base font-bold text-ink">
+        {/* Review cards */}
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <article className="surface-card flex flex-col gap-2.5 p-5">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
                 {t('materials.reviews.aac.title')}
               </h3>
-              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-clay text-ink-soft font-semibold">
+              <span className="rounded bg-paper-deep px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-ink-soft">
                 {t('materials.reviews.badge')}
               </span>
             </div>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              {t('materials.reviews.aac.body')}
-            </p>
-            <p className="text-[11px] text-ink-soft border-t border-ink/10 pt-2">
+            <p className="text-xs leading-6 text-ink-soft">{t('materials.reviews.aac.body')}</p>
+            <p className="mt-auto border-t border-line-soft pt-2.5 text-[11px] leading-5 text-ink-soft">
               {t('materials.reviews.aac.note')}
             </p>
-          </div>
+          </article>
 
-          <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 space-y-2.5">
-            <h3 className="font-headline text-base font-bold text-ink">
+          <article className="surface-card flex flex-col gap-2.5 p-5">
+            <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
               {t('materials.reviews.vitrified.title')}
             </h3>
-            <p className="text-xs text-ink-soft leading-relaxed">
+            <p className="text-xs leading-6 text-ink-soft">
               {t('materials.reviews.vitrified.body')}
             </p>
-            <p className="text-[11px] text-ink-soft border-t border-ink/10 pt-2">
+            <p className="mt-auto border-t border-line-soft pt-2.5 text-[11px] leading-5 text-ink-soft">
               {t('materials.reviews.vitrified.note')}
             </p>
-          </div>
+          </article>
 
-          <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 space-y-2.5">
-            <h3 className="font-headline text-base font-bold text-ink">
+          <article className="surface-card flex flex-col gap-2.5 p-5">
+            <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
               {t('materials.reviews.details.title')}
             </h3>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              {t('materials.reviews.details.body')}
-            </p>
-            <p className="text-[11px] text-ink-soft border-t border-ink/10 pt-2">
+            <p className="text-xs leading-6 text-ink-soft">{t('materials.reviews.details.body')}</p>
+            <p className="mt-auto border-t border-line-soft pt-2.5 text-[11px] leading-5 text-ink-soft">
               {t('materials.reviews.details.note')}
             </p>
-          </div>
+          </article>
+        </section>
+
+        {/* Disclaimer */}
+        <div className="flex items-start gap-3 rounded-xl border border-line bg-panel px-5 py-4 text-xs leading-6 text-ink-soft">
+          <Info className="mt-0.5 h-4 w-4 flex-none text-accent" aria-hidden="true" />
+          <p>
+            <strong className="font-bold text-ink">{t('materials.disclaimer.title')}</strong>{' '}
+            {t('materials.disclaimer.body')}
+          </p>
         </div>
 
-        {/* Disclaimer Callout Box */}
-        <div className="bg-clay/50 border border-ink/14 rounded-lg p-4 text-xs text-ink-soft leading-relaxed">
-          <strong className="text-ink font-sans">
-            {t('materials.disclaimer.title')}
-          </strong>{' '}
-          {t('materials.disclaimer.body')}
+        <div>
+          <Link to="/app/new" className="btn-primary h-10 px-4 text-xs">
+            <span>{t('landing.cta.start')}</span>
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </div>

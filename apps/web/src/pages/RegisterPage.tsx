@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
-import { Home, UserPlus, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, UserPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { z } from 'zod';
 import { ApiError, isMockApi } from '../services/apiClient';
 import { useAuth } from '../auth/useAuth';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
+import { AuthShell } from '../components/layout/AuthShell';
 
 function createRegisterSchema(t: TFunction) {
   return z
@@ -99,28 +100,23 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-12 bg-paper text-ink">
+    <AuthShell>
       <div className="w-full max-w-md space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-md bg-paper-deep border border-ink/14 text-forest mb-1">
-            <Home className="w-5 h-5 stroke-[2]" />
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="font-headline text-2xl sm:text-3xl font-bold text-ink">
+        <header className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-extrabold tracking-[-0.05em] text-ink sm:text-3xl">
               {t('auth.register.title')}
             </h1>
             {mock && <SampleDataBadge text={t('common.mockAuth')} variant="subtle" />}
           </div>
-          <p className="text-xs text-ink-soft">{t('auth.register.subtitle')}</p>
-        </div>
+          <p className="text-sm leading-6 text-ink-soft">{t('auth.register.subtitle')}</p>
+        </header>
 
-        {/* Card */}
-        <div className="bg-paper-deep/60 border border-ink/14 rounded-lg p-6 sm:p-8 shadow-card space-y-5">
+        <div className="surface-card p-6 sm:p-7">
           {apiError && (
             <div
               role="alert"
-              className="p-3 text-xs bg-error/10 border border-error/20 text-error rounded-md"
+              className="mb-4 rounded-lg border border-error/25 bg-error/5 px-3.5 py-2.5 text-xs text-error"
             >
               {apiError}
             </div>
@@ -128,7 +124,7 @@ export function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-1.5">
-              <label htmlFor="full_name" className="block text-xs font-medium text-ink">
+              <label htmlFor="full_name" className="block text-xs font-semibold text-ink">
                 {t('auth.register.fullNameLabel')}
               </label>
               <input
@@ -136,8 +132,8 @@ export function RegisterPage() {
                 type="text"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
-                  errors.full_name ? 'border-2 border-error' : 'border border-ink/14'
+                className={`field-input h-11 ${
+                  errors.full_name ? 'border-error ring-2 ring-error/15' : ''
                 }`}
                 placeholder={t('auth.register.fullNamePlaceholder')}
                 autoComplete="name"
@@ -145,14 +141,14 @@ export function RegisterPage() {
                 aria-describedby={errors.full_name ? 'full_name-error' : undefined}
               />
               {errors.full_name && (
-                <p id="full_name-error" className="text-[11px] text-error font-medium">
+                <p id="full_name-error" className="text-[11px] font-semibold text-error">
                   {errors.full_name}
                 </p>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-medium text-ink">
+              <label htmlFor="email" className="block text-xs font-semibold text-ink">
                 {t('auth.shared.emailLabel')}
               </label>
               <input
@@ -160,8 +156,8 @@ export function RegisterPage() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-sans focus-ring ${
-                  errors.email ? 'border-2 border-error' : 'border border-ink/14'
+                className={`field-input h-11 ${
+                  errors.email ? 'border-error ring-2 ring-error/15' : ''
                 }`}
                 placeholder={t('auth.shared.emailPlaceholder')}
                 autoComplete="email"
@@ -169,18 +165,18 @@ export function RegisterPage() {
                 aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p id="email-error" className="text-[11px] text-error font-medium">
+                <p id="email-error" className="text-[11px] font-semibold text-error">
                   {errors.email}
                 </p>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <label htmlFor="password" className="block text-xs font-medium text-ink">
+              <div className="flex items-center justify-between gap-2">
+                <label htmlFor="password" className="block text-xs font-semibold text-ink">
                   {t('auth.shared.passwordLabel')}
                 </label>
-                <span className="text-[10px] text-ink-soft font-mono">
+                <span className="text-[10px] text-ink-soft">
                   {t('auth.shared.passwordMinHint')}
                 </span>
               </div>
@@ -189,8 +185,8 @@ export function RegisterPage() {
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
-                  errors.password ? 'border-2 border-error' : 'border border-ink/14'
+                className={`field-input h-11 font-mono ${
+                  errors.password ? 'border-error ring-2 ring-error/15' : ''
                 }`}
                 placeholder={t('auth.shared.passwordPlaceholder')}
                 autoComplete="new-password"
@@ -198,14 +194,14 @@ export function RegisterPage() {
                 aria-describedby={errors.password ? 'password-error' : undefined}
               />
               {errors.password && (
-                <p id="password-error" className="text-[11px] text-error font-medium">
+                <p id="password-error" className="text-[11px] font-semibold text-error">
                   {errors.password}
                 </p>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="confirmPassword" className="block text-xs font-medium text-ink">
+              <label htmlFor="confirmPassword" className="block text-xs font-semibold text-ink">
                 {t('auth.register.confirmPasswordLabel')}
               </label>
               <input
@@ -213,16 +209,18 @@ export function RegisterPage() {
                 type="password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className={`w-full px-3 py-2 bg-paper rounded-md text-sm text-ink font-mono focus-ring ${
-                  errors.confirmPassword ? 'border-2 border-error' : 'border border-ink/14'
+                className={`field-input h-11 font-mono ${
+                  errors.confirmPassword ? 'border-error ring-2 ring-error/15' : ''
                 }`}
                 placeholder={t('auth.shared.passwordPlaceholder')}
                 autoComplete="new-password"
                 aria-invalid={Boolean(errors.confirmPassword)}
-                aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                aria-describedby={
+                  errors.confirmPassword ? 'confirmPassword-error' : undefined
+                }
               />
               {errors.confirmPassword && (
-                <p id="confirmPassword-error" className="text-[11px] text-error font-medium">
+                <p id="confirmPassword-error" className="text-[11px] font-semibold text-error">
                   {errors.confirmPassword}
                 </p>
               )}
@@ -231,28 +229,31 @@ export function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-md bg-brick hover:bg-brick-hover text-paper text-sm font-medium shadow-subtle transition-colors focus-ring flex items-center justify-center gap-2 disabled:opacity-60"
+              aria-busy={loading}
+              className="btn-primary h-11 w-full"
             >
-              <UserPlus className="w-4 h-4" />
+              <UserPlus className="h-4 w-4" aria-hidden="true" />
               <span>{loading ? t('auth.register.submitting') : t('auth.register.submit')}</span>
             </button>
           </form>
         </div>
 
-        {/* Footer Link */}
-        <div className="text-center text-xs text-ink-soft space-y-2">
+        <div className="space-y-2 text-xs text-ink-soft">
           <div>
             {t('auth.register.footerPrompt')}{' '}
-            <Link to="/login" className="font-semibold text-brick hover:underline">
+            <Link
+              to="/login"
+              className="rounded font-bold text-accent hover:underline focus-ring"
+            >
               {t('auth.register.footerLink')}
             </Link>
           </div>
-          <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-ink-soft">
-            <ShieldCheck className="w-3.5 h-3.5 text-forest" />
+          <div className="flex items-center gap-1.5 text-[10px]">
+            <ShieldCheck className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
             <span>{t('auth.shared.securityRegister')}</span>
           </div>
         </div>
       </div>
-    </div>
+    </AuthShell>
   );
 }

@@ -4,23 +4,31 @@ import { useTranslation } from 'react-i18next';
 export function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="mt-auto border-t border-ink/14 bg-paper text-ink-soft py-6 text-xs font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-ink">
-            <span className="font-headline font-semibold">BuildSmart AI</span>
-            <span className="text-ink-soft">·</span>
-            <span className="text-ink-soft">{t('footer.tagline')}</span>
+    <footer className="mt-auto px-3 pb-3 pt-8 sm:px-5 sm:pb-4">
+      <div className="mx-auto w-full max-w-shell rounded-xl bg-[#E5E9EF] px-6 py-6 sm:px-10">
+        <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-accent-soft text-[11px] font-extrabold tracking-[-0.04em] text-accent-deep">
+              BS
+            </span>
+            <div className="flex flex-col leading-tight">
+              <span className="font-headline text-sm font-extrabold tracking-[-0.04em] text-ink">
+                BuildSmart AI
+              </span>
+              <span className="text-[11px] text-ink-soft">{t('footer.tagline')}</span>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-[11px] text-ink-soft">
-            <Link to="/methodology" className="hover:text-ink transition-colors">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-medium text-ink-soft">
+            <span>{t('footer.region')}</span>
+            <Link
+              to="/methodology"
+              className="transition-colors hover:text-accent focus-ring rounded"
+            >
               {t('nav.methodology')}
             </Link>
-            <span aria-hidden="true">·</span>
-            <span>{t('footer.region')}</span>
-            <span aria-hidden="true">·</span>
-            <span className="font-mono text-ink">{t('footer.indicative')}</span>
+            <span className="hidden h-1 w-1 rounded-full bg-ink-soft/50 sm:block" aria-hidden="true" />
+            <span>{t('footer.indicative')}</span>
           </div>
         </div>
       </div>
