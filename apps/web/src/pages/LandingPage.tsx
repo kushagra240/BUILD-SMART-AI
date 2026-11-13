@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import buildSmartLogo from '../assets/buildsmart-logo.png';
 import buildSmartMark from '../assets/buildsmart-mark.png';
 import '../styles/landing.css';
@@ -497,7 +497,7 @@ export function LandingPage() {
         <div>
           <a href="#features">Features</a>
           <a href="#planner">Cost guide</a>
-          <a href="#about">Methodology</a>
+          <Link to="/methodology">Methodology</Link>
         </div>
       </footer>
 

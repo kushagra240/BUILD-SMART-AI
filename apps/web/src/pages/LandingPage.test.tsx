@@ -24,6 +24,11 @@ describe('LandingPage', () => {
     );
     // The same figure is shown in the hero sample card and in the planner.
     expect(screen.getAllByText('₹43,20,000')).toHaveLength(2);
+    // The footer label must lead to the real methodology page, not an anchor.
+    expect(screen.getByRole('link', { name: 'Methodology' })).toHaveAttribute(
+      'href',
+      '/methodology'
+    );
   });
 
   it('recalculates the indicative cost from area and quality', () => {
