@@ -12,6 +12,22 @@ export type EstimateResponse = components['schemas']['EstimateResponse'];
 export type EstimateZone = { id: string; name: string };
 
 /**
+ * Maps high-level UI location zones to the regulatory SSR rate zones used by
+ * the backend bottom-up estimation engine (`rates.zone`).
+ */
+export const ZONE_ID_MAP: Record<string, string> = {
+  pune_central: 'ZN-PMC',
+  pune_east: 'ZN-PMC',
+  pune_west: 'ZN-PMC',
+  pcmc: 'ZN-PCMC',
+  pune_south_peripheral: 'ZN-PMC',
+};
+
+export function mapZoneToRatesZone(zoneId: string): string {
+  return ZONE_ID_MAP[zoneId] || zoneId;
+}
+
+/**
  * Mock mode is opt-out: the app runs against the simulated API unless the
  * environment explicitly sets VITE_USE_MOCK=false. Evaluated at call time so
  * tests can stub the environment per test.
@@ -517,9 +533,14 @@ class ApiClient {
       };
     }
 
+    const payload: EstimateCreate = {
+      ...req,
+      zone_id: mapZoneToRatesZone(req.zone_id),
+    };
+
     return this.request<EstimateResponse>(`/projects/${projectId}/estimates`, {
       method: 'POST',
-      body: JSON.stringify(req),
+      body: JSON.stringify(payload),
     });
   }
 

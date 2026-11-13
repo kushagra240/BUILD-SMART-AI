@@ -666,7 +666,12 @@
       "pune_east": "East Pune",
       "pune_west": "West & North-West Pune",
       "pcmc": "Pimpri-Chinchwad (PCMC)",
-      "pune_south_peripheral": "South & Peripheral Pune"
+      "pune_south_peripheral": "South & Peripheral Pune",
+      "zn_pmc": "Pune Municipal Corporation (PMC)",
+      "zn_pcmc": "Pimpri-Chinchwad (PCMC)",
+      "zn_cant": "Pune Cantonment Areas",
+      "zn_council": "Municipal Council Towns",
+      "zn_other": "Rural / Peripheral Areas"
     },
     "materialCategories": {
       "cement": "Cement",

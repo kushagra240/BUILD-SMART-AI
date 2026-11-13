@@ -40,6 +40,11 @@ const ZONE_MULTIPLIERS: Record<string, number> = {
   pune_west: 1.05,
   pcmc: 0.98,
   pune_south_peripheral: 0.95,
+  'ZN-PMC': 1.05,
+  'ZN-PCMC': 0.98,
+  'ZN-CANT': 1.02,
+  'ZN-COUNCIL': 0.95,
+  'ZN-OTHER': 0.90,
 };
 
 const TIER_RATES: Record<string, number> = {

@@ -666,7 +666,12 @@
       "pune_east": "पूर्व पुणे",
       "pune_west": "पश्चिम और उत्तर-पश्चिम पुणे",
       "pcmc": "पिंपरी-चिंचवड (PCMC)",
-      "pune_south_peripheral": "दक्षिण और परिधीय पुणे"
+      "pune_south_peripheral": "दक्षिण और परिधीय पुणे",
+      "zn_pmc": "पुणे नगर निगम (PMC)",
+      "zn_pcmc": "पिंपरी-चिंचवड (PCMC)",
+      "zn_cant": "पुणे छावनी क्षेत्र",
+      "zn_council": "नगर परिषद क्षेत्र",
+      "zn_other": "ग्रामीण / बाहरी क्षेत्र"
     },
     "materialCategories": {
       "cement": "सीमेंट",
