@@ -18,7 +18,7 @@ export function SampleDataBadge({
     return (
       <span
         data-testid="sample-data-badge"
-        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium tracking-wide bg-ink text-paper uppercase ${className}`}
+        className={`inline-flex items-center rounded-md bg-night px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white ${className}`}
       >
         {label}
       </span>
@@ -29,7 +29,7 @@ export function SampleDataBadge({
     return (
       <span
         data-testid="sample-data-badge"
-        className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-ink-soft border border-ink/14 bg-paper-deep/60 ${className}`}
+        className={`inline-flex items-center rounded-md border border-line bg-panel px-2 py-0.5 text-[10px] font-semibold text-ink-soft ${className}`}
       >
         {label}
       </span>
@@ -39,9 +39,9 @@ export function SampleDataBadge({
   return (
     <span
       data-testid="sample-data-badge"
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-ochre/20 text-ink border border-ochre/40 ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-ochre/40 bg-ochre/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-ink ${className}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-ochre" aria-hidden="true" />
+      <span className="h-1.5 w-1.5 rounded-full bg-ochre" aria-hidden="true" />
       <span>{label}</span>
     </span>
   );

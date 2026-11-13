@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
 
   return (
     <div className="inline-flex items-center gap-1.5">
-      <Languages className="h-3.5 w-3.5 shrink-0 text-ink-soft" aria-hidden="true" />
+      <Languages className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
       <label htmlFor={selectId} className="sr-only">
         {t('language.label')}
       </label>
@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
         id={selectId}
         value={current}
         onChange={(event) => void i18n.changeLanguage(event.target.value)}
-        className="max-w-[7.5rem] rounded border border-ink/14 bg-paper px-1.5 py-1 font-sans text-xs text-ink focus-ring"
+        className="max-w-[7.5rem] rounded-lg border border-line bg-white px-2 py-1.5 text-[11px] font-semibold text-ink transition-colors hover:border-accent/50 focus-ring"
       >
         {SUPPORTED_LANGUAGES.map((code) => (
           <option key={code} value={code}>

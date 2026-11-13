@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
-import { ArrowRight, Download, Info } from 'lucide-react';
+import { ArrowRight, Download, Info, Layers, Ruler, TrendingUp, Wallet } from 'lucide-react';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { apiClient, type EstimateResponse } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { formatDateTime, formatINR, formatNumber } from '../lib/formatters';
@@ -16,22 +18,32 @@ import {
   translateZone,
 } from '../i18n/labels';
 
-// Colour mapping for the 9 v1 cost categories. Keys are the English contract
-// values: only the display text is translated, never the stored/API key.
+// Colour ramp for the cost categories: dark neutral -> accent blue -> cool
+// grey, matching the design system. Lookup keys are the lowercase contract
+// values (`enum.categories.*`), compared case- and separator-insensitively so
+// `Foundation` and `foundation` resolve to the same colour.
 const CATEGORY_CHART_COLORS: Record<string, string> = {
-  Foundation: '#6B4F3A',
-  Structure: '#1F4D45',
-  Masonry: '#B4472B',
-  Roofing: '#8A6FA0',
-  Flooring: '#D9A441',
-  Plumbing: '#4F86A6',
-  Electrical: '#9BB05A',
-  Finishing: '#D88C9A',
-  Labour: '#3A3F3C',
+  foundation: '#151820',
+  structure: '#315EFB',
+  masonry: '#6685F4',
+  roofing: '#2455E6',
+  flooring: '#8FA8F5',
+  plumbing: '#8F98A8',
+  electrical: '#B7C2D8',
+  finishing: '#5C6470',
+  labour: '#AFC4FB',
 };
 
-function getCategoryColor(name: string): string {
-  return CATEGORY_CHART_COLORS[name] ?? '#1F4D45';
+const CATEGORY_CHART_RAMP = Object.values(CATEGORY_CHART_COLORS);
+
+/**
+ * A category the ramp does not know (a stub payload or a future contract
+ * addition) still gets its own colour, derived from its position in the
+ * breakdown. Keeps the donut readable without inventing labels.
+ */
+function getCategoryColor(name: string, index = 0): string {
+  const key = name.trim().toLowerCase();
+  return CATEGORY_CHART_COLORS[key] ?? CATEGORY_CHART_RAMP[index % CATEGORY_CHART_RAMP.length];
 }
 
 /** Humanises a contract dictionary key such as `unit_rate_inr`. */
@@ -119,8 +131,7 @@ function isEstimateResponse(value: unknown): value is EstimateResponse {
 /**
  * Compare two contract dictionaries (`primary` / `alternative`) as a table.
  * Keys are never hardcoded: rows are the union of the keys the API sent, so a
- * new backend field appears without a frontend change. Key captions come from
- * the API (technical field names) and are humanised, not translated.
+ * new backend field appears without a frontend change.
  */
 function MaterialComparison({
   label,
@@ -136,7 +147,7 @@ function MaterialComparison({
 
   if (keys.length === 0) {
     return (
-      <p className="border-t border-ink/10 p-4 text-sm text-ink-soft">
+      <p className="border-t border-line-soft px-5 py-4 text-sm text-ink-soft">
         {t('results.materials.noSpec')}
       </p>
     );
@@ -145,7 +156,7 @@ function MaterialComparison({
   const renderValue = (source: Record<string, string | number>, key: string) => {
     const value = source[key];
     if (value === undefined || value === '') {
-      return <span className="italic text-ink-soft">{t('common.notProvided')}</span>;
+      return <span className="italic text-ink-soft/70">{t('common.notProvided')}</span>;
     }
     return typeof value === 'number' ? formatNumber(value) : value;
   };
@@ -155,46 +166,110 @@ function MaterialComparison({
       <table className="w-full table-fixed text-sm">
         <caption className="sr-only">{label}</caption>
         <thead>
-          <tr className="border-y border-ink/10 bg-paper-deep/50 text-left">
+          <tr className="border-y border-line-soft bg-paper-deep/50 text-left">
             <th
               scope="col"
-              className="w-[30%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+              className="w-[30%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
             >
               {t('results.materials.specification')}
             </th>
             <th
               scope="col"
-              className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+              className="w-[35%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
             >
               {t('results.materials.primary')}
             </th>
             <th
               scope="col"
-              className="w-[35%] px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-wider text-ink-soft"
+              className="w-[35%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
             >
               {t('results.materials.alternative')}
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-ink/10">
+        <tbody className="divide-y divide-line-soft">
           {keys.map((key) => (
             <tr key={key} className="align-top">
               <th
                 scope="row"
-                className="break-words px-4 py-2.5 text-left font-medium text-ink-soft"
+                className="break-words px-5 py-3 text-left font-semibold text-ink-soft"
               >
                 {titleCase(key)}
               </th>
-              <td className="break-words px-4 py-2.5 text-ink">
-                {renderValue(primary, key)}
-              </td>
-              <td className="break-words px-4 py-2.5 text-ink">
-                {renderValue(alternative, key)}
-              </td>
+              <td className="break-words px-5 py-3 text-ink">{renderValue(primary, key)}</td>
+              <td className="break-words px-5 py-3 text-ink">{renderValue(alternative, key)}</td>
             </tr>
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+/**
+ * Cost split donut. The table next to it is the accessible data alternative:
+ * the SVG is decorative to assistive technology.
+ */
+function BudgetDonut({
+  breakdown,
+  total,
+  t,
+}: {
+  breakdown: EstimateResponse['breakdown'];
+  total: number;
+  t: TFunction;
+}) {
+  const data = breakdown.map((item, index) => ({
+    key: item.category,
+    name: translateCategory(t, item.category),
+    value: item.amount,
+    fill: getCategoryColor(item.category, index),
+  }));
+
+  return (
+    <div className="relative mx-auto w-full max-w-[300px]">
+      <div className="h-[260px] w-full" data-testid="budget-donut" aria-hidden="true">
+        <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 300, height: 260 }}>
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              innerRadius="64%"
+              outerRadius="90%"
+              paddingAngle={2}
+              stroke="#FBFCFE"
+              strokeWidth={2}
+            >
+              {data.map((entry) => (
+                <Cell key={entry.key} fill={entry.fill} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) => formatINR(Number(value))}
+              contentStyle={{
+                borderRadius: 12,
+                border: '1px solid #DCE1E8',
+                background: '#FBFCFE',
+                boxShadow: '0 18px 40px rgba(18,24,35,0.13)',
+                fontSize: 12,
+                padding: '8px 12px',
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div
+        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
+        aria-hidden="true"
+      >
+        <span className="max-w-[8.5rem] text-[9px] font-bold uppercase tracking-[0.14em] text-ink-soft">
+          {t('results.breakdown.total')}
+        </span>
+        <span className="mt-1.5 text-2xl font-extrabold tracking-[-0.05em] text-ink">
+          {formatINR(total)}
+        </span>
+      </div>
     </div>
   );
 }
@@ -204,6 +279,7 @@ export function ResultsPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const locationState = (location.state ?? null) as ResultsLocationState | null;
+  const reduceMotion = useReducedMotion();
 
   const [estimate, setEstimate] = useState<EstimateResponse | null>(() =>
     isEstimateResponse(locationState?.estimate) ? locationState.estimate : null
@@ -270,13 +346,31 @@ export function ResultsPage() {
     }
   };
 
+  const containerVariants: Variants = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: reduceMotion ? 0 : 0.1 },
+    },
+  };
+
+  const itemVariants: Variants = reduceMotion
+    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
+    : {
+        hidden: { opacity: 0, y: 18 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.5, ease: 'easeOut' },
+        },
+      };
+
   if (status === 'redirect') {
     return <Navigate to="/app" replace />;
   }
 
   if (status === 'loading') {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-paper px-4">
+      <div className="app-surface flex min-h-[60vh] flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-2xl">
           <LoadingState label={t('results.loading')} />
         </div>
@@ -286,17 +380,20 @@ export function ResultsPage() {
 
   if (status === 'error' || !estimate) {
     return (
-      <div className="min-h-screen bg-paper text-ink px-4 py-10">
-        <div className="max-w-2xl mx-auto space-y-5">
+      <div className="app-surface min-h-screen px-4 py-10 text-ink">
+        <div className="mx-auto max-w-2xl space-y-5">
           <ErrorState
             message={error ?? t('results.errors.load')}
             onRetry={() => setReloadKey((key) => key + 1)}
           />
-          <div className="flex flex-wrap items-center gap-4 text-xs">
-            <Link to="/app" className="text-brick hover:underline focus-ring rounded">
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <Link to="/app" className="rounded font-semibold text-accent hover:underline focus-ring">
               {t('results.backDashboard')}
             </Link>
-            <Link to="/app/new" className="text-brick hover:underline focus-ring rounded">
+            <Link
+              to="/app/new"
+              className="rounded font-semibold text-accent hover:underline focus-ring"
+            >
               {t('results.startNewEstimate')}
             </Link>
           </div>
@@ -342,55 +439,85 @@ export function ResultsPage() {
     [t('results.inputs.budget'), formatBudget(estimate.budget, t)],
   ];
 
-  return (
-    <div className="min-h-screen bg-paper text-ink pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
-        {/* Step Indicator Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
-          <div className="flex items-center gap-2 text-xs font-mono">
-            <span className="px-2 py-0.5 rounded bg-forest text-paper font-semibold">1</span>
-            <span className="text-ink">{t('results.steps.projectSite')}</span>
-            <span className="text-ink-soft">›</span>
-            <span className="px-2 py-0.5 rounded bg-forest text-paper font-semibold">2</span>
-            <span className="text-ink">{t('results.steps.preferences')}</span>
-            <span className="text-ink-soft">›</span>
-            <span className="px-2 py-0.5 rounded bg-brick text-paper font-semibold">3</span>
-            <span className="font-semibold text-ink">{t('results.steps.estimate')}</span>
-          </div>
+  const steps = [
+    t('results.steps.projectSite'),
+    t('results.steps.preferences'),
+    t('results.steps.estimate'),
+  ];
 
-          <div className="flex items-center gap-2">
+  return (
+    <div className="app-surface min-h-screen px-4 pb-16 pt-6 text-ink sm:px-6 lg:px-8">
+      <motion.div
+        className="mx-auto max-w-shell space-y-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* Toolbar: progress, provenance and primary actions */}
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
+          <ol className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+            {steps.map((label, index) => {
+              const stepNumber = index + 1;
+              const isCurrent = stepNumber === steps.length;
+              return (
+                <li key={label} className="flex items-center gap-1.5">
+                  {index > 0 && (
+                    <span aria-hidden="true" className="px-0.5 text-ink-soft/50">
+                      ›
+                    </span>
+                  )}
+                  <span
+                    className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 ${
+                      isCurrent ? 'bg-accent-soft text-accent-deep' : 'text-ink-soft'
+                    }`}
+                  >
+                    <span
+                      className={`grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold ${
+                        isCurrent ? 'bg-accent text-white' : 'bg-night text-white'
+                      }`}
+                    >
+                      {stepNumber}
+                    </span>
+                    <span className={isCurrent ? 'font-bold' : ''}>{label}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+
+          <div className="flex flex-wrap items-center gap-2">
             {estimate.is_mock && (
               <SampleDataBadge text={t('results.mockBadge')} variant="contrast" />
             )}
+            <Link to="/app/projects" className="btn-ghost h-10 px-4">
+              {t('results.savedProjects')}
+            </Link>
             <button
               type="button"
               onClick={handleDownloadPdf}
               disabled={pdfStatus === 'loading'}
               aria-busy={pdfStatus === 'loading'}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-forest hover:bg-forest-hover disabled:opacity-60 disabled:cursor-not-allowed text-paper text-xs font-medium transition-colors focus-ring"
+              className="btn-primary h-10 px-5"
             >
-              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              <Download className="h-4 w-4" aria-hidden="true" />
               <span>
                 {pdfStatus === 'loading' ? t('results.generating') : t('results.download')}
               </span>
             </button>
-            <Link
-              to="/app/projects"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-paper border border-ink/14 hover:bg-paper-deep text-xs font-medium text-ink transition-colors focus-ring"
-            >
-              <span>{t('results.savedProjects')}</span>
-            </Link>
           </div>
-        </div>
+        </motion.div>
 
         {pdfStatus === 'error' && (
           <div
             role="alert"
-            className="rounded-lg border border-brick/40 bg-brick-light px-4 py-3 text-xs text-ink space-y-1"
+            className="rounded-xl border border-error/25 bg-error/5 px-5 py-4 text-sm text-ink"
           >
-            <strong className="text-brick">{t('results.pdfError.title')}</strong>
-            <p className="leading-relaxed">{pdfError}</p>
-            <p className="text-ink-soft leading-relaxed">{t('results.pdfError.body')}</p>
+            <strong className="block font-bold text-error">{t('results.pdfError.title')}</strong>
+            <p className="mt-1 leading-6">{pdfError}</p>
+            <p className="mt-1 leading-6 text-ink-soft">{t('results.pdfError.body')}</p>
           </div>
         )}
 
@@ -398,224 +525,235 @@ export function ResultsPage() {
         {estimate.is_mock && (
           <div
             role="status"
-            className="rounded-lg border border-ochre/40 bg-ochre/10 px-4 py-3 text-xs text-ink flex items-start gap-2"
+            className="flex items-start gap-3 rounded-xl border border-ochre/40 bg-ochre/10 px-5 py-4 text-sm text-ink"
           >
-            <Info className="w-4 h-4 text-ochre flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="leading-relaxed">
+            <Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-ochre" aria-hidden="true" />
+            <p className="leading-6">
               <strong className="uppercase tracking-wide">{t('results.mockWarning.title')}</strong>{' '}
               {t('results.mockWarning.body')}
             </p>
           </div>
         )}
 
-        {/* Title Header */}
-        <div className="space-y-1">
-          <div className="text-[11px] font-mono uppercase tracking-widest text-ink-soft">
+        {/* Title block */}
+        <motion.header variants={itemVariants} className="max-w-3xl space-y-3 pt-2">
+          <p className="eyebrow text-accent">
             {projectName
               ? t('results.projectEstimateKicker', {
                   project: projectName.toUpperCase(),
                   id: shortId(estimate.id),
                 })
               : t('results.estimateKicker', { id: shortId(estimate.id) })}
-          </div>
-          <h1 className="font-headline text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+          </p>
+          <h1 className="text-4xl font-extrabold leading-[1.03] tracking-[-0.055em] text-ink sm:text-5xl">
             {t('results.title')}
           </h1>
-          <p className="text-xs sm:text-sm text-ink-soft font-sans">{subtitle}</p>
-        </div>
+          <p className="text-sm leading-6 text-ink-soft">{subtitle}</p>
+        </motion.header>
 
-        {/* Top KPI Box */}
-        <div className="bg-paper-deep/50 border border-ink/14 rounded-lg p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          {/* Main Indicative Total */}
-          <div className="md:col-span-5 space-y-1.5 md:border-r border-ink/10 md:pr-6">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-clay text-ink-soft border border-ink/14 font-semibold">
+        {/* KPI cards */}
+        <motion.section
+          variants={itemVariants}
+          aria-label={t('results.kpi.indicative')}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        >
+          <div className="relative overflow-hidden rounded-2xl bg-night p-6 text-white shadow-lift">
+            <div className="flex items-start justify-between gap-4">
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/50">
                 {t('results.kpi.indicative')}
+              </p>
+              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-white/10 text-white">
+                <Wallet className="h-[18px] w-[18px]" aria-hidden="true" />
               </span>
             </div>
-            <div className="font-headline text-3xl sm:text-5xl font-bold text-brick tracking-tight">
+            <p className="mt-4 text-[28px] font-extrabold leading-none tracking-[-0.05em] sm:text-[32px]">
               {formatINR(totalCost)}
-            </div>
-            <p className="text-xs text-ink-soft font-sans">
+            </p>
+            <p className="mt-3 text-xs leading-5 text-white/60">
               {t('results.kpi.confidence', {
                 label: estimate.confidence.label,
                 reason: estimate.confidence.reason,
               })}
             </p>
-          </div>
-
-          {/* Planning Rate & Band */}
-          <div className="md:col-span-4 space-y-1 md:border-r border-ink/10 md:pr-6">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-              {t('results.kpi.planningRate')}
-            </div>
-            <div className="font-headline text-xl sm:text-2xl font-bold text-ink">
-              ₹{formatNumber(ratePerSqFt)}{' '}
-              <span className="text-sm font-sans font-normal text-ink-soft">
-                {t('results.kpi.perSqFt')}
-              </span>
-            </div>
-            <div className="text-xs text-forest font-semibold pt-0.5">
+            <p className="mt-3 border-t border-white/10 pt-3 text-xs font-semibold text-[#9FB6FF]">
               {t('results.kpi.planningRange', {
                 low: formatINR(estimate.total.p10),
                 high: formatINR(estimate.total.p90),
               })}
-            </div>
-            <p className="text-[11px] text-ink-soft leading-tight">{t('results.kpi.rangeNote')}</p>
+            </p>
           </div>
 
-          {/* Built-up Area */}
-          <div className="md:col-span-3 space-y-1">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-ink-soft">
-              {t('results.kpi.totalBuiltUp')}
-            </div>
-            <div className="font-headline text-xl sm:text-2xl font-bold text-ink">
-              {formatNumber(areaSqFt)}{' '}
-              <span className="text-sm font-sans font-normal text-ink-soft">
-                {t('common.sqFt')}
+          <div className="surface-card-interactive p-6">
+            <div className="flex items-start justify-between gap-4">
+              <p className="eyebrow">{t('results.inputs.quality')}</p>
+              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-accent-soft text-accent">
+                <Layers className="h-[18px] w-[18px]" aria-hidden="true" />
               </span>
             </div>
-            <p className="text-[11px] text-ink-soft leading-tight">
+            <p className="mt-4 text-2xl font-extrabold tracking-[-0.04em] text-ink">
+              {translateQuality(t, estimate.inputs.quality_tier)}
+            </p>
+            <p className="mt-3 text-xs leading-5 text-ink-soft">
+              {t('results.inputs.construction')}:{' '}
+              <span className="font-semibold text-ink">
+                {translateConstruction(t, estimate.inputs.construction_type)}
+              </span>
+            </p>
+          </div>
+
+          <div className="surface-card-interactive p-6">
+            <div className="flex items-start justify-between gap-4">
+              <p className="eyebrow">{t('results.kpi.totalBuiltUp')}</p>
+              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-accent-soft text-accent">
+                <Ruler className="h-[18px] w-[18px]" aria-hidden="true" />
+              </span>
+            </div>
+            <p className="mt-4 text-2xl font-extrabold tracking-[-0.04em] text-ink">
+              {formatNumber(areaSqFt)}{' '}
+              <span className="text-sm font-semibold text-ink-soft">{t('common.sqFt')}</span>
+            </p>
+            <p className="mt-3 text-xs leading-5 text-ink-soft">
               {t('results.kpi.builtUpMeta', {
                 count: floors,
                 construction: translateConstruction(t, estimate.inputs.construction_type),
               })}
             </p>
           </div>
-        </div>
 
-        {/* Main Grid: Breakdown on left, inputs on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Where the budget goes */}
-          <div className="lg:col-span-8 space-y-5">
-            <div className="flex items-baseline justify-between border-b border-ink/14 pb-2">
-              <h2 className="font-headline text-xl font-bold text-ink">
-                {t('results.breakdown.title')}
-              </h2>
-              <span className="text-xs font-mono text-ink-soft">
-                {t('results.breakdown.meta', {
-                  count: estimate.breakdown.length,
-                  share: shareTotal,
-                })}
+          <div className="surface-card-interactive p-6">
+            <div className="flex items-start justify-between gap-4">
+              <p className="eyebrow">{t('results.kpi.planningRate')}</p>
+              <span className="grid h-9 w-9 flex-none place-items-center rounded-[10px] bg-accent-soft text-accent">
+                <TrendingUp className="h-[18px] w-[18px]" aria-hidden="true" />
               </span>
             </div>
+            <p className="mt-4 text-2xl font-extrabold tracking-[-0.04em] text-ink">
+              ₹{formatNumber(ratePerSqFt)}{' '}
+              <span className="text-sm font-semibold text-ink-soft">
+                {t('results.kpi.perSqFt')}
+              </span>
+            </p>
+            <p className="mt-3 text-xs leading-5 text-ink-soft">{t('results.kpi.rangeNote')}</p>
+          </div>
+        </motion.section>
 
-            {/* Segmented Stacked Bar Chart */}
-            <div className="space-y-1.5">
-              <div
-                className="w-full h-5 rounded overflow-hidden flex border border-ink/14 shadow-inner"
-                role="img"
-                aria-label={t('results.breakdown.chartAria')}
-              >
-                {estimate.breakdown.map((item) => (
-                  <div
-                    key={item.category}
-                    style={{
-                      width: `${item.share_pct}%`,
-                      backgroundColor: getCategoryColor(item.category),
-                    }}
-                    title={`${translateCategory(t, item.category)}: ${item.share_pct}% (${formatINR(
-                      item.amount
-                    )})`}
-                    className="h-full transition-opacity hover:opacity-90"
-                  />
-                ))}
-              </div>
+        {/* Breakdown: donut + accessible table in one surface */}
+        <motion.section
+          variants={itemVariants}
+          className="surface-card overflow-hidden"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-line-soft px-6 py-5">
+            <h2 className="section-title">{t('results.breakdown.title')}</h2>
+            <span className="text-[11px] font-semibold text-ink-soft">
+              {t('results.breakdown.meta', {
+                count: estimate.breakdown.length,
+                share: shareTotal,
+              })}
+            </span>
+          </div>
 
-              {/* Chart Legend Mini-bar */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-ink-soft pt-1">
-                {estimate.breakdown.slice(0, 5).map((item) => (
-                  <div key={item.category} className="flex items-center gap-1">
-                    <span
-                      className="w-2.5 h-2.5 rounded-sm inline-block"
-                      style={{ backgroundColor: getCategoryColor(item.category) }}
-                    />
-                    <span>
-                      {translateCategory(t, item.category).split(' ')[0]} ({item.share_pct}%)
-                    </span>
-                  </div>
-                ))}
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr]">
+            <div className="flex items-center justify-center border-b border-line-soft bg-paper-deep/35 px-6 py-8 lg:border-b-0 lg:border-r">
+              {estimate.breakdown.length > 0 ? (
+                <BudgetDonut breakdown={estimate.breakdown} total={totalCost} t={t} />
+              ) : (
+                <p className="max-w-[16rem] text-center text-xs leading-5 text-ink-soft">
+                  {t('results.breakdown.note')}
+                </p>
+              )}
             </div>
 
-            {/* Categories Table */}
-            <div className="border border-ink/14 rounded-lg overflow-hidden bg-paper">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-paper-deep/70 text-ink-soft font-mono uppercase text-[10px] tracking-wider border-b border-ink/14">
-                  <tr>
-                    <th scope="col" className="py-2.5 px-4 font-semibold">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <caption className="sr-only">{t('results.breakdown.title')}</caption>
+                <thead>
+                  <tr className="border-b border-line-soft text-[10px] uppercase tracking-[0.1em] text-ink-soft">
+                    <th scope="col" className="px-6 py-3 font-bold">
                       {t('results.breakdown.costCategory')}
                     </th>
-                    <th scope="col" className="py-2.5 px-4 text-center font-semibold">
+                    <th scope="col" className="px-4 py-3 text-center font-bold">
                       {t('results.breakdown.share')}
                     </th>
-                    <th scope="col" className="py-2.5 px-4 text-right font-semibold">
+                    <th scope="col" className="px-6 py-3 text-right font-bold">
                       {t('results.breakdown.amount')}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-ink/10 font-sans">
-                  {estimate.breakdown.map((category) => (
-                    <tr key={category.category} className="hover:bg-paper-deep/30 transition-colors">
-                      <td className="py-2.5 px-4 flex items-center gap-2">
-                        <span
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: getCategoryColor(category.category) }}
-                          aria-hidden="true"
-                        />
-                        <span className="font-medium text-ink">
-                          {translateCategory(t, category.category)}
+                <tbody className="divide-y divide-line-soft">
+                  {estimate.breakdown.map((category, index) => (
+                    <tr
+                      key={category.category}
+                      className="transition-colors duration-200 hover:bg-paper-deep/40"
+                    >
+                      <td className="px-6 py-3">
+                        <span className="flex items-center gap-2.5">
+                          <span
+                            data-testid="category-dot"
+                            className="h-2 w-2 flex-none rounded-full"
+                            style={{ backgroundColor: getCategoryColor(category.category, index) }}
+                            aria-hidden="true"
+                          />
+                          <span className="font-semibold text-ink">
+                            {translateCategory(t, category.category)}
+                          </span>
                         </span>
                       </td>
-                      <td className="py-2.5 px-4 text-center font-mono text-ink-soft">
+                      <td className="px-4 py-3 text-center text-xs font-semibold text-ink-soft">
                         {category.share_pct}%
                       </td>
-                      <td className="py-2.5 px-4 text-right font-mono font-medium text-ink">
+                      <td className="px-6 py-3 text-right text-[13px] font-bold text-ink">
                         {formatINR(category.amount)}
                       </td>
                     </tr>
                   ))}
-                  <tr className="bg-clay/40 font-bold border-t-2 border-ink/20">
-                    <td className="py-3 px-4 text-ink font-sans text-sm">
+                  <tr className="border-t border-line bg-paper-deep/60">
+                    <td className="px-6 py-4 font-bold text-ink">
                       {t('results.breakdown.total')}
                     </td>
-                    <td className="py-3 px-4 text-center font-mono text-ink">{shareTotal}%</td>
-                    <td className="py-3 px-4 text-right font-mono text-brick text-sm">
+                    <td className="px-4 py-4 text-center text-xs font-bold text-ink-soft">
+                      {shareTotal}%
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-extrabold text-accent">
                       {formatINR(totalCost)}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+          </div>
 
-            <p className="text-[11px] text-ink-soft leading-relaxed font-sans">
-              {t('results.breakdown.note')}
-            </p>
+          <p className="border-t border-line-soft px-6 py-3 text-[11px] leading-5 text-ink-soft">
+            {t('results.breakdown.note')}
+          </p>
+        </motion.section>
 
-            {/* Material recommendations from the API */}
-            <div className="overflow-hidden rounded-lg border border-ink/14 bg-paper-deep/60">
-              <div className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="font-headline text-base font-bold text-ink">
-                  {t('results.materials.title')}
-                </h3>
+        {/* Materials + estimate metadata */}
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12"
+        >
+          <div className="space-y-5 lg:col-span-8">
+            <section className="surface-card overflow-hidden">
+              <div className="flex flex-col gap-2 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="section-title">{t('results.materials.title')}</h2>
                 <Link
                   to="/materials"
-                  className="inline-flex items-center gap-1.5 self-start text-xs font-medium text-brick hover:underline focus-ring rounded sm:self-auto"
+                  className="inline-flex items-center gap-1.5 self-start rounded text-xs font-bold text-accent hover:underline focus-ring sm:self-auto"
                 >
                   <span>{t('results.materials.openGuide')}</span>
-                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               </div>
 
               {estimate.materials.length > 0 ? (
-                <div className="divide-y divide-ink/14 border-t border-ink/14">
+                <div className="divide-y divide-line-soft border-t border-line-soft">
                   {estimate.materials.map((material) => (
-                    <section key={material.category} className="bg-paper">
-                      <div className="space-y-1 p-4">
-                        <h4 className="break-words text-sm font-semibold text-ink">
+                    <section key={material.category}>
+                      <div className="space-y-1 px-6 py-4">
+                        <h3 className="break-words text-sm font-bold text-ink">
                           {translateMaterialCategory(t, material.category)}
-                        </h4>
-                        <p className="break-words text-sm leading-relaxed text-ink-soft">
+                        </h3>
+                        <p className="break-words text-sm leading-6 text-ink-soft">
                           {material.reason}
                         </p>
                       </div>
@@ -630,44 +768,38 @@ export function ResultsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="border-t border-ink/14 p-4 text-sm text-ink-soft">
+                <p className="border-t border-line-soft px-6 py-4 text-sm leading-6 text-ink-soft">
                   {t('results.materials.none')}
                 </p>
               )}
 
-              <p className="border-t border-ink/14 bg-paper-deep/40 px-4 py-2.5 text-xs leading-relaxed text-ink-soft">
+              <p className="border-t border-line-soft bg-paper-deep/40 px-6 py-3 text-[11px] leading-5 text-ink-soft">
                 {t('results.materials.disclaimer')}
               </p>
-            </div>
+            </section>
 
-            {/* Service disclaimer */}
-            <div className="bg-clay/40 border border-ink/14 rounded-lg p-4 text-[11px] text-ink-soft leading-relaxed">
-              <strong className="text-ink font-sans">{t('results.serviceNote')}</strong>{' '}
+            <section className="rounded-2xl border border-line bg-paper-deep/60 px-6 py-5 text-[11px] leading-6 text-ink-soft">
+              <strong className="font-bold text-ink">{t('results.serviceNote')}</strong>{' '}
               {estimate.disclaimer}
-            </div>
+            </section>
           </div>
 
-          {/* Right Column: contract inputs */}
-          <div className="lg:col-span-4 space-y-5">
-            <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
-              <h3 className="font-headline font-bold text-base text-ink">
-                {t('results.inputs.title')}
-              </h3>
-              <div className="space-y-2 text-xs font-sans">
+          <div className="space-y-5 lg:col-span-4">
+            <section className="surface-card p-6">
+              <h2 className="section-title">{t('results.inputs.title')}</h2>
+              <dl className="mt-4 space-y-2.5 text-sm">
                 {inputRows.map(([label, value]) => (
                   <div
                     key={label}
-                    className="flex justify-between gap-3 border-b border-ink/10 pb-1.5"
+                    className="flex justify-between gap-3 border-b border-line-soft pb-2 last:border-0 last:pb-0"
                   >
-                    <span className="text-ink-soft">{label}</span>
-                    <span className="font-medium text-ink text-right">{value}</span>
+                    <dt className="text-ink-soft">{label}</dt>
+                    <dd className="text-right font-semibold text-ink">{value}</dd>
                   </div>
                 ))}
-              </div>
-              <div className="pt-2 border-t border-ink/10 text-[10px] font-mono text-ink-soft space-y-1">
-                <div>
-                  {t('results.inputs.prepared', { date: formatDateTime(estimate.created_at) })}
-                </div>
+              </dl>
+              <div className="mt-4 space-y-1 border-t border-line-soft pt-3 text-[10px] text-ink-soft">
+                <div>{t('results.inputs.prepared', { date: formatDateTime(estimate.created_at) })}</div>
                 <div>
                   {t('results.inputs.model', {
                     version: estimate.model.version,
@@ -675,42 +807,36 @@ export function ResultsPage() {
                   })}
                 </div>
               </div>
-            </div>
+            </section>
 
             {estimate.drivers.length > 0 && (
-              <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-3">
-                <h3 className="font-headline font-bold text-base text-ink">
-                  {t('results.drivers.title')}
-                </h3>
-                <div className="space-y-2 text-xs font-sans">
+              <section className="surface-card p-6">
+                <h2 className="section-title">{t('results.drivers.title')}</h2>
+                <dl className="mt-4 space-y-2.5 text-sm">
                   {estimate.drivers.map((driver) => (
                     <div
                       key={driver.label}
-                      className="flex justify-between gap-3 border-b border-ink/10 pb-1.5"
+                      className="flex justify-between gap-3 border-b border-line-soft pb-2 last:border-0 last:pb-0"
                     >
-                      <span className="text-ink-soft">{driver.label}</span>
-                      <span className="font-medium text-ink text-right">
-                        {driver.impact_pct}%
-                      </span>
+                      <dt className="text-ink-soft">{driver.label}</dt>
+                      <dd className="text-right font-bold text-accent">{driver.impact_pct}%</dd>
                     </div>
                   ))}
-                </div>
-              </div>
+                </dl>
+              </section>
             )}
 
-            <div className="bg-paper-deep/40 border border-ink/14 rounded-lg p-5 space-y-2.5">
-              <h3 className="font-headline font-bold text-base text-ink">
-                {t('results.notIncluded.title')}
-              </h3>
-              <ul className="text-xs text-ink-soft space-y-2 list-disc list-inside font-sans">
+            <section className="surface-card p-6">
+              <h2 className="section-title">{t('results.notIncluded.title')}</h2>
+              <ul className="mt-4 list-disc space-y-2 pl-4 text-sm leading-6 text-ink-soft">
                 <li>{t('results.notIncluded.item1')}</li>
                 <li>{t('results.notIncluded.item2')}</li>
                 <li>{t('results.notIncluded.item3')}</li>
               </ul>
-            </div>
+            </section>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

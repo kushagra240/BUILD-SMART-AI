@@ -37,50 +37,50 @@ export function HouseSchematic({
           role="img"
         >
           {/* Ground baseline */}
-          <line x1="10" y1="100" x2="250" y2="100" stroke="#1F2421" strokeOpacity="0.3" strokeWidth="1" />
+          <line x1="10" y1="100" x2="250" y2="100" stroke="#17191F" strokeOpacity="0.3" strokeWidth="1" />
 
           {/* Main Building Outline */}
-          <rect x="30" y="25" width="200" height="75" rx="1" fill="#F6F1E7" />
+          <rect x="30" y="25" width="200" height="75" rx="1" fill="#FBFCFE" />
 
           {/* Roof Accent / Parapet line */}
-          <rect x="25" y="20" width="210" height="5" rx="1" fill="#1F4D45" fillOpacity="0.1" />
+          <rect x="25" y="20" width="210" height="5" rx="1" fill="#315EFB" fillOpacity="0.1" />
 
           {/* Floor Divider */}
-          <line x1="30" y1="62" x2="230" y2="62" stroke="#1F2421" strokeOpacity="0.2" strokeDasharray="3 2" />
+          <line x1="30" y1="62" x2="230" y2="62" stroke="#17191F" strokeOpacity="0.2" strokeDasharray="3 2" />
 
           {/* Second Floor Windows */}
           <rect x="45" y="32" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="59" y1="32" x2="59" y2="52" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="45" y1="42" x2="73" y2="42" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="59" y1="32" x2="59" y2="52" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="45" y1="42" x2="73" y2="42" stroke="#315EFB" strokeOpacity="0.4" />
 
           <rect x="88" y="32" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="102" y1="32" x2="102" y2="52" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="88" y1="42" x2="116" y2="42" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="102" y1="32" x2="102" y2="52" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="88" y1="42" x2="116" y2="42" stroke="#315EFB" strokeOpacity="0.4" />
 
           <rect x="144" y="32" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="158" y1="32" x2="158" y2="52" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="144" y1="42" x2="172" y2="42" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="158" y1="32" x2="158" y2="52" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="144" y1="42" x2="172" y2="42" stroke="#315EFB" strokeOpacity="0.4" />
 
           <rect x="187" y="32" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="201" y1="32" x2="201" y2="52" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="187" y1="42" x2="215" y2="42" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="201" y1="32" x2="201" y2="52" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="187" y1="42" x2="215" y2="42" stroke="#315EFB" strokeOpacity="0.4" />
 
           {/* Ground Floor Windows and Door */}
           <rect x="45" y="70" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="59" y1="70" x2="59" y2="90" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="45" y1="80" x2="73" y2="80" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="59" y1="70" x2="59" y2="90" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="45" y1="80" x2="73" y2="80" stroke="#315EFB" strokeOpacity="0.4" />
 
           {/* Ground Floor Entrance Door */}
           <rect x="100" y="65" width="25" height="35" rx="1" fill="#FFFFFF" />
-          <circle cx="120" cy="83" r="1.5" fill="#1F4D45" />
+          <circle cx="120" cy="83" r="1.5" fill="#315EFB" />
 
           <rect x="150" y="70" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="164" y1="70" x2="164" y2="90" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="150" y1="80" x2="178" y2="80" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="164" y1="70" x2="164" y2="90" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="150" y1="80" x2="178" y2="80" stroke="#315EFB" strokeOpacity="0.4" />
 
           <rect x="187" y="70" width="28" height="20" rx="1" fill="#FFFFFF" />
-          <line x1="201" y1="70" x2="201" y2="90" stroke="#1F4D45" strokeOpacity="0.4" />
-          <line x1="187" y1="80" x2="215" y2="80" stroke="#1F4D45" strokeOpacity="0.4" />
+          <line x1="201" y1="70" x2="201" y2="90" stroke="#315EFB" strokeOpacity="0.4" />
+          <line x1="187" y1="80" x2="215" y2="80" stroke="#315EFB" strokeOpacity="0.4" />
         </svg>
       </div>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, MapPin, Menu, X, ChevronDown } from 'lucide-react';
+import { ChevronDown, Home, MapPin, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../auth/useAuth';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -15,6 +15,11 @@ function initialsFor(name: string): string {
   }
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
+
+const NAV_LINK =
+  'inline-flex items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-[11px] font-semibold tracking-[0.02em] transition-colors duration-200 focus-ring';
+const NAV_ACTIVE = 'bg-night text-white shadow-sm';
+const NAV_IDLE = 'text-ink-soft hover:bg-paper-deep hover:text-ink';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,76 +52,85 @@ export function Navbar() {
     navigate('/login', { replace: true });
   };
 
+  const primaryLinks = [
+    { to: '/app', label: t('nav.overview') },
+    { to: '/app/new', label: t('nav.newEstimate') },
+    { to: '/app/projects', label: t('nav.savedProjects') },
+    { to: '/materials', label: t('nav.materialsGuide') },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 bg-paper border-b border-ink/14 text-ink">
-      {/* Top Main Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 border-b border-ink/10">
-          {/* Logo & Brand */}
+    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
+      <div className="mx-auto w-full max-w-shell rounded-xl border border-white/70 bg-panel/90 shadow-nav backdrop-blur-xl">
+        {/* Main bar: brand, context, account actions */}
+        <div className="grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-4">
           <Link
             to="/"
-            className="flex items-center gap-2.5 group rounded p-1 focus-ring"
+            className="flex items-center gap-2.5 rounded-lg p-1 focus-ring"
             aria-label={t('nav.homeAria')}
           >
-            <div className="w-8 h-8 rounded-md bg-paper-deep border border-ink/14 flex items-center justify-center text-forest group-hover:border-forest transition-colors">
-              <Home className="w-4 h-4 stroke-[2]" aria-hidden="true" />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-headline font-bold text-lg tracking-tight text-ink">
+            <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-accent text-white shadow-[0_6px_16px_rgba(49,94,251,0.32)]">
+              <Home className="h-[18px] w-[18px]" aria-hidden="true" />
+            </span>
+            <span className="flex items-baseline gap-1.5">
+              <span className="font-headline text-[17px] font-extrabold tracking-[-0.045em] text-ink">
                 BuildSmart
               </span>
-              <span className="text-[10px] font-mono font-medium px-1.5 py-0.2 rounded bg-clay text-ink-soft border border-ink/14">
+              <span className="rounded bg-accent-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-accent-deep">
                 AI
               </span>
-            </div>
+            </span>
           </Link>
 
-          {/* Center Context Label (Figma Header) */}
-          <div className="hidden md:flex items-center text-[10px] uppercase font-mono tracking-widest text-ink-soft">
-            <span>{t('nav.context')}</span>
+          <div className="hidden justify-center md:flex">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-soft">
+              {t('nav.context')}
+            </span>
           </div>
 
-          {/* Right Action / User Profile */}
-          <div className="hidden sm:flex items-center gap-3">
-            <LanguageSwitcher />
+          <div className="flex items-center justify-end gap-2">
+            <div className="hidden sm:block">
+              <LanguageSwitcher />
+            </div>
+
             {user ? (
-              <div className="relative">
+              <div className="relative hidden sm:block">
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-md hover:bg-paper-deep text-xs font-medium text-ink border border-transparent hover:border-ink/14 transition-colors focus-ring"
+                  className="flex items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-xs font-semibold text-ink transition-colors hover:border-line hover:bg-paper-deep focus-ring"
                   aria-expanded={profileDropdownOpen}
                 >
-                  <span className="w-6 h-6 rounded-full bg-clay border border-ink/14 flex items-center justify-center text-[11px] font-mono font-semibold text-ink">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-night text-[11px] font-bold text-white">
                     {initialsFor(user.full_name)}
                   </span>
-                  <span>{user.full_name}</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-ink-soft" aria-hidden="true" />
+                  <span className="max-w-[10rem] truncate">{user.full_name}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-ink-soft" aria-hidden="true" />
                 </button>
 
                 {profileDropdownOpen && (
-                  <div className="absolute right-0 mt-1 w-48 bg-paper border border-ink/14 rounded-lg shadow-subtle py-1 z-50 text-xs">
-                    <div className="px-3 py-2 border-b border-ink/10 text-ink-soft font-mono">
+                  <div className="absolute right-0 z-50 mt-2 w-52 rounded-xl border border-line bg-panel py-1.5 text-xs shadow-panel">
+                    <div className="border-b border-line-soft px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                       {t('nav.signedInAs', { name: user.full_name })}
                     </div>
                     <Link
                       to="/app"
                       onClick={() => setProfileDropdownOpen(false)}
-                      className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
+                      className="block px-3 py-2 font-medium text-ink transition-colors hover:bg-paper-deep"
                     >
                       {t('nav.projectOverview')}
                     </Link>
                     <Link
                       to="/app/projects"
                       onClick={() => setProfileDropdownOpen(false)}
-                      className="block px-3 py-1.5 hover:bg-paper-deep text-ink"
+                      className="block px-3 py-2 font-medium text-ink transition-colors hover:bg-paper-deep"
                     >
                       {t('nav.savedProjects')}
                     </Link>
                     <button
                       type="button"
                       onClick={() => void handleLogout()}
-                      className="block w-full text-left px-3 py-1.5 hover:bg-paper-deep text-brick border-t border-ink/10"
+                      className="block w-full border-t border-line-soft px-3 py-2 text-left font-semibold text-error transition-colors hover:bg-error/5"
                     >
                       {t('nav.logout')}
                     </button>
@@ -124,179 +138,129 @@ export function Navbar() {
                 )}
               </div>
             ) : status === 'loading' ? (
-              <span className="text-xs text-ink-soft font-mono">{t('nav.checkingSession')}</span>
+              <span className="hidden text-[11px] font-medium text-ink-soft sm:block">
+                {t('nav.checkingSession')}
+              </span>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden items-center gap-2 sm:flex">
                 <Link
                   to="/login"
-                  className="px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-ink rounded hover:bg-paper-deep"
+                  className="rounded-lg px-3 py-2 text-xs font-semibold text-ink-soft transition-colors hover:text-ink focus-ring"
                 >
                   {t('nav.login')}
                 </Link>
-                <Link
-                  to="/register"
-                  className="px-3 py-1.5 text-xs font-semibold text-paper bg-brick hover:bg-brick-hover rounded shadow-sm"
-                >
+                <Link to="/register" className="btn-primary h-10 px-4">
                   {t('nav.register')}
                 </Link>
               </div>
             )}
-          </div>
 
-          {/* Mobile hamburger menu toggle */}
-          <div className="flex sm:hidden items-center">
+            {/* Mobile hamburger menu toggle */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded text-ink-soft hover:text-ink hover:bg-paper-deep focus-ring"
+              className="grid h-10 w-10 place-items-center rounded-lg bg-night text-white focus-ring sm:hidden"
               aria-label={t('nav.toggleMenu')}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
-        {/* Sub-Navigation Tabs Row (Figma Screenshot 1, 2, 3, 4) */}
-        <div className="flex items-center justify-between text-xs overflow-x-auto scrollbar-none py-1">
-          <nav
-            className="flex items-center space-x-1 sm:space-x-6 whitespace-nowrap"
-            aria-label={t('nav.subNavigation')}
-          >
-            <Link
-              to="/app"
-              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
-                isActive('/app')
-                  ? 'border-brick text-ink font-semibold'
-                  : 'border-transparent text-ink-soft hover:text-ink'
-              }`}
+        {/* Sub-navigation: segmented pill row */}
+        <div className="border-t border-line-soft/80 px-2 sm:px-3">
+          <div className="flex items-center justify-between gap-3">
+            <nav
+              className="flex items-center gap-1 overflow-x-auto py-1.5"
+              aria-label={t('nav.subNavigation')}
             >
-              {t('nav.overview')}
-            </Link>
-            <Link
-              to="/app/new"
-              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
-                isActive('/app/new')
-                  ? 'border-brick text-ink font-semibold'
-                  : 'border-transparent text-ink-soft hover:text-ink'
-              }`}
-            >
-              {t('nav.newEstimate')}
-            </Link>
-            <Link
-              to="/app/projects"
-              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
-                isActive('/app/projects')
-                  ? 'border-brick text-ink font-semibold'
-                  : 'border-transparent text-ink-soft hover:text-ink'
-              }`}
-            >
-              {t('nav.savedProjects')}
-            </Link>
-            <Link
-              to="/materials"
-              className={`py-2 px-2 text-xs font-medium border-b-2 transition-colors ${
-                isActive('/materials')
-                  ? 'border-brick text-ink font-semibold'
-                  : 'border-transparent text-ink-soft hover:text-ink'
-              }`}
-            >
-              {t('nav.materialsGuide')}
-            </Link>
-          </nav>
+              {primaryLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`${NAV_LINK} ${isActive(link.to) ? NAV_ACTIVE : NAV_IDLE}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-          <div className="hidden md:flex items-center gap-1.5 text-xs text-ink-soft whitespace-nowrap pl-4">
-            <MapPin className="w-3.5 h-3.5 text-forest" aria-hidden="true" />
-            <span>{t('nav.planningForPune')}</span>
+            <div className="hidden shrink-0 items-center gap-1.5 pr-1 text-[11px] font-medium text-ink-soft lg:flex">
+              <MapPin className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+              <span>{t('nav.planningForPune')}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <nav className="sm:hidden bg-paper-deep border-t border-ink/14 px-4 py-3 space-y-2 text-sm">
-          <Link
-            to="/app"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md ${
-              isActive('/app') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
-            }`}
-          >
-            {t('nav.overview')}
-          </Link>
-          <Link
-            to="/app/new"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md ${
-              isActive('/app/new') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
-            }`}
-          >
-            {t('nav.newEstimate')}
-          </Link>
-          <Link
-            to="/app/projects"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md ${
-              isActive('/app/projects') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
-            }`}
-          >
-            {t('nav.savedProjects')}
-          </Link>
-          <Link
-            to="/materials"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md ${
-              isActive('/materials') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
-            }`}
-          >
-            {t('nav.materialsGuide')}
-          </Link>
-          <Link
-            to="/methodology"
-            onClick={() => setMobileMenuOpen(false)}
-            className={`block px-3 py-2 rounded-md ${
-              isActive('/methodology') ? 'bg-clay text-ink font-semibold' : 'text-ink-soft'
-            }`}
-          >
-            {t('nav.methodology')}
-          </Link>
-          <div className="pt-2 border-t border-ink/10">
-            <LanguageSwitcher />
-          </div>
-          <div className="pt-2 border-t border-ink/10 flex justify-between gap-2">
-            {user ? (
-              <>
-                <span className="flex-1 flex items-center px-2 text-xs text-ink-soft truncate">
-                  {user.full_name}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void handleLogout()}
-                  className="flex-1 text-center py-2 text-xs font-semibold rounded border border-brick/40 text-brick bg-paper"
-                >
-                  {t('nav.logout')}
-                </button>
-              </>
-            ) : (
-              <>
+        {/* Mobile Drawer */}
+        {mobileMenuOpen && (
+          <nav className="border-t border-line-soft px-3 py-3 text-sm sm:hidden">
+            <div className="flex flex-col gap-1">
+              {primaryLinks.map((link) => (
                 <Link
-                  to="/login"
+                  key={link.to}
+                  to={link.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center py-2 text-xs font-medium rounded border border-ink/14 bg-paper"
+                  className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+                    isActive(link.to) ? 'bg-night text-white' : 'text-ink-soft hover:bg-paper-deep'
+                  }`}
                 >
-                  {t('nav.login')}
+                  {link.label}
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 text-center py-2 text-xs font-semibold rounded bg-brick text-paper"
-                >
-                  {t('nav.register')}
-                </Link>
-              </>
-            )}
-          </div>
-        </nav>
-      )}
+              ))}
+              <Link
+                to="/methodology"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+                  isActive('/methodology')
+                    ? 'bg-night text-white'
+                    : 'text-ink-soft hover:bg-paper-deep'
+                }`}
+              >
+                {t('nav.methodology')}
+              </Link>
+            </div>
+
+            <div className="mt-3 border-t border-line-soft pt-3">
+              <LanguageSwitcher />
+            </div>
+
+            <div className="mt-3 flex justify-between gap-2 border-t border-line-soft pt-3">
+              {user ? (
+                <>
+                  <span className="flex flex-1 items-center truncate px-2 text-xs text-ink-soft">
+                    {user.full_name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void handleLogout()}
+                    className="flex-1 rounded-lg border border-error/30 bg-panel py-2 text-center text-xs font-semibold text-error"
+                  >
+                    {t('nav.logout')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 rounded-lg border border-line bg-panel py-2 text-center text-xs font-semibold text-ink"
+                  >
+                    {t('nav.login')}
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 rounded-lg bg-night py-2 text-center text-xs font-semibold text-white"
+                  >
+                    {t('nav.register')}
+                  </Link>
+                </>
+              )}
+            </div>
+          </nav>
+        )}
+      </div>
     </header>
   );
 }

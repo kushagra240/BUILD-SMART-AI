@@ -81,6 +81,21 @@ describe('ResultsPage contract rendering', () => {
     expect(screen.queryByText(/BS-2026-004/)).not.toBeInTheDocument();
   });
 
+  it('gives every cost category its own colour in the breakdown', () => {
+    const { container } = renderResults({ state: { estimate } });
+
+    expect(screen.getByTestId('budget-donut')).toBeInTheDocument();
+
+    // The API sends capitalised labels while the palette is keyed by the
+    // lowercase contract values; a mismatch would paint every slice the same.
+    const colors = Array.from(container.querySelectorAll('[data-testid="category-dot"]')).map(
+      (dot) => (dot as HTMLElement).style.backgroundColor
+    );
+
+    expect(colors).toHaveLength(estimate.breakdown.length);
+    expect(new Set(colors).size).toBe(estimate.breakdown.length);
+  });
+
   it('does not show the mock warning for a non-mock estimate', () => {
     renderResults({
       state: { estimate: { ...estimate, is_mock: false } },
