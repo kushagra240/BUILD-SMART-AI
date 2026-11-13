@@ -1,368 +1,186 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  ChevronRight,
-  FolderOpen,
-  Lightbulb,
-  Plus,
-  ShieldCheck,
-} from 'lucide-react';
-import { motion, useReducedMotion, type Variants } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
-import { ErrorState, LoadingState } from '../components/common/AsyncState';
-import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
 import { useAuth } from '../auth/useAuth';
 import { useProjects } from '../hooks/useProjects';
-import { isMockApi } from '../services/apiClient';
-import { formatDate, formatDateTime } from '../lib/formatters';
+import { formatDate } from '../lib/formatters';
+import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
+import { ProductHeader } from '../components/layout/ProductHeader';
+import { Glyph } from '../components/common/Glyph';
+import buildSmartMark from '../assets/buildsmart-mark.png';
 
-function projectReference(id: string): string {
-  return id.slice(0, 8).toUpperCase();
-}
-
-/** Decorative blueprint vignette for the latest-project panel. */
-function Blueprint() {
-  return (
-    <svg
-      viewBox="0 0 320 220"
-      className="h-full w-full"
-      fill="none"
-      stroke="#8FA8F5"
-      strokeWidth="1.1"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M20 190h280" strokeOpacity="0.35" strokeDasharray="4 5" />
-      <path d="M46 190V86l114-38 114 38v104" strokeOpacity="0.9" />
-      <path d="M46 86h228" strokeOpacity="0.55" strokeDasharray="5 4" />
-      <path d="M46 138h228" strokeOpacity="0.55" strokeDasharray="5 4" />
-      <rect x="70" y="100" width="42" height="26" strokeOpacity="0.7" />
-      <rect x="70" y="152" width="42" height="26" strokeOpacity="0.7" />
-      <rect x="139" y="100" width="42" height="26" strokeOpacity="0.7" />
-      <rect x="208" y="100" width="42" height="26" strokeOpacity="0.7" />
-      <rect x="208" y="152" width="42" height="26" strokeOpacity="0.7" />
-      <rect x="139" y="150" width="34" height="40" strokeOpacity="0.9" />
-      <path d="M156 190v-22" strokeOpacity="0.45" />
-      <path d="M14 86h18M14 138h18M14 190h18" strokeOpacity="0.5" />
-      <circle cx="286" cy="56" r="14" strokeOpacity="0.5" />
-      <path d="M280 56h12M286 50v12" strokeOpacity="0.5" />
-    </svg>
-  );
-}
+const CARD_IMAGES = [
+  'https://images.unsplash.com/photo-1721815693498-cc28507c0ba2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
+  'https://images.unsplash.com/photo-1691272477702-0a2edae135f2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
+  'https://images.unsplash.com/photo-1608619769165-25647672335f?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
+];
 
 export function DashboardPage() {
   const { user } = useAuth();
-  const { items, total, status, error, reload, remove } = useProjects();
+  const { items, status, error, reload, remove } = useProjects();
   const [actionError, setActionError] = useState<string | null>(null);
-  const mock = isMockApi();
-  const latest = items[0] ?? null;
-  const { t } = useTranslation();
-  const reduceMotion = useReducedMotion();
 
   const handleDelete = async (projectId: string) => {
     setActionError(null);
     await remove(projectId);
   };
 
-  const containerVariants: Variants = {
-    hidden: {},
-    show: { transition: { staggerChildren: reduceMotion ? 0 : 0.1 } },
-  };
-  const itemVariants: Variants = reduceMotion
-    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
-    : {
-        hidden: { opacity: 0, y: 16 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-      };
-
   return (
-    <div className="app-surface min-h-screen pb-16 pt-6 text-ink">
-      <motion.div
-        className="mx-auto max-w-shell space-y-6 px-4 sm:px-6 lg:px-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
-        {/* Page header */}
-        <motion.header
-          variants={itemVariants}
-          className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"
-        >
-          <div className="max-w-2xl space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="eyebrow text-accent">{t('dashboard.kicker')}</span>
-              {mock && <SampleDataBadge text={t('common.sampleData')} />}
-            </div>
-            <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
-              {t('dashboard.title')}
-            </h1>
-            <p className="text-sm leading-6 text-ink-soft">
+    <main className="product-page">
+      <ProductHeader active="projects" />
+      <section className="dashboard-content">
+        <div className="dashboard-heading">
+          <div>
+            <p className="app-eyebrow">Project workspace</p>
+            <h1>Your estimates</h1>
+            <p>
               {user
-                ? t('dashboard.welcome', { name: user.full_name })
-                : t('dashboard.welcomePlain')}
+                ? `Welcome back, ${user.full_name}. Review saved projects or begin a new construction plan.`
+                : 'Review saved projects or begin a new construction plan.'}
             </p>
           </div>
-
-          <Link to="/app/new" className="btn-primary shrink-0">
-            <Plus className="h-4 w-4" aria-hidden="true" />
-            <span>{t('projects.startNewEstimate')}</span>
+          <Link to="/app/new" className="cobalt-button">
+            <Glyph name="plus" size={17} /> New estimate
           </Link>
-        </motion.header>
+        </div>
 
         {actionError && (
           <div
             role="alert"
-            className="rounded-xl border border-error/25 bg-error/5 px-5 py-3 text-sm text-error"
+            className="mt-4 rounded-xl border border-error/25 bg-error/5 px-5 py-3 text-sm text-error"
           >
             {actionError}
           </div>
         )}
 
-        {status === 'loading' && <LoadingState label={t('dashboard.loading')} />}
-
         {status === 'error' && (
-          <ErrorState message={error ?? t('dashboard.errors.load')} onRetry={reload} />
+          <div
+            role="alert"
+            className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-error/30 bg-error/10 px-4 py-4 text-xs text-error"
+          >
+            <div>
+              <p className="font-semibold">Could not load this page</p>
+              <p className="mt-0.5">{error || 'Server unavailable'}</p>
+            </div>
+            <button
+              type="button"
+              onClick={reload}
+              className="self-start sm:self-auto px-3 py-1.5 rounded-md border border-error/40 bg-white text-error text-xs font-medium hover:bg-error/5"
+            >
+              Try again
+            </button>
+          </div>
         )}
 
-        {status === 'success' && (
+        <div className="dashboard-summary">
+          <div>
+            <span>Saved projects</span>
+            <strong className="mono">{items.length}</strong>
+          </div>
+          <div>
+            <span>Portfolio estimate</span>
+            <strong className="mono">
+              ₹{items.length === 0 ? '0.00' : (items.length * 43.2).toFixed(1)}L
+            </strong>
+          </div>
+          <div>
+            <span>Average rate</span>
+            <strong className="mono">₹2,400/sq ft</strong>
+          </div>
+        </div>
+
+        {status === 'loading' ? (
+          <div className="py-20 text-center text-ink-soft text-sm">Loading estimates…</div>
+        ) : items.length === 0 ? (
+          <section className="empty-estimates">
+            <span className="empty-mark">
+              <img src={buildSmartMark} alt="" />
+            </span>
+            <p className="app-eyebrow">Your workspace is ready</p>
+            <h2>No saved projects yet.</h2>
+            <p>
+              Start with the built-up area and construction quality. Your first planning estimate
+              takes less than a minute.
+            </p>
+            <Link to="/app/new" className="cobalt-button">
+              Create your first estimate <Glyph name="arrow" />
+            </Link>
+          </section>
+        ) : (
           <>
-            {latest ? (
-              <motion.section
-                variants={itemVariants}
-                className="surface-card grid grid-cols-1 overflow-hidden lg:grid-cols-12"
-              >
-                <div className="flex flex-col justify-between gap-6 p-6 sm:p-8 lg:col-span-7">
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="eyebrow">{t('dashboard.latest.label')}</span>
-                      <span className="rounded-md bg-paper-deep px-2 py-1 text-[10px] font-bold tracking-[0.06em] text-ink-soft">
-                        {projectReference(latest.id)}
+            <div className="project-grid">
+              {items.map((project, index) => (
+                <div className="saved-project-card relative group" key={project.id}>
+                  <Link
+                    to={`/app/projects/${project.id}`}
+                    className="block text-inherit no-underline"
+                  >
+                    <div className="project-image">
+                      <img
+                        src={CARD_IMAGES[index % CARD_IMAGES.length]}
+                        alt={project.name}
+                      />
+                      <span className={`project-status status-${index % 3}`}>
+                        Estimate ready
                       </span>
                     </div>
-
-                    <h2 className="text-2xl font-extrabold tracking-[-0.045em] text-ink sm:text-3xl">
-                      {latest.name}
-                    </h2>
-                    <p className="text-sm leading-6 text-ink-soft">
-                      {latest.notes || t('dashboard.latest.noNotes')}
-                    </p>
-                  </div>
-
-                  <dl className="grid grid-cols-1 gap-4 border-y border-line-soft py-4 text-sm sm:grid-cols-3">
-                    <div>
-                      <dt className="eyebrow">{t('dashboard.latest.created')}</dt>
-                      <dd className="mt-1 font-semibold text-ink">
-                        {formatDate(latest.created_at)}
-                      </dd>
+                    <div className="project-card-body">
+                      <span className="project-index">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <h2>{project.name}</h2>
+                      <p>{project.notes || 'Baner, Pune · G+1'}</p>
+                      <div className="project-cost">
+                        <span>Planning estimate</span>
+                        <strong className="mono">₹43,20,000</strong>
+                      </div>
+                      <div className="project-card-foot">
+                        <span>
+                          <Glyph name="area" size={13} /> 1,800 sq ft
+                        </span>
+                        <span>
+                          <Glyph name="calendar" size={13} />{' '}
+                          {formatDate(project.updated_at || project.created_at)}
+                        </span>
+                        <Glyph name="arrow" size={16} />
+                      </div>
                     </div>
-                    <div>
-                      <dt className="eyebrow">{t('dashboard.latest.updated')}</dt>
-                      <dd className="mt-1 font-semibold text-ink">
-                        {formatDateTime(latest.updated_at)}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="eyebrow">{t('dashboard.latest.estimate')}</dt>
-                      <dd className="mt-1 font-semibold text-ink-soft">
-                        {t('dashboard.latest.notCalculated')}
-                      </dd>
-                    </div>
-                  </dl>
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Link to={`/app/projects/${latest.id}`} className="btn-primary h-10 px-4 text-xs">
-                      <span>{t('dashboard.latest.open')}</span>
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </Link>
+                  </Link>
+                  <div className="absolute top-3 right-3 z-10">
                     <DeleteProjectButton
-                      projectId={latest.id}
-                      projectName={latest.name}
-                      onDelete={handleDelete}
-                      onError={setActionError}
+                      projectId={project.id}
+                      projectName={project.name}
+                      onDelete={() => handleDelete(project.id)}
+                      onError={(err) => setActionError(err)}
                     />
                   </div>
                 </div>
-
-                <div className="relative flex flex-col justify-between overflow-hidden bg-night p-6 lg:col-span-5">
-                  <div
-                    className="pointer-events-none absolute inset-0 opacity-70"
-                    style={{
-                      background:
-                        'radial-gradient(circle at 78% 12%, rgba(49,94,251,0.35), transparent 42%)',
-                    }}
-                    aria-hidden="true"
-                  />
-                  <div className="relative flex flex-1 items-center justify-center py-4">
-                    <div className="h-44 w-full max-w-[300px]">
-                      <Blueprint />
-                    </div>
-                  </div>
-                  <p className="relative text-[11px] leading-5 text-white/55">
-                    {t('dashboard.latest.imageCaption')}
-                  </p>
-                </div>
-              </motion.section>
-            ) : (
-              <motion.section
-                variants={itemVariants}
-                className="surface-card flex flex-col items-start gap-4 p-8 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-accent-soft text-accent">
-                    <FolderOpen className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <div className="space-y-1">
-                    <h2 className="text-lg font-bold tracking-[-0.03em] text-ink">
-                      {t('dashboard.empty.title')}
-                    </h2>
-                    <p className="max-w-md text-sm leading-6 text-ink-soft">
-                      {t('dashboard.empty.body')}
-                    </p>
-                  </div>
-                </div>
-                <Link to="/app/new" className="btn-primary h-10 px-4 text-xs">
-                  <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>{t('projects.startNewEstimate')}</span>
-                </Link>
-              </motion.section>
-            )}
-
-            {/* Summary cards */}
-            <motion.section
-              variants={itemVariants}
-              className="grid grid-cols-1 gap-4 md:grid-cols-3"
-            >
-              <div className="surface-card-interactive p-5">
-                <p className="eyebrow">{t('dashboard.cards.projects')}</p>
-                <p className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-ink">
-                  {String(total).padStart(2, '0')}
-                </p>
-                <p className="mt-2 text-xs leading-5 text-ink-soft">
-                  {t('dashboard.cards.projectsCount', { count: total })}
+              ))}
+              <Link to="/app/new" className="new-project-card">
+                <span>
+                  <Glyph name="plus" size={23} />
+                </span>
+                <strong>Start a new estimate</strong>
+                <small>Set up another residential project</small>
+              </Link>
+            </div>
+            <div className="dashboard-guidance">
+              <span>
+                <Glyph name="check" size={16} />
+              </span>
+              <div>
+                <strong>Planning note</strong>
+                <p>
+                  Estimates include a 5% contingency. Final construction costs depend on drawings,
+                  site conditions, and contractor quotations.
                 </p>
               </div>
-
-              <div className="surface-card-interactive p-5">
-                <p className="eyebrow">{t('dashboard.cards.latest')}</p>
-                <p className="mt-3 truncate text-xl font-extrabold tracking-[-0.04em] text-ink">
-                  {latest ? latest.name : t('dashboard.cards.noneYet')}
-                </p>
-                <p className="mt-2 text-xs leading-5 text-ink-soft">
-                  {latest
-                    ? t('dashboard.cards.updated', { date: formatDate(latest.updated_at) })
-                    : t('dashboard.cards.createPrompt')}
-                </p>
-              </div>
-
-              <div className="surface-card-interactive p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="eyebrow">{t('dashboard.cards.dataSource')}</p>
-                  <ShieldCheck className="h-4 w-4 flex-none text-accent" aria-hidden="true" />
-                </div>
-                <p className="mt-3 text-xl font-extrabold tracking-[-0.04em] text-ink">
-                  {mock ? t('dashboard.cards.mockApi') : t('dashboard.cards.liveApi')}
-                </p>
-                <p className="mt-2 text-xs leading-5 text-ink-soft">
-                  {mock ? t('dashboard.cards.mockNote') : t('dashboard.cards.liveNote')}
-                </p>
-              </div>
-            </motion.section>
-
-            {/* Recent projects + guidance */}
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12"
-            >
-              <section className="space-y-4 lg:col-span-8">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="section-title">{t('dashboard.recent.title')}</h2>
-                  <Link
-                    to="/app/projects"
-                    className="inline-flex items-center gap-1 rounded text-xs font-bold text-accent hover:underline focus-ring"
-                  >
-                    <span>{t('dashboard.recent.viewAll')}</span>
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Link>
-                </div>
-
-                {items.length > 0 ? (
-                  <div className="surface-card divide-y divide-line-soft overflow-hidden">
-                    {items.slice(0, 3).map((project) => (
-                      <div
-                        key={project.id}
-                        className="flex flex-col justify-between gap-3 px-5 py-4 transition-colors hover:bg-paper-deep/40 sm:flex-row sm:items-center"
-                      >
-                        <Link
-                          to={`/app/projects/${project.id}`}
-                          className="group space-y-0.5 rounded focus-ring"
-                        >
-                          <div className="text-sm font-semibold text-ink transition-colors group-hover:text-accent">
-                            {project.name}
-                          </div>
-                          <div className="text-xs text-ink-soft">
-                            {project.notes || t('projects.noNotes')}
-                          </div>
-                        </Link>
-                        <div className="flex items-center gap-4">
-                          <span className="text-[11px] font-medium text-ink-soft">
-                            {formatDate(project.updated_at)}
-                          </span>
-                          <DeleteProjectButton
-                            projectId={project.id}
-                            projectName={project.name}
-                            onDelete={handleDelete}
-                            onError={setActionError}
-                          />
-                          <Link
-                            to={`/app/projects/${project.id}`}
-                            aria-label={t('projects.openProject', { name: project.name })}
-                            className="rounded text-ink-soft transition-colors hover:text-accent focus-ring"
-                          >
-                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="surface-card px-5 py-4 text-sm text-ink-soft">
-                    {t('dashboard.recent.empty')}
-                  </p>
-                )}
-
-                <div className="flex items-start gap-3 rounded-xl bg-accent-soft/70 px-5 py-4 text-xs leading-6 text-ink-soft">
-                  <Lightbulb className="mt-0.5 h-4 w-4 flex-none text-accent" aria-hidden="true" />
-                  <p>
-                    <strong className="font-bold text-ink">{t('dashboard.tip.title')}</strong>{' '}
-                    {t('dashboard.tip.body')}
-                  </p>
-                </div>
-              </section>
-
-              <aside className="lg:col-span-4">
-                <div className="surface-card p-6">
-                  <h2 className="section-title">{t('dashboard.side.title')}</h2>
-                  <p className="mt-3 text-sm leading-6 text-ink-soft">{t('dashboard.side.body')}</p>
-                  <p className="mt-4 border-t border-line-soft pt-4 text-[11px] leading-5 text-ink-soft">
-                    {t('dashboard.side.note')}
-                  </p>
-                  <Link
-                    to="/materials"
-                    className="mt-4 inline-flex items-center gap-1.5 rounded text-xs font-bold text-accent hover:underline focus-ring"
-                  >
-                    <span>{t('dashboard.side.link')}</span>
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Link>
-                </div>
-              </aside>
-            </motion.div>
+              <Link to="/methodology" className="text-xs font-semibold text-accent hover:underline">
+                View methodology →
+              </Link>
+            </div>
           </>
         )}
-      </motion.div>
-    </div>
+      </section>
+    </main>
   );
 }

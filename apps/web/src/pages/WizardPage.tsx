@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion, useReducedMotion } from 'framer-motion';
 import { calculateEstimateMock } from '../services/mockApi';
 import {
   apiClient,
@@ -13,11 +12,9 @@ import {
 } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { QualityTier, ConstructionType } from '../types/estimate';
-import { formatINR, formatNumber } from '../lib/formatters';
-import { HouseSchematic } from '../components/common/HouseSchematic';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
-import { ErrorState } from '../components/common/AsyncState';
-import { ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
+import { formatINR } from '../lib/formatters';
+import { ProductHeader } from '../components/layout/ProductHeader';
+import { Glyph } from '../components/common/Glyph';
 
 interface WizardFormData {
   projectName: string;
@@ -60,7 +57,6 @@ const FLOOR_OPTIONS = [
 export function WizardPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const reduceMotion = useReducedMotion();
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -110,8 +106,6 @@ export function WizardPage() {
 
   const ratePerSqFt = QUALITY_RATES[form.qualityTier];
   const calculatedTotal = form.builtUpArea * ratePerSqFt;
-  const approxPerFloor =
-    form.floors > 0 ? Math.round(form.builtUpArea / form.floors) : form.builtUpArea;
 
   const validateStep1 = (): boolean => {
     const errs: Record<string, string> = {};
@@ -181,8 +175,6 @@ export function WizardPage() {
         return;
       }
 
-      // Estimates belong to a project, so create one first and reuse it if the
-      // user retries after a failed calculation.
       let projectId = createdProjectId;
       if (!projectId) {
         const project = await apiClient.createProject({
@@ -213,561 +205,368 @@ export function WizardPage() {
 
   if (optionsError) {
     return (
-      <div className="app-surface flex min-h-[60vh] flex-col items-center justify-center px-4">
-        <div className="w-full max-w-2xl">
-          <ErrorState message={optionsError} onRetry={loadOptions} />
-        </div>
-      </div>
+      <main className="product-page wizard-page">
+        <ProductHeader active="estimate" />
+        <section className="wizard-content">
+          <div role="alert" className="mt-8 rounded-lg border border-error/30 bg-error/10 p-6 text-center text-error">
+            <p className="font-semibold">{optionsError}</p>
+            <button
+              type="button"
+              onClick={loadOptions}
+              className="mt-3 px-4 py-2 rounded-md bg-white text-error border border-error/40 font-medium text-xs hover:bg-error/5"
+            >
+              Try again
+            </button>
+          </div>
+        </section>
+      </main>
     );
   }
 
   if (loading) {
     return (
-      <div className="app-surface flex min-h-[60vh] flex-col items-center justify-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-        <span className="text-xs font-semibold text-ink-soft">{t('wizard.loading')}</span>
-      </div>
+      <main className="product-page wizard-page">
+        <ProductHeader active="estimate" />
+        <section className="wizard-content py-20 text-center text-ink-soft text-sm">
+          {t('wizard.loading')}
+        </section>
+      </main>
     );
   }
 
-  const stepLabels = [
-    t('wizard.steps.projectSite'),
-    t('wizard.steps.preferences'),
-    t('wizard.steps.estimate'),
-  ];
-
   return (
-    <div className="app-surface min-h-screen pb-20 pt-6 text-ink">
-      <div className="mx-auto max-w-shell space-y-6 px-4 sm:px-6 lg:px-8">
-        {/* Heading + stepper */}
-        <header className="max-w-3xl space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="eyebrow text-accent">{t('wizard.kicker', { step })}</span>
-            <SampleDataBadge text={t('common.sampleData')} />
-          </div>
+    <main className="product-page wizard-page">
+      <ProductHeader active="estimate" />
+      <section className="wizard-content">
+        <Link to="/app" className="wizard-back">
+          ← Back to projects
+        </Link>
+        <div className="wizard-title">
+          <p className="app-eyebrow">New residential estimate</p>
+          <h1>Set up your project.</h1>
+          <p>Start with the size and quality of the home you’re planning.</p>
+        </div>
+        <div className="progress-stepper">
+          {[
+            ['1', 'Setup'],
+            ['2', 'Specifications'],
+            ['3', 'Results'],
+          ].map(([number, label], index) => {
+            const isCurrent = (index === 0 && step === 1) || (index === 1 && step === 2);
+            return (
+              <div className={isCurrent ? 'current' : ''} key={number}>
+                <span>{number}</span>
+                <strong>{label}</strong>
+                {index < 2 && <i />}
+              </div>
+            );
+          })}
+        </div>
 
-          <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
-            {step === 1 ? t('wizard.headings.step1') : t('wizard.headings.step2')}
-          </h1>
+        <section className="wizard-card">
+          {step === 1 ? (
+            <>
+              <div className="wizard-card-heading">
+                <span>
+                  <Glyph name="home" />
+                </span>
+                <div>
+                  <p className="app-eyebrow">Step 01</p>
+                  <h2>Home size and site setup</h2>
+                  <p>Use approximate measurements for your first planning estimate.</p>
+                </div>
+              </div>
 
-          <p className="text-sm leading-6 text-ink-soft">
-            {step === 1 ? t('wizard.subtitles.step1') : t('wizard.subtitles.step2')}
-          </p>
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label htmlFor="projectName" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.projectName')}</span>
+                  </label>
+                  <input
+                    id="projectName"
+                    type="text"
+                    value={form.projectName}
+                    onChange={(e) => setForm({ ...form, projectName: e.target.value })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                    placeholder={t('wizard.fields.projectNamePlaceholder')}
+                  />
+                  {errors.projectName && (
+                    <p className="mt-1 text-[11px] font-semibold text-error">{errors.projectName}</p>
+                  )}
+                </div>
 
-          <div className="flex items-center gap-1.5 pt-2 text-[11px] font-semibold">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 transition-colors ${
-                step === 1 ? 'bg-accent-soft text-accent-deep' : 'text-ink-soft hover:bg-paper-deep'
-              }`}
-            >
-              <span
-                className={`grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold ${
-                  step === 1 ? 'bg-accent text-white' : 'bg-night text-white'
-                }`}
-              >
-                1
-              </span>
-              <span>{stepLabels[0]}</span>
-            </button>
-            <span aria-hidden="true" className="px-0.5 text-ink-soft/50">
-              ›
-            </span>
-            <button
-              type="button"
-              onClick={() => validateStep1() && setStep(2)}
-              className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 transition-colors ${
-                step === 2 ? 'bg-accent-soft text-accent-deep' : 'text-ink-soft hover:bg-paper-deep'
-              }`}
-            >
-              <span
-                className={`grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold ${
-                  step === 2 ? 'bg-accent text-white' : 'bg-night text-white'
-                }`}
-              >
-                2
-              </span>
-              <span>{stepLabels[1]}</span>
-            </button>
-            <span aria-hidden="true" className="px-0.5 text-ink-soft/50">
-              ›
-            </span>
-            <span className="flex items-center gap-1.5 py-1 pl-1 pr-3 text-ink-soft/70">
-              <span className="grid h-6 w-6 place-items-center rounded-full border border-line text-[10px] font-bold">
-                3
-              </span>
-              <span>{stepLabels[2]}</span>
-            </span>
-          </div>
-        </header>
-
-        {/* ================= STEP 1: PROJECT & SITE ================= */}
-        {step === 1 && (
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.45, ease: 'easeOut' }}
-            className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12"
-          >
-            {/* Left form column */}
-            <div className="space-y-5 lg:col-span-8">
-              {/* Project & location */}
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.sections.projectLocation')}</h2>
-
-                <div className="mt-5 space-y-4">
-                  <div className="space-y-1.5">
-                    <label htmlFor="projectName" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.projectName')}
-                    </label>
-                    <input
-                      id="projectName"
-                      type="text"
-                      value={form.projectName}
-                      onChange={(e) => setForm({ ...form, projectName: e.target.value })}
-                      className={`field-input h-11 ${errors.projectName ? 'border-error ring-2 ring-error/15' : ''}`}
-                      placeholder={t('wizard.fields.projectNamePlaceholder')}
-                    />
-                    {errors.projectName && (
-                      <p className="text-[11px] font-semibold text-error">{errors.projectName}</p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <label htmlFor="city" className="block text-xs font-semibold text-ink">
-                          {t('wizard.fields.city')}
-                        </label>
-                        <span className="rounded bg-paper-deep px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-ink-soft">
-                          {t('wizard.fields.fixedRegion')}
-                        </span>
-                      </div>
-                      <input
-                        id="city"
-                        type="text"
-                        disabled
-                        value={form.city}
-                        className="field-input h-11 cursor-not-allowed bg-paper-deep/60 text-ink-soft"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label htmlFor="locality" className="block text-xs font-semibold text-ink">
-                        {t('wizard.fields.locality')}
-                      </label>
-                      <select
-                        id="locality"
-                        value={form.locality}
-                        onChange={(e) => setForm({ ...form, locality: e.target.value })}
-                        className="field-input h-11"
-                      >
-                        {LOCALITIES.map((id) => (
-                          <option key={id} value={id}>
-                            {t(`wizard.localities.${id.toLowerCase()}`)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="zone" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.zone')}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="locality" className="block text-xs font-semibold text-ink">
+                      <span>{t('wizard.fields.locality')}</span>
                     </label>
                     <select
-                      id="zone"
-                      value={form.zoneId}
-                      onChange={(e) => {
-                        setForm({ ...form, zoneId: e.target.value });
-                        if (e.target.value) setErrors({ ...errors, zoneId: '' });
-                      }}
-                      className={`field-input h-11 ${errors.zoneId ? 'border-error ring-2 ring-error/15' : ''}`}
+                      id="locality"
+                      value={form.locality}
+                      onChange={(e) => setForm({ ...form, locality: e.target.value })}
+                      className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
                     >
-                      <option value="">{t('wizard.fields.zonePlaceholder')}</option>
+                      {LOCALITIES.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="zoneId" className="block text-xs font-semibold text-ink">
+                      <span>Location zone</span>
+                    </label>
+                    <select
+                      id="zoneId"
+                      value={form.zoneId}
+                      onChange={(e) => setForm({ ...form, zoneId: e.target.value })}
+                      className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                    >
+                      <option value="" disabled>
+                        Select zone
+                      </option>
                       {zones.map((zone) => (
                         <option key={zone.id} value={zone.id}>
-                          {t(`enum.zones.${zone.id}`, { defaultValue: zone.name })}
+                          {zone.name}
                         </option>
                       ))}
                     </select>
-                    {errors.zoneId ? (
-                      <p className="text-[11px] font-semibold text-error">{errors.zoneId}</p>
-                    ) : (
-                      <p className="text-[11px] text-ink-soft">{t('wizard.hints.zone')}</p>
-                    )}
-                  </div>
-
-                  <p className="text-[11px] leading-5 text-ink-soft">
-                    {t('wizard.hints.planningAssumption')}
-                  </p>
-                </div>
-              </section>
-
-              {/* Area & floors */}
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.sections.areaFloors')}</h2>
-
-                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <label htmlFor="builtUpArea" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.builtUpArea')}
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="builtUpArea"
-                        type="number"
-                        min="300"
-                        max="10000"
-                        value={form.builtUpArea || ''}
-                        onChange={(e) => {
-                          const val = Number(e.target.value);
-                          setForm({ ...form, builtUpArea: val });
-                          if (val > 0) setErrors({ ...errors, builtUpArea: '' });
-                        }}
-                        className={`field-input h-11 pr-16 ${errors.builtUpArea ? 'border-error ring-2 ring-error/15' : ''}`}
-                      />
-                      <span className="pointer-events-none absolute right-3.5 top-3 text-[11px] font-semibold text-ink-soft">
-                        {t('common.sqFt')}
-                      </span>
-                    </div>
-                    {errors.builtUpArea ? (
-                      <p className="text-[11px] font-semibold text-error">{errors.builtUpArea}</p>
-                    ) : (
-                      <p className="text-[11px] text-ink-soft">{t('wizard.hints.addAllFloors')}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="plotArea" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.plotArea')}
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="plotArea"
-                        type="number"
-                        value={form.plotArea || ''}
-                        onChange={(e) => setForm({ ...form, plotArea: Number(e.target.value) })}
-                        className="field-input h-11 pr-16"
-                      />
-                      <span className="pointer-events-none absolute right-3.5 top-3 text-[11px] font-semibold text-ink-soft">
-                        {t('common.sqFt')}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-ink-soft">{t('wizard.hints.plotOptional')}</p>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="floors" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.floors')}
-                    </label>
-                    <select
-                      id="floors"
-                      value={form.floors}
-                      onChange={(e) => setForm({ ...form, floors: Number(e.target.value) })}
-                      className="field-input h-11"
-                    >
-                      {FLOOR_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {t(`wizard.floors.${option.key}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <span className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.approxPerFloor')}
-                    </span>
-                    <div className="flex h-11 items-center justify-between gap-2 rounded-lg border border-line bg-paper-deep/50 px-3.5 text-sm">
-                      <span className="font-semibold text-ink">
-                        {formatNumber(approxPerFloor)} {t('common.sqFt')}
-                      </span>
-                      <span className="text-[10px] text-ink-soft">
-                        {t('wizard.floors.perFloorFormula', {
-                          count: form.floors,
-                          area: formatNumber(form.builtUpArea),
-                        })}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="bedrooms" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.bedrooms')}
-                    </label>
-                    <input
-                      id="bedrooms"
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={form.bedrooms || ''}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setForm({ ...form, bedrooms: val });
-                        if (val >= 1 && val <= 20) setErrors({ ...errors, bedrooms: '' });
-                      }}
-                      className={`field-input h-11 ${errors.bedrooms ? 'border-error ring-2 ring-error/15' : ''}`}
-                    />
-                    {errors.bedrooms && (
-                      <p className="text-[11px] font-semibold text-error">{errors.bedrooms}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="bathrooms" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.bathrooms')}
-                    </label>
-                    <input
-                      id="bathrooms"
-                      type="number"
-                      min="1"
-                      max="20"
-                      value={form.bathrooms || ''}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setForm({ ...form, bathrooms: val });
-                        if (val >= 1 && val <= 20) setErrors({ ...errors, bathrooms: '' });
-                      }}
-                      className={`field-input h-11 ${errors.bathrooms ? 'border-error ring-2 ring-error/15' : ''}`}
-                    />
-                    {errors.bathrooms && (
-                      <p className="text-[11px] font-semibold text-error">{errors.bathrooms}</p>
+                    {errors.zoneId && (
+                      <p className="mt-1 text-[11px] font-semibold text-error">{errors.zoneId}</p>
                     )}
                   </div>
                 </div>
-
-                <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-accent/15 bg-accent-soft/60 p-4 text-xs leading-6 text-ink-soft">
-                  <Info className="mt-0.5 h-4 w-4 flex-none text-accent" aria-hidden="true" />
-                  <p>
-                    <strong className="font-bold text-ink">{t('wizard.areaCallout.title')}</strong>{' '}
-                    {t('wizard.areaCallout.body', {
-                      plot: formatNumber(form.plotArea),
-                      built: formatNumber(form.builtUpArea),
-                    })}
-                  </p>
-                </div>
-              </section>
-
-              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <span className="text-[11px] text-ink-soft">{t('wizard.requiredNote')}</span>
-                <button type="button" onClick={handleNextStep} className="btn-primary w-full sm:w-auto">
-                  <span>{t('wizard.actions.continue')}</span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </button>
               </div>
-            </div>
 
-            {/* Right information panel */}
-            <aside className="space-y-5 lg:col-span-4">
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.side.measureTitle')}</h2>
-                <div className="mt-4">
-                  <HouseSchematic
-                    groundArea={`${formatNumber(approxPerFloor)} ${t('common.sqFt')}`}
-                    firstFloorArea={`${formatNumber(approxPerFloor)} ${t('common.sqFt')}`}
-                    totalArea={`${formatNumber(form.builtUpArea)} ${t('common.sqFt')}`}
+              <div className="wizard-control mt-6">
+                <label htmlFor="builtUpArea">
+                  <span>Built-up area</span>
+                  <strong className="mono">{form.builtUpArea.toLocaleString('en-IN')} sq ft</strong>
+                </label>
+                <input
+                  id="builtUpArea"
+                  type="range"
+                  min="600"
+                  max="5000"
+                  step="100"
+                  value={form.builtUpArea}
+                  onChange={(event) => setForm({ ...form, builtUpArea: Number(event.target.value) })}
+                  style={
+                    {
+                      '--wizard-range': `${((form.builtUpArea - 600) / 4400) * 100}%`,
+                    } as React.CSSProperties
+                  }
+                />
+                <div className="wizard-scale">
+                  <span>600 sq ft</span>
+                  <span>Typical Pune home: 1,200–2,400 sq ft</span>
+                  <span>5,000 sq ft</span>
+                </div>
+                {errors.builtUpArea && (
+                  <p className="mt-1 text-[11px] font-semibold text-error">{errors.builtUpArea}</p>
+                )}
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                  <label htmlFor="floors" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.floors')}</span>
+                  </label>
+                  <select
+                    id="floors"
+                    value={form.floors}
+                    onChange={(e) => setForm({ ...form, floors: Number(e.target.value) })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  >
+                    {FLOOR_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.value === 1 ? 'Ground floor only' : `G+${opt.value - 1} (${opt.value} floors)`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="bedrooms" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.bedrooms')}</span>
+                  </label>
+                  <input
+                    id="bedrooms"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={form.bedrooms}
+                    onChange={(e) => setForm({ ...form, bedrooms: Number(e.target.value) })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
                   />
                 </div>
-                <p className="mt-4 border-t border-line-soft pt-4 text-[11px] leading-5 text-ink-soft">
-                  {t('wizard.side.measureBody')}
-                </p>
-              </section>
 
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.side.nextTitle')}</h2>
-                <p className="mt-3 text-sm leading-6 text-ink-soft">{t('wizard.side.nextBody')}</p>
-                <p className="mt-3 text-[11px] text-ink-soft">{t('wizard.side.nextNote')}</p>
-              </section>
-            </aside>
-          </motion.div>
-        )}
+                <div>
+                  <label htmlFor="bathrooms" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.bathrooms')}</span>
+                  </label>
+                  <input
+                    id="bathrooms"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={form.bathrooms}
+                    onChange={(e) => setForm({ ...form, bathrooms: Number(e.target.value) })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  />
+                </div>
 
-        {/* ================= STEP 2: CONSTRUCTION PREFERENCES ================= */}
-        {step === 2 && (
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.45, ease: 'easeOut' }}
-            className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12"
-          >
-            {/* Left form column */}
-            <div className="space-y-5 lg:col-span-8">
-              {/* Construction quality */}
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.sections.quality')}</h2>
+                <div>
+                  <label htmlFor="plotArea" className="block text-xs font-semibold text-ink">
+                    <span>Plot area (optional)</span>
+                  </label>
+                  <input
+                    id="plotArea"
+                    type="number"
+                    value={form.plotArea || ''}
+                    onChange={(e) => setForm({ ...form, plotArea: Number(e.target.value) })}
+                    placeholder="1200"
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  />
+                </div>
+              </div>
 
-                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  {QUALITY_ORDER.map((tier) => {
-                    const selected = form.qualityTier === tier;
+              <div className="wizard-footer">
+                <div>
+                  <span>Indicative planning total</span>
+                  <strong className="mono">{formatINR(calculatedTotal)}</strong>
+                </div>
+                <button type="button" onClick={handleNextStep} className="cobalt-button">
+                  {t('wizard.actions.continue')} <Glyph name="arrow" size={17} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="wizard-card-heading">
+                <span>
+                  <Glyph name="chart" />
+                </span>
+                <div>
+                  <p className="app-eyebrow">Step 02</p>
+                  <h2>Quality and material specifications</h2>
+                  <p>Choose the specification level that best reflects your material expectations.</p>
+                </div>
+              </div>
+
+              <fieldset className="wizard-quality">
+                <legend>Construction quality</legend>
+                <p>Choose the specification level that best reflects your material expectations.</p>
+                <div>
+                  {QUALITY_ORDER.map((tierKey, index) => {
+                    const item =
+                      tierKey === 'economy' ? 'Economy' : tierKey === 'standard' ? 'Standard' : 'Premium';
+                    const isSelected = form.qualityTier === tierKey;
                     return (
-                      <label
-                        key={tier}
-                        className={`relative cursor-pointer rounded-xl border p-4 transition-all duration-200 ${
-                          selected
-                            ? 'border-accent bg-accent-tint ring-1 ring-accent'
-                            : 'border-line bg-panel hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-soft'
-                        }`}
+                      <button
+                        type="button"
+                        className={isSelected ? 'selected' : ''}
+                        key={tierKey}
+                        onClick={() => setForm({ ...form, qualityTier: tierKey })}
                       >
-                        <input
-                          type="radio"
-                          name="qualityTier"
-                          value={tier}
-                          checked={selected}
-                          onChange={() => setForm({ ...form, qualityTier: tier })}
-                          className="sr-only"
-                        />
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm font-bold text-ink">
-                              {t(`enum.quality.${tier}`)}
-                            </span>
-                            {selected && (
-                              <span className="grid h-5 w-5 place-items-center rounded-full bg-accent text-white">
-                                <Check className="h-3 w-3" aria-hidden="true" />
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xl font-extrabold tracking-[-0.04em] text-ink">
-                            {formatINR(QUALITY_RATES[tier])}
-                          </div>
-                          <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
-                            {t('wizard.quality.perSqFt')}
-                          </div>
-                          <div className="pt-1 text-[11px] leading-5 text-ink-soft">
-                            {t(`wizard.quality.${tier}Desc`)}
-                          </div>
-                        </div>
-                      </label>
+                        <span className="quality-check">
+                          {isSelected && <Glyph name="check" size={13} />}
+                        </span>
+                        <small>0{index + 1}</small>
+                        <strong>{item}</strong>
+                        <span className="mono">₹{QUALITY_RATES[tierKey].toLocaleString('en-IN')}/sq ft</span>
+                        <p>
+                          {tierKey === 'economy'
+                            ? 'Practical essentials and durable base finishes.'
+                            : tierKey === 'standard'
+                              ? 'Balanced quality for a comfortable family home.'
+                              : 'Upgraded finishes, fixtures, and detailing.'}
+                        </p>
+                      </button>
                     );
                   })}
                 </div>
+              </fieldset>
 
-                <p className="mt-4 text-[11px] leading-5 text-ink-soft">{t('wizard.quality.note')}</p>
-              </section>
-
-              {/* Structure & finishes */}
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.sections.structure')}</h2>
-
-                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <label htmlFor="structuralSystem" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.structuralSystem')}
-                    </label>
-                    <select
-                      id="structuralSystem"
-                      value={form.structuralSystem}
-                      onChange={(e) =>
-                        setForm({ ...form, structuralSystem: e.target.value as ConstructionType })
-                      }
-                      className="field-input h-11"
-                    >
-                      <option value="rcc_framed">{t('enum.construction.rcc_framed')}</option>
-                      <option value="load_bearing">{t('enum.construction.load_bearing')}</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="walling" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.walling')}
-                    </label>
-                    <select
-                      id="walling"
-                      value={form.walling}
-                      onChange={(e) => setForm({ ...form, walling: e.target.value })}
-                      className="field-input h-11"
-                    >
-                      {WALLING_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                          {t(`wizard.options.walling.${option}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="flooring" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.flooring')}
-                    </label>
-                    <select
-                      id="flooring"
-                      value={form.flooring}
-                      onChange={(e) => setForm({ ...form, flooring: e.target.value })}
-                      className="field-input h-11"
-                    >
-                      {FLOORING_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                          {t(`wizard.options.flooring.${option}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="windows" className="block text-xs font-semibold text-ink">
-                      {t('wizard.fields.windows')}
-                    </label>
-                    <select
-                      id="windows"
-                      value={form.windows}
-                      onChange={(e) => setForm({ ...form, windows: e.target.value })}
-                      className="field-input h-11"
-                    >
-                      {WINDOWS_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                          {t(`wizard.options.windows.${option}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="structuralSystem" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.constructionType')}</span>
+                  </label>
+                  <select
+                    id="structuralSystem"
+                    value={form.structuralSystem}
+                    onChange={(e) =>
+                      setForm({ ...form, structuralSystem: e.target.value as ConstructionType })
+                    }
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  >
+                    <option value="rcc_framed">{t('wizard.options.construction.rcc_framed')}</option>
+                    <option value="load_bearing">{t('wizard.options.construction.load_bearing')}</option>
+                  </select>
                 </div>
 
-                <p className="mt-4 text-[11px] leading-5 text-ink-soft">{t('wizard.hints.structure')}</p>
-              </section>
-
-              {/* Coverage */}
-              <section className="surface-card p-6">
-                <h2 className="section-title">{t('wizard.sections.coverage')}</h2>
-
-                <div className="mt-5 grid grid-cols-1 gap-6 text-xs sm:grid-cols-2">
-                  <div className="space-y-2.5">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-accent">
-                      {t('wizard.coverage.includedTitle')}
-                    </div>
-                    <ul className="space-y-2 text-ink">
-                      {['included1', 'included2', 'included3', 'included4'].map((key) => (
-                        <li key={key} className="flex items-start gap-2">
-                          <Check className="mt-0.5 h-3.5 w-3.5 flex-none text-accent" aria-hidden="true" />
-                          <span className="leading-5">{t(`wizard.coverage.${key}`)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-soft">
-                      {t('wizard.coverage.excludedTitle')}
-                    </div>
-                    <ul className="space-y-2 leading-5 text-ink-soft">
-                      {['excluded1', 'excluded2', 'excluded3', 'excluded4'].map((key) => (
-                        <li key={key} className="flex items-start gap-2">
-                          <span aria-hidden="true" className="text-ink-soft/60">
-                            ·
-                          </span>
-                          <span>{t(`wizard.coverage.${key}`)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div>
+                  <label htmlFor="walling" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.walling')}</span>
+                  </label>
+                  <select
+                    id="walling"
+                    value={form.walling}
+                    onChange={(e) => setForm({ ...form, walling: e.target.value })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  >
+                    {WALLING_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {t(`wizard.options.walling.${opt}`)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </section>
+
+                <div>
+                  <label htmlFor="flooring" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.flooring')}</span>
+                  </label>
+                  <select
+                    id="flooring"
+                    value={form.flooring}
+                    onChange={(e) => setForm({ ...form, flooring: e.target.value })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  >
+                    {FLOORING_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {t(`wizard.options.flooring.${opt}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="windows" className="block text-xs font-semibold text-ink">
+                    <span>{t('wizard.fields.windows')}</span>
+                  </label>
+                  <select
+                    id="windows"
+                    value={form.windows}
+                    onChange={(e) => setForm({ ...form, windows: e.target.value })}
+                    className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
+                  >
+                    {WINDOWS_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {t(`wizard.options.windows.${opt}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
               {submitError && (
                 <div
                   role="alert"
-                  className="space-y-1 rounded-xl border border-error/30 bg-error/5 px-5 py-4 text-xs text-error"
+                  className="mt-6 space-y-1 rounded-xl border border-error/30 bg-error/5 px-5 py-4 text-xs text-error"
                 >
                   <p className="font-bold">{t('wizard.errors.calculateTitle')}</p>
                   <p>{submitError}</p>
@@ -783,116 +582,36 @@ export function WizardPage() {
                 </div>
               )}
 
-              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <button type="button" onClick={() => setStep(1)} className="btn-ghost w-full sm:w-auto">
-                  <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>{t('wizard.actions.back')}</span>
+              <div className="wizard-footer">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="wizard-back text-xs font-semibold text-ink-soft hover:text-ink"
+                >
+                  ← Back to project details
                 </button>
+                <div>
+                  <span>Indicative planning total</span>
+                  <strong className="mono">{formatINR(calculatedTotal)}</strong>
+                </div>
                 <button
                   type="button"
                   onClick={handleCalculate}
                   disabled={submitting}
                   aria-busy={submitting}
-                  className="btn-primary w-full sm:w-auto"
+                  className="cobalt-button"
                 >
-                  {submitting ? (
-                    <>
-                      <span
-                        className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
-                        aria-hidden="true"
-                      />
-                      <span>{t('wizard.actions.calculating')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{t('wizard.actions.calculate')}</span>
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </>
-                  )}
+                  {submitting ? t('wizard.actions.calculating') : t('wizard.actions.calculate')}{' '}
+                  <Glyph name="arrow" size={17} />
                 </button>
               </div>
-            </div>
-
-            {/* Right summary panel */}
-            <aside className="space-y-5 lg:col-span-4">
-              <section className="surface-card p-6">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-accent-deep">
-                    {t('wizard.summary.ready')}
-                  </span>
-                  <SampleDataBadge text={t('common.sampleData')} variant="subtle" />
-                </div>
-
-                <div className="mt-4 space-y-0.5">
-                  <h2 className="text-xl font-extrabold tracking-[-0.04em] text-ink">
-                    {form.projectName}
-                  </h2>
-                  <p className="text-xs text-ink-soft">
-                    {form.locality}, Pune
-                  </p>
-                </div>
-
-                <dl className="mt-4 space-y-2.5 border-y border-line-soft py-4 text-xs">
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-ink-soft">{t('wizard.summary.building')}</dt>
-                    <dd className="font-semibold text-ink">
-                      {t('wizard.summary.floorsValue', {
-                        count: form.floors,
-                        above: form.floors - 1,
-                      })}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-ink-soft">{t('wizard.summary.totalBuiltUp')}</dt>
-                    <dd className="font-semibold text-ink">
-                      {formatNumber(form.builtUpArea)} {t('common.sqFt')}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-ink-soft">{t('wizard.summary.plotArea')}</dt>
-                    <dd className="font-semibold text-ink">
-                      {formatNumber(form.plotArea)} {t('common.sqFt')}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-ink-soft">{t('wizard.summary.quality')}</dt>
-                    <dd className="font-semibold capitalize text-ink">
-                      {t(`enum.quality.${form.qualityTier}`)}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-ink-soft">{t('wizard.summary.planningRate')}</dt>
-                    <dd className="font-semibold text-ink">
-                      ₹{formatNumber(ratePerSqFt)} / {t('common.sqFt')}
-                    </dd>
-                  </div>
-                  <div className="pt-2 text-[10px] text-ink-soft">
-                    {t('wizard.summary.formula', {
-                      area: formatNumber(form.builtUpArea),
-                      rate: formatNumber(ratePerSqFt),
-                    })}
-                  </div>
-                </dl>
-
-                <div className="mt-4 rounded-xl bg-night p-5 text-white">
-                  <p className="text-[28px] font-extrabold leading-none tracking-[-0.05em]">
-                    {formatINR(calculatedTotal)}
-                  </p>
-                  <p className="mt-2 text-[11px] text-white/55">{t('wizard.summary.totalNote')}</p>
-                </div>
-              </section>
-
-              <section className="rounded-xl border border-accent/15 bg-accent-soft/60 p-5 text-xs">
-                <div className="flex items-center gap-1.5 font-bold text-ink">
-                  <Info className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-                  <span>{t('wizard.summary.assumptionTitle')}</span>
-                </div>
-                <p className="mt-2 leading-6 text-ink-soft">{t('wizard.summary.assumptionBody')}</p>
-              </section>
-            </aside>
-          </motion.div>
-        )}
-      </div>
-    </div>
+            </>
+          )}
+        </section>
+        <p className="wizard-disclaimer">
+          This is an indicative planning estimate, not a contractor quotation.
+        </p>
+      </section>
+    </main>
   );
 }
