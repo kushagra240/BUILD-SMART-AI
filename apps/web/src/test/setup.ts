@@ -40,6 +40,48 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
     ResizeObserverStub;
 }
 
+// jsdom does not implement IntersectionObserver either. The landing page uses
+// it for reveal-on-scroll; the stub reports every observed element as visible
+// so assertions and axe see the final state.
+class IntersectionObserverStub {
+  private readonly callback: IntersectionObserverCallback;
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback;
+  }
+
+  observe(target: Element) {
+    this.callback(
+      [
+        {
+          target,
+          isIntersecting: true,
+          intersectionRatio: 1,
+          boundingClientRect: target.getBoundingClientRect(),
+          intersectionRect: target.getBoundingClientRect(),
+          rootBounds: null,
+          time: 0,
+        } as unknown as IntersectionObserverEntry,
+      ],
+      this as unknown as IntersectionObserver
+    );
+  }
+
+  unobserve() {}
+
+  disconnect() {}
+
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+}
+
+if (typeof globalThis.IntersectionObserver === 'undefined') {
+  (
+    globalThis as unknown as { IntersectionObserver: typeof IntersectionObserverStub }
+  ).IntersectionObserver = IntersectionObserverStub;
+}
+
 if (typeof window.matchMedia !== 'function') {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,

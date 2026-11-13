@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -18,6 +18,41 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { AuthProvider } from './auth/AuthProvider';
 import { RequireAuth } from './auth/RequireAuth';
 
+/**
+ * The landing page is a full-bleed, self-contained layout from the Figma
+ * export: it ships its own floating header and footer, so the global chrome is
+ * suppressed on "/" only. Every other route keeps the app shell.
+ */
+function AppShell() {
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
+
+  return (
+    <div className="app-surface flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-accent/20 selection:text-ink">
+      {!isLanding && <MockBanner />}
+      {!isLanding && <Navbar />}
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/app" element={<DashboardPage />} />
+            <Route path="/app/new" element={<WizardPage />} />
+            <Route path="/app/estimates/:id" element={<ResultsPage />} />
+            <Route path="/app/projects" element={<SavedProjectsPage />} />
+            <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
+          </Route>
+          <Route path="/materials" element={<MaterialsGuidePage />} />
+          <Route path="/methodology" element={<MethodologyPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      {!isLanding && <Footer />}
+    </div>
+  );
+}
+
 export function App() {
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language;
@@ -32,28 +67,7 @@ export function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="app-surface flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-accent/20 selection:text-ink">
-          <MockBanner />
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route element={<RequireAuth />}>
-                <Route path="/app" element={<DashboardPage />} />
-                <Route path="/app/new" element={<WizardPage />} />
-                <Route path="/app/estimates/:id" element={<ResultsPage />} />
-                <Route path="/app/projects" element={<SavedProjectsPage />} />
-                <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
-              </Route>
-              <Route path="/materials" element={<MaterialsGuidePage />} />
-              <Route path="/methodology" element={<MethodologyPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppShell />
       </AuthProvider>
     </BrowserRouter>
   );

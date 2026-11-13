@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Home } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import buildSmartMark from '../../assets/buildsmart-mark.png';
 
 /**
  * Two-panel shell for the login and register screens. The left panel is the
@@ -36,8 +37,15 @@ export function AuthShell({ children }: { children: ReactNode }) {
               className="inline-flex items-center gap-2.5 rounded focus-ring"
               aria-label={t('nav.homeAria')}
             >
-              <span className="grid h-10 w-10 place-items-center rounded-[10px] bg-accent text-white shadow-[0_8px_20px_rgba(49,94,251,0.4)]">
-                <Home className="h-5 w-5" aria-hidden="true" />
+              <span className="grid h-10 w-10 place-items-center rounded-[10px] bg-[#E8EDFF] shadow-[0_8px_20px_rgba(49,94,251,0.4)]">
+                <img
+                  src={buildSmartMark}
+                  alt=""
+                  className="h-6 w-auto"
+                  width={18}
+                  height={24}
+                  decoding="async"
+                />
               </span>
               <span className="font-headline text-lg font-extrabold tracking-[-0.045em] text-white">
                 BuildSmart

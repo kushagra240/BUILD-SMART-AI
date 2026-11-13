@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Home, MapPin, Menu, X } from 'lucide-react';
+import { ChevronDown, MapPin, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import buildSmartLogo from '../../assets/buildsmart-logo.png';
 import { useAuth } from '../../auth/useAuth';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
@@ -69,17 +70,14 @@ export function Navbar() {
             className="flex items-center gap-2.5 rounded-lg p-1 focus-ring"
             aria-label={t('nav.homeAria')}
           >
-            <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-accent text-white shadow-[0_6px_16px_rgba(49,94,251,0.32)]">
-              <Home className="h-[18px] w-[18px]" aria-hidden="true" />
-            </span>
-            <span className="flex items-baseline gap-1.5">
-              <span className="font-headline text-[17px] font-extrabold tracking-[-0.045em] text-ink">
-                BuildSmart
-              </span>
-              <span className="rounded bg-accent-soft px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.08em] text-accent-deep">
-                AI
-              </span>
-            </span>
+            <img
+              src={buildSmartLogo}
+              alt=""
+              className="h-10 w-auto"
+              width={117}
+              height={40}
+              decoding="async"
+            />
           </Link>
 
           <div className="hidden justify-center md:flex">
