@@ -13,6 +13,7 @@ import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { AuthContext } from '../auth/context';
 import { Glyph, type GlyphName } from '../components/common/Glyph';
 import buildSmartLogo from '../assets/buildsmart-logo.png';
+import buildSmartMark from '../assets/buildsmart-mark.png';
 import {
   translateCategory,
   translateMaterialCategory,
@@ -168,6 +169,7 @@ export function ResultsPage() {
   const auth = useContext(AuthContext);
 
   const [activeNav, setActiveNav] = useState('Estimate');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [estimate, setEstimate] = useState<EstimateResponse | null>(() =>
     isEstimateResponse(locationState?.estimate) ? locationState.estimate : null
   );
@@ -330,16 +332,22 @@ export function ResultsPage() {
   const topCategories = [...donutData].sort((a, b) => b.amount - a.amount).slice(0, 3);
 
   return (
-    <main className="results-page">
+    <main className={`results-page ${sidebarCollapsed ? 'sidebar-is-collapsed' : ''}`}>
       <aside className="results-sidebar">
-        <Link to="/" className="results-logo" aria-label="BuildSmart home">
-          <img src={buildSmartLogo} alt="BuildSmart AI" />
-        </Link>
+        <div className="results-sidebar-head">
+          <Link to="/" className="results-logo" aria-label="BuildSmart home">
+            <img src={sidebarCollapsed ? buildSmartMark : buildSmartLogo} alt="BuildSmart AI" />
+          </Link>
+          <button type="button" className="sidebar-collapse" onClick={() => setSidebarCollapsed((value) => !value)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+            <Glyph name="collapse" size={17} />
+          </button>
+        </div>
         <nav>
           {[
             ['Projects', 'folder', '/app'],
             ['Estimate', 'chart', ''],
             ['Project details', 'home', '/app/new'],
+            ['Materials', 'layers', '#materials-characteristics'],
             ['Settings', 'settings', '/materials'],
           ].map(([label, icon, route]) => (
             <button
@@ -347,10 +355,12 @@ export function ResultsPage() {
               key={label}
               onClick={() => {
                 setActiveNav(label);
-                if (route) navigate(route);
+                if (route === '#materials-characteristics') {
+                  document.getElementById('materials-characteristics')?.scrollIntoView({ behavior: 'smooth' });
+                } else if (route) navigate(route);
               }}
             >
-              <Glyph name={icon as GlyphName} size={17} /> {label}
+              <Glyph name={icon as GlyphName} size={17} /> <span>{label}</span>
             </button>
           ))}
         </nav>
@@ -360,7 +370,7 @@ export function ResultsPage() {
           <small>{locality}</small>
         </div>
         <button className="sidebar-logout" onClick={handleLogout}>
-          <Glyph name="logout" size={16} /> Log out
+          <Glyph name="logout" size={16} /> <span>Log out</span>
         </button>
       </aside>
 
@@ -678,6 +688,27 @@ export function ResultsPage() {
                 {t('results.materials.none')}
               </p>
             )}
+          </motion.section>
+
+          <motion.section variants={itemVariants} id="materials-characteristics" className="result-panel mock-materials-panel">
+            <div className="result-panel-head">
+              <div><p className="app-eyebrow">Material intelligence</p><h2>Material characteristics preview</h2></div>
+              <span className="mock-data-badge">MOCK · DATABASE PREVIEW</span>
+            </div>
+            <p className="mock-materials-intro">Characteristics only — no reviews or ratings. Replace these preview records with database content when available.</p>
+            <div className="mock-materials-grid">
+              {[
+                ['AAC block walling', 'Walling system', 'Lightweight masonry', 'Thermal comfort', 'https://images.unsplash.com/photo-1775049525334-6a797b803823?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
+                ['Vitrified flooring', 'Floor finish', 'Dense finished surface', 'Low routine upkeep', 'https://images.unsplash.com/photo-1691784054906-07fc6e5e17b0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
+                ['uPVC window system', 'Openings', 'Sealed frame assembly', 'Weather protection', 'https://images.unsplash.com/photo-1601362771608-a9d7430c066d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
+                ['Reinforcement steel', 'Structural system', 'Load-bearing reinforcement', 'Engineer specified', 'https://images.unsplash.com/photo-1519634093379-625390ebebc7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
+              ].map(([name, category, characteristic, performance, image], index) => (
+                <article className="mock-material-card" key={name}>
+                  <div className="mock-material-image"><img src={image} alt="" /><span>0{index + 1}</span></div>
+                  <div className="mock-material-copy"><small>{category}</small><h3>{name}</h3><dl><div><dt>Characteristic</dt><dd>{characteristic}</dd></div><div><dt>Performance focus</dt><dd>{performance}</dd></div><div><dt>Verify on site</dt><dd>Professional review required</dd></div></dl></div>
+                </article>
+              ))}
+            </div>
           </motion.section>
 
           <p className="results-disclaimer">

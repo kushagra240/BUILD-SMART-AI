@@ -13,7 +13,9 @@ export type GlyphName =
   | 'clock'
   | 'check'
   | 'download'
-  | 'menu';
+  | 'menu'
+  | 'collapse'
+  | 'layers';
 
 export function Glyph({ name, size = 18 }: { name: GlyphName; size?: number }) {
   const paths: Record<GlyphName, ReactNode> = {
@@ -69,6 +71,8 @@ export function Glyph({ name, size = 18 }: { name: GlyphName; size?: number }) {
       </>
     ),
     menu: <path d="M4 7h16M4 12h16M4 17h16" />,
+    collapse: (<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16m6-12-4 4 4 4" /></>),
+    layers: (<><path d="m12 3-9 5 9 5 9-5-9-5Z" /><path d="m3 12 9 5 9-5M3 16l9 5 9-5" /></>),
   };
 
   return (
