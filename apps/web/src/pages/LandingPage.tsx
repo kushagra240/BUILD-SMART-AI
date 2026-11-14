@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -6,12 +7,71 @@ import {
   Layers,
   MapPin,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
+const qualityRates = {
+  Economy: 2000,
+  Standard: 2400,
+  Premium: 3100,
+};
+
 export function LandingPage() {
   const { t } = useTranslation();
+  const [area, setArea] = useState(1800);
+  const [quality, setQuality] = useState<'Economy' | 'Standard' | 'Premium'>('Standard');
+  const [showCurtain, setShowCurtain] = useState(() => {
+    try {
+      return !sessionStorage.getItem('buildsmart_curtain_shown');
+    } catch {
+      return false;
+    }
+  });
+
+  const estimate = useMemo(() => area * qualityRates[quality], [area, quality]);
+  const estimateLabel = useMemo(
+    () =>
+      new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0,
+      }).format(estimate),
+    [estimate]
+  );
+
+  useEffect(() => {
+    if (showCurtain) {
+      try {
+        sessionStorage.setItem('buildsmart_curtain_shown', 'true');
+      } catch {
+        // Ignore sessionStorage write errors in restricted or incognito environments
+      }
+      const timer = setTimeout(() => setShowCurtain(false), 2200);
+      return () => clearTimeout(timer);
+    }
+  }, [showCurtain]);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   const highlights = [
     t('landing.highlights.categories'),
     t('landing.highlights.formatting'),
@@ -24,7 +84,17 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="app-surface min-h-screen pb-16 text-ink">
+    <div className="landing app-surface min-h-screen pb-16 text-ink">
+      {/* Opening Intro Curtain */}
+      {showCurtain && (
+        <div className="intro-curtain" aria-hidden="true">
+          <span className="intro-mark">
+            <img src="/buildsmart-mark.png" alt="" />
+          </span>
+          <strong>BuildSmart</strong>
+        </div>
+      )}
+
       {/* Hero */}
       <section className="mx-auto max-w-shell px-4 pb-10 pt-10 sm:px-6 sm:pt-14 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
@@ -42,10 +112,12 @@ export function LandingPage() {
             <p className="max-w-xl text-base leading-7 text-ink-soft">{t('landing.subtitle')}</p>
 
             <div className="flex flex-col items-stretch gap-3 pt-1 sm:flex-row sm:items-center">
-              <Link to="/app/new" className="btn-primary">
+              <Link to="/app/new" className="hero-cta btn-primary">
                 <Calculator className="h-4 w-4" aria-hidden="true" />
                 <span>{t('landing.cta.start')}</span>
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                <span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </span>
               </Link>
               <Link to="/app" className="btn-ghost">
                 <span>{t('landing.cta.overview')}</span>
@@ -75,10 +147,14 @@ export function LandingPage() {
                   <img
                     src="https://images.unsplash.com/photo-1691272477702-0a2edae135f2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=88&w=2000"
                     alt="Modern residential architecture in Pune"
-                    className="h-44 w-full object-cover"
+                    className="hero-photo h-44 w-full object-cover"
                     loading="lazy"
                   />
-                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-2 rounded-lg bg-night/85 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
+                  <svg className="blueprint" viewBox="0 0 500 300" aria-hidden="true">
+                    <path d="M3 260h494M72 258V116l116-70 115 70v142M188 46l115 70 118-71v213M107 258v-93h58v93M224 258v-74h45v74M340 258V138h50v120" />
+                    <path d="M55 276h265M55 286h195M72 102h348" />
+                  </svg>
+                  <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-2 rounded-lg bg-night/85 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
                     <img src="/buildsmart-mark.png" alt="" className="h-4 w-4 object-contain" />
                     <span>Pune Residential Reference</span>
                   </div>
@@ -137,7 +213,7 @@ export function LandingPage() {
             <img
               src="https://images.unsplash.com/photo-1721815693498-cc28507c0ba2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=86&w=1200"
               alt="Contemporary multi-storey Indian residence in Pune"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -182,6 +258,102 @@ export function LandingPage() {
                 <p className="mt-2 text-xs leading-6 text-ink-soft">{t('landing.features.ranges.body')}</p>
               </div>
             </article>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Quick Planner */}
+      <section className="mx-auto max-w-shell px-4 pt-12 sm:px-6 sm:pt-16 lg:px-8" id="planner">
+        <div className="planner-section reveal">
+          <div className="planner-copy">
+            <p className="section-label light">Live Planning Calculator</p>
+            <h2>
+              Know your budget.
+              <span className="block text-accent">Before you build.</span>
+            </h2>
+            <p>
+              Adjust your home size and material specification to get a preliminary Pune-calibrated cost
+              breakdown in real time.
+            </p>
+            <ul>
+              <li>
+                <CheckCircle2 className="h-4 w-4 text-accent" /> 9 cost categories
+              </li>
+              <li>
+                <CheckCircle2 className="h-4 w-4 text-accent" /> 3 quality scenarios
+              </li>
+              <li>
+                <CheckCircle2 className="h-4 w-4 text-accent" /> Current Pune rates
+              </li>
+            </ul>
+          </div>
+
+          <div className="planner-card">
+            <div className="planner-card-head">
+              <div>
+                <small>Home Size & Quality</small>
+                <h3>Preliminary Estimate</h3>
+              </div>
+              <span>
+                <Sparkles className="h-5 w-5" />
+              </span>
+            </div>
+
+            <div className="range-label">
+              <span>Built-up area</span>
+              <strong>{area.toLocaleString('en-IN')} sq ft</strong>
+            </div>
+
+            <input
+              type="range"
+              min={600}
+              max={5000}
+              step={100}
+              value={area}
+              onChange={(e) => setArea(Number(e.target.value))}
+              className="area-range"
+              aria-label="Built-up area slider in square feet"
+              style={{
+                ['--range-progress' as string]: `${((area - 600) / (5000 - 600)) * 100}%`,
+              }}
+            />
+
+            <div className="range-scale">
+              <span>600 sq ft</span>
+              <span>Typical Pune: 1,800 sq ft</span>
+              <span>5,000 sq ft</span>
+            </div>
+
+            <fieldset>
+              <legend>Construction quality</legend>
+              <div className="quality-options">
+                {(['Economy', 'Standard', 'Premium'] as const).map((tier) => (
+                  <button
+                    key={tier}
+                    type="button"
+                    onClick={() => setQuality(tier)}
+                    className={quality === tier ? 'quality-active' : ''}
+                  >
+                    <strong>{tier}</strong>
+                    <small>₹{qualityRates[tier].toLocaleString('en-IN')}/sq ft</small>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="planner-result">
+              <div>
+                <span>Estimated build cost</span>
+                <strong>{estimateLabel}</strong>
+              </div>
+              <div className="result-note">
+                <span>₹{qualityRates[quality].toLocaleString('en-IN')} / sq ft</span>
+              </div>
+            </div>
+
+            <Link to="/app/new" className="planner-button">
+              Create detailed estimate <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

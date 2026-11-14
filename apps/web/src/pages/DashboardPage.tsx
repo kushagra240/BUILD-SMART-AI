@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useAuth } from '../auth/useAuth';
 import { useProjects } from '../hooks/useProjects';
 import { formatDate, formatINR } from '../lib/formatters';
@@ -53,6 +54,25 @@ export function DashboardPage() {
   };
 
   const portfolioTotal = items.reduce((sum, p) => sum + getProjectDetails(p).costValue, 0);
+  const reduceMotion = useReducedMotion();
+
+  const containerVariants: Variants = {
+    hidden: {},
+    show: {
+      transition: { staggerChildren: reduceMotion ? 0 : 0.08 },
+    },
+  };
+
+  const itemVariants: Variants = reduceMotion
+    ? { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } }
+    : {
+        hidden: { opacity: 0, y: 16 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+        },
+      };
 
   return (
     <main className="product-page">
@@ -101,7 +121,12 @@ export function DashboardPage() {
           </div>
         )}
 
-        <div className="dashboard-summary">
+        <motion.div
+          className="dashboard-summary"
+          variants={itemVariants}
+          initial="hidden"
+          animate="show"
+        >
           <div>
             <span>Saved projects</span>
             <strong className="mono">{items.length}</strong>
@@ -114,7 +139,7 @@ export function DashboardPage() {
             <span>Average rate</span>
             <strong className="mono">₹2,400 / sq ft</strong>
           </div>
-        </div>
+        </motion.div>
 
         {status === 'loading' ? (
           <div className="py-20 text-center text-ink-soft text-sm">Loading estimates…</div>
@@ -135,11 +160,20 @@ export function DashboardPage() {
           </section>
         ) : (
           <>
-            <div className="project-grid">
+            <motion.div
+              className="project-grid"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
               {items.map((project, index) => {
                 const details = getProjectDetails(project);
                 return (
-                  <div className="saved-project-card relative group" key={project.id}>
+                  <motion.div
+                    className="saved-project-card relative group"
+                    key={project.id}
+                    variants={itemVariants}
+                  >
                     <Link
                       to={`/app/estimates/${project.id}`}
                       className="block text-inherit no-underline"
@@ -183,7 +217,7 @@ export function DashboardPage() {
                         onError={(err) => setActionError(err)}
                       />
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
               <Link to="/app/new" className="new-project-card">
@@ -193,7 +227,7 @@ export function DashboardPage() {
                 <strong>Start a new estimate</strong>
                 <small>Set up another residential project</small>
               </Link>
-            </div>
+            </motion.div>
             <div className="dashboard-guidance">
               <span>
                 <Glyph name="check" size={16} />
