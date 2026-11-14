@@ -31,6 +31,17 @@ def get_request_id(request: Request) -> str:
     return getattr(request.state, "request_id", "unknown")
 
 
+def _sanitize_error_detail(val: Any) -> Any:
+    """Safely convert non-JSON-serializable values (such as Exception objects) to strings."""
+    if isinstance(val, Exception):
+        return str(val)
+    if isinstance(val, dict):
+        return {k: _sanitize_error_detail(v) for k, v in val.items()}
+    if isinstance(val, list | tuple):
+        return [_sanitize_error_detail(v) for v in val]
+    return val
+
+
 def setup_error_handlers(app: FastAPI) -> None:
     """Register custom error handlers on FastAPI application."""
 
@@ -90,7 +101,7 @@ def setup_error_handlers(app: FastAPI) -> None:
             code="VALIDATION_ERROR",
             message="Request payload validation failed",
             request_id=request_id,
-            details=exc.errors(),
+            details=_sanitize_error_detail(exc.errors()),
         )
 
     @app.exception_handler(Exception)
