@@ -1,11 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import './application.css';
+@import './landing.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  /* Core Figma monochrome-and-cobalt design tokens */
+  --graphite-dark: #111319;
+  --graphite: #17191f;
+  --graphite-soft: #252832;
+  --cobalt: #315efb;
+  --cobalt-dark: #2455e6;
+  --cobalt-soft: #6685f4;
+  --periwinkle: #7893ff;
+  --cobalt-surface: #edf1ff;
+  --slate-background: #f2f4f7;
+  --white: #ffffff;
+  --silver-border: #dfe4ec;
+  --silver-surface: #f8f9fb;
+  --primary-text: #17191f;
+  --secondary-text: #747c88;
+  --muted-text: #9299a5;
+
   /* Figma design tokens (source: exported `Glowing Pulsing Button.make`). */
   --color-paper: #f2f4f7;
   --color-paper-deep: #e8ecf2;
@@ -43,7 +61,13 @@
 
   body {
     min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
     background-color: #f2f4f7;
+    background-image:
+      radial-gradient(circle at 8% 6%, rgba(49, 94, 251, 0.05), transparent 26%),
+      radial-gradient(circle at 94% 70%, rgba(23, 29, 43, 0.04), transparent 30%);
+    background-attachment: fixed;
     color: #17191f;
     font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.5;
