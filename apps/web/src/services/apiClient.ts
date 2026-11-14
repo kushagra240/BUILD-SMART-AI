@@ -275,10 +275,17 @@ class ApiClient {
         try {
           await this.refresh();
         } catch {
-          this.notifyUnauthorized();
           throw error;
         }
-        return this.sendRaw(path, options);
+        try {
+          return await this.sendRaw(path, options);
+        } catch (retryError) {
+          if (retryError instanceof ApiError && retryError.status === 401) {
+            this.setAccessToken(null);
+            this.notifyUnauthorized();
+          }
+          throw retryError;
+        }
       }
       throw error;
     }
@@ -390,6 +397,7 @@ class ApiClient {
         })
         .catch((error: unknown) => {
           this.setAccessToken(null);
+          this.notifyUnauthorized();
           throw error;
         })
         .finally(() => {

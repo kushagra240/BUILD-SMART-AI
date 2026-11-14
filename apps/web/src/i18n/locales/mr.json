@@ -47,6 +47,7 @@
     "subNavigation": "उप नेव्हिगेशन",
     "toggleMenu": "नेव्हिगेशन मेनू टॉगल करा",
     "projectOverview": "प्रकल्प आढावा",
+    "projectOwner": "प्रकल्प मालक",
     "signedInAs": "{{name}} म्हणून साइन इन",
     "logout": "लॉग आउट",
     "login": "लॉग इन",
@@ -61,6 +62,7 @@
   },
   "auth": {
     "checkingSession": "तुमचे सत्र तपासले जात आहे…",
+    "logout": "लॉग आउट",
     "shared": {
       "emailLabel": "ईमेल पत्ता",
       "emailPlaceholder": "name@example.com",
@@ -186,15 +188,13 @@
       "economyDesc": "साधे, टिकाऊ मूलभूत",
       "standardDesc": "संतुलित दैनंदिन आराम",
       "premiumDesc": "उच्च-दर्जाचे फिनिश",
-      "rateUnavailable": "/meta/options कडून दर उपलब्ध नाही",
-      "note": "उदाहरणात्मक दरांमध्ये 5% आकस्मिकता समाविष्ट आहे. हे पुरवठादाराचे कोट किंवा सध्याचे सत्यापित बाजार दर नाहीत."
+      "rateUnavailable": "/meta/options कडून दर उपलब्ध नाही"
     },
     "coverage": {
       "includedTitle": "या अंदाजात समाविष्ट",
       "included1": "सिव्हिल रचना आणि मूलभूत फिनिश",
       "included2": "वीज आणि प्लंबिंग कामे",
       "included3": "मानक सॅनिटरी फिटिंग",
-      "included4": "5% आकस्मिकता भत्ता",
       "excludedTitle": "वेगळे बजेट ठेवा",
       "excluded1": "जमीन आणि वैधानिक मंजुरी शुल्क",
       "excluded2": "वास्तुविशारद आणि व्यावसायिक फी",
@@ -211,7 +211,6 @@
       "floorsValue_one": "G+{{above}} · {{count}} मजला",
       "floorsValue_other": "G+{{above}} · {{count}} मजले",
       "formula": "{{area}} चौरस फूट × ₹{{rate}} / चौरस फूट",
-      "totalNote": "प्राथमिक एकूण, आकस्मिकतेसह",
       "assumptionTitle": "एक योग्य सुरुवातीचे गृहीतक",
       "assumptionBody": "नियमित साइट, सामान्य पाया आणि तळघर नसल्याचे गृहीत धरते. मातीची स्थिती आणि प्रवेश खर्चावर परिणाम करू शकतात."
     },

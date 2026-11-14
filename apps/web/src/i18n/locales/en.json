@@ -47,6 +47,7 @@
     "subNavigation": "Sub navigation",
     "toggleMenu": "Toggle navigation menu",
     "projectOverview": "Project overview",
+    "projectOwner": "Project owner",
     "signedInAs": "Signed in as {{name}}",
     "logout": "Log out",
     "login": "Log in",
@@ -61,6 +62,7 @@
   },
   "auth": {
     "checkingSession": "Checking your session…",
+    "logout": "Log out",
     "shared": {
       "emailLabel": "Email address",
       "emailPlaceholder": "name@example.com",
@@ -186,15 +188,13 @@
       "economyDesc": "Simple, durable essentials",
       "standardDesc": "Balanced everyday comfort",
       "premiumDesc": "Higher-spec finishes",
-      "rateUnavailable": "Rate not provided by /meta/options",
-      "note": "Illustrative rates include a 5% contingency. They are not supplier quotes or current verified market rates."
+      "rateUnavailable": "Rate not provided by /meta/options"
     },
     "coverage": {
       "includedTitle": "INCLUDED IN THIS ESTIMATE",
       "included1": "Civil structure and basic finishes",
       "included2": "Electrical and plumbing works",
       "included3": "Standard sanitary fixtures",
-      "included4": "5% contingency allowance",
       "excludedTitle": "BUDGET SEPARATELY",
       "excluded1": "Land and statutory approval fees",
       "excluded2": "Architect and professional fees",
@@ -211,7 +211,6 @@
       "floorsValue_one": "G+{{above}} · {{count}} floor",
       "floorsValue_other": "G+{{above}} · {{count}} floors",
       "formula": "{{area}} sq ft × ₹{{rate}} / sq ft",
-      "totalNote": "Preliminary total, including contingency",
       "assumptionTitle": "A sound starting assumption",
       "assumptionBody": "Assumes a regular site, normal foundations and no basement. Soil conditions and access can affect costs."
     },

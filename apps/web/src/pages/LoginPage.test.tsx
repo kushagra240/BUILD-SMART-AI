@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginPage } from './LoginPage';
 import { ApiError } from '../services/apiClient';
@@ -26,6 +26,11 @@ function renderLogin() {
       <LoginPage />
     </MemoryRouter>
   );
+}
+
+function NewEstimateProbe() {
+  const location = useLocation();
+  return <div>{`new estimate ${location.search}`}</div>;
 }
 
 describe('LoginPage API errors', () => {
@@ -89,6 +94,30 @@ describe('LoginPage API errors', () => {
 
     expect(await screen.findByText('Projects dashboard')).toBeInTheDocument();
     expect(screen.queryByText('Overview page')).not.toBeInTheDocument();
+  });
+
+  it('returns the user to the URL preserved by RequireAuth', async () => {
+    auth.login.mockResolvedValueOnce({ id: 'usr_mock_1' });
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/login',
+            state: { from: { pathname: '/app/new', search: '?step=2' } },
+          },
+        ]}
+      >
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/app/new" element={<NewEstimateProbe />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
+
+    expect(await screen.findByText('new estimate ?step=2')).toBeInTheDocument();
   });
 
   it('does not prefill credentials when the real API is enabled', () => {

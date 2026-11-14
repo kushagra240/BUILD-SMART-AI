@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { z } from 'zod';
@@ -34,10 +34,24 @@ const mockDefaults: RegisterFormData = {
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register, status } = useAuth();
   const mock = isMockApi();
   const { t } = useTranslation();
   const registerSchema = createRegisterSchema(t);
+
+  const from = (
+    location.state as {
+      from?: { pathname?: string; search?: string };
+    } | null
+  )?.from;
+  const isSafeRedirect =
+    from?.pathname &&
+    !from.pathname.startsWith('/login') &&
+    !from.pathname.startsWith('/register');
+  const redirectTo = isSafeRedirect
+    ? `${from.pathname}${from.search ?? ''}`
+    : '/app/projects';
 
   const [formData, setFormData] = useState<RegisterFormData>(() =>
     mock ? mockDefaults : { full_name: '', email: '', password: '', confirmPassword: '' }
@@ -47,8 +61,19 @@ export function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
+  if (status === 'loading') {
+    return (
+      <div
+        role="status"
+        className="min-h-[40vh] flex items-center justify-center px-4 py-12 text-sm text-ink-soft"
+      >
+        {t('auth.checkingSession')}
+      </div>
+    );
+  }
+
   if (status === 'authenticated') {
-    return <Navigate to="/app/projects" replace />;
+    return <Navigate to={redirectTo} replace />;
   }
 
   const applyApiError = (error: unknown) => {
@@ -92,7 +117,7 @@ export function RegisterPage() {
         password: formData.password,
         full_name: formData.full_name,
       });
-      navigate('/app/projects', { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       applyApiError(err);
     } finally {

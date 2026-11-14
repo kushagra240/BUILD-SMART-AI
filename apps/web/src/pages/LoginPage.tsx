@@ -36,7 +36,11 @@ export function LoginPage() {
       from?: { pathname?: string; search?: string };
     } | null
   )?.from;
-  const redirectTo = from?.pathname
+  const isSafeRedirect =
+    from?.pathname &&
+    !from.pathname.startsWith('/login') &&
+    !from.pathname.startsWith('/register');
+  const redirectTo = isSafeRedirect
     ? `${from.pathname}${from.search ?? ''}`
     : '/app/projects';
 
@@ -47,6 +51,17 @@ export function LoginPage() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+
+  if (status === 'loading') {
+    return (
+      <div
+        role="status"
+        className="min-h-[40vh] flex items-center justify-center px-4 py-12 text-sm text-ink-soft"
+      >
+        {t('auth.checkingSession')}
+      </div>
+    );
+  }
 
   if (status === 'authenticated') {
     return <Navigate to={redirectTo} replace />;
