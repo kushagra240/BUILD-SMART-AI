@@ -7,15 +7,16 @@ import {
   BudgetStatus,
   CostDriver,
 } from '../types/estimate';
+import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 export const MOCK_META_OPTIONS: MetaOptions = {
   is_mock: true,
   zones: [
-    { zone_id: 'pune_central', zone_name: 'Central Pune', description: 'Shivajinagar, Deccan, Camp, Sadashiv Peth (Narrow access, high demand)' },
-    { zone_id: 'pune_east', zone_name: 'East Pune', description: 'Kharadi, Hadapsar, Viman Nagar, Wagholi (Standard logistics)' },
-    { zone_id: 'pune_west', zone_name: 'West & North-West Pune', description: 'Baner, Wakad, Hinjewadi, Aundh, Bavdhan (High demand IT corridor)' },
-    { zone_id: 'pcmc', zone_name: 'Pimpri-Chinchwad (PCMC)', description: 'Nigdi, Bhosari, Rawet, Chinchwad (Industrial logistics access)' },
-    { zone_id: 'pune_south_peripheral', zone_name: 'South & Peripheral Pune', description: 'Katraj, Kondhwa, Undri, Ambegaon (Outer ring access)' },
+    { id: 'pune_central', name: 'Central Pune', description: 'Shivajinagar, Deccan, Camp, Sadashiv Peth (Narrow access, high demand)' },
+    { id: 'pune_east', name: 'East Pune', description: 'Kharadi, Hadapsar, Viman Nagar, Wagholi (Standard logistics)' },
+    { id: 'pune_west', name: 'West & North-West Pune', description: 'Baner, Wakad, Hinjewadi, Aundh, Bavdhan (High demand IT corridor)' },
+    { id: 'pcmc', name: 'Pimpri-Chinchwad (PCMC)', description: 'Nigdi, Bhosari, Rawet, Chinchwad (Industrial logistics access)' },
+    { id: 'pune_south_peripheral', name: 'South & Peripheral Pune', description: 'Katraj, Kondhwa, Undri, Ambegaon (Outer ring access)' },
   ],
   quality_tiers: [
     { id: 'economy', name: 'Economy', description: 'Entry-level materials, basic fittings, local PPC cement', indicative_rate_sqft: 1550 },
@@ -47,11 +48,16 @@ const ZONE_MULTIPLIERS: Record<string, number> = {
   'ZN-OTHER': 0.90,
 };
 
-const TIER_RATES: Record<string, number> = {
-  economy: 1550,
-  standard: 1900,
-  premium: 2500,
-};
+const TIER_RATE_MISSING = 'MOCK_META_OPTIONS has no indicative rate for quality tier';
+
+/** The mock quality rates live only in `MOCK_META_OPTIONS`. */
+function mockRateForQualityTier(tier: string): number {
+  const option = MOCK_META_OPTIONS.quality_tiers.find((item) => item.id === tier);
+  if (option?.indicative_rate_sqft === undefined) {
+    throw new Error(`${TIER_RATE_MISSING} "${tier}"`);
+  }
+  return option.indicative_rate_sqft;
+}
 
 export async function fetchMetaOptions(): Promise<MetaOptions> {
   // Simulate network latency
@@ -65,7 +71,7 @@ export async function calculateEstimateMock(
 ): Promise<EstimateResponse> {
   await new Promise((resolve) => setTimeout(resolve, 350));
 
-  const baseRate = TIER_RATES[inputs.quality_tier] || 1900;
+  const baseRate = mockRateForQualityTier(inputs.quality_tier);
   const zoneMult = ZONE_MULTIPLIERS[inputs.zone_id] || 1.0;
   const floorFactor = 1 + (inputs.floors - 1) * 0.04;
 
@@ -77,18 +83,11 @@ export async function calculateEstimateMock(
   const p10Total = Math.round(p50Total * 0.90);
   const p90Total = Math.round(p50Total * 1.12);
 
-  // 9-Category Shares (sums to 100%)
-  const shares: { category: string; pct: number }[] = [
-    { category: 'Foundation', pct: 11.0 },
-    { category: 'Structure', pct: 28.0 },
-    { category: 'Masonry', pct: 11.0 },
-    { category: 'Roofing', pct: 5.0 },
-    { category: 'Flooring', pct: 10.0 },
-    { category: 'Plumbing', pct: 7.0 },
-    { category: 'Electrical', pct: 7.0 },
-    { category: 'Finishing', pct: 10.0 },
-    { category: 'Labour', pct: 11.0 },
-  ];
+  // The nine canonical categories, with the mock allocation summing to 100%.
+  const shares = ESTIMATE_CATEGORIES.map((category) => ({
+    category: category.value,
+    pct: category.sharePct,
+  }));
 
   // Calculate breakdown amounts ensuring exact sum to p50Total using largest remainder
   const rawBreakdowns = shares.map((s) => {

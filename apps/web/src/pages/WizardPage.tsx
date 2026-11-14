@@ -8,10 +8,9 @@ import {
   isMockApi,
   mapZoneToRatesZone,
   type EstimateCreate,
-  type EstimateZone,
 } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
-import { QualityTier, ConstructionType } from '../types/estimate';
+import { QualityTier, ConstructionType, MetaOptions } from '../types/estimate';
 import { formatINR } from '../lib/formatters';
 import { ProductHeader } from '../components/layout/ProductHeader';
 import { Glyph } from '../components/common/Glyph';
@@ -33,14 +32,6 @@ interface WizardFormData {
   windows: string;
 }
 
-const QUALITY_RATES: Record<QualityTier, number> = {
-  economy: 2000,
-  standard: 2400,
-  premium: 3100,
-};
-
-const QUALITY_ORDER: QualityTier[] = ['economy', 'standard', 'premium'];
-
 const LOCALITIES = ['Baner', 'Kothrud', 'Bavdhan', 'Wagholi', 'Kharadi', 'Wakad', 'Aundh'] as const;
 
 const WALLING_OPTIONS = ['aac_blocks', 'red_clay', 'fly_ash'] as const;
@@ -60,7 +51,7 @@ export function WizardPage() {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [zones, setZones] = useState<EstimateZone[]>([]);
+  const [meta, setMeta] = useState<MetaOptions | null>(null);
   const [optionsError, setOptionsError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitFieldErrors, setSubmitFieldErrors] = useState<Record<string, string>>({});
@@ -89,9 +80,9 @@ export function WizardPage() {
     setLoading(true);
     setOptionsError(null);
     apiClient
-      .getEstimateZones()
+      .getMetaOptions()
       .then((response) => {
-        setZones(response);
+        setMeta(response);
         setLoading(false);
       })
       .catch((cause: unknown) => {
@@ -104,8 +95,14 @@ export function WizardPage() {
     loadOptions();
   }, [loadOptions]);
 
-  const ratePerSqFt = QUALITY_RATES[form.qualityTier];
-  const calculatedTotal = form.builtUpArea * ratePerSqFt;
+  const zones = meta?.zones ?? [];
+  const qualityTiers = meta?.quality_tiers ?? [];
+  const selectedTier = qualityTiers.find((tier) => tier.id === form.qualityTier);
+  const ratePerSqFt = selectedTier?.indicative_rate_sqft;
+  const calculatedTotal =
+    ratePerSqFt === undefined ? null : form.builtUpArea * ratePerSqFt;
+  const totalLabel =
+    calculatedTotal === null ? t('wizard.quality.rateUnavailable') : formatINR(calculatedTotal);
 
   const validateStep1 = (): boolean => {
     const errs: Record<string, string> = {};
@@ -436,7 +433,7 @@ export function WizardPage() {
               <div className="wizard-footer">
                 <div>
                   <span>Indicative planning total</span>
-                  <strong className="mono">{formatINR(calculatedTotal)}</strong>
+                  <strong className="mono">{totalLabel}</strong>
                 </div>
                 <button type="button" onClick={handleNextStep} className="cobalt-button">
                   {t('wizard.actions.continue')} <Glyph name="arrow" size={17} />
@@ -460,30 +457,26 @@ export function WizardPage() {
                 <legend>Construction quality</legend>
                 <p>Choose the specification level that best reflects your material expectations.</p>
                 <div>
-                  {QUALITY_ORDER.map((tierKey, index) => {
-                    const item =
-                      tierKey === 'economy' ? 'Economy' : tierKey === 'standard' ? 'Standard' : 'Premium';
-                    const isSelected = form.qualityTier === tierKey;
+                  {qualityTiers.map((tier, index) => {
+                    const isSelected = form.qualityTier === tier.id;
                     return (
                       <button
                         type="button"
                         className={isSelected ? 'selected' : ''}
-                        key={tierKey}
-                        onClick={() => setForm({ ...form, qualityTier: tierKey })}
+                        key={tier.id}
+                        onClick={() => setForm({ ...form, qualityTier: tier.id })}
                       >
                         <span className="quality-check">
                           {isSelected && <Glyph name="check" size={13} />}
                         </span>
                         <small>0{index + 1}</small>
-                        <strong>{item}</strong>
-                        <span className="mono">₹{QUALITY_RATES[tierKey].toLocaleString('en-IN')}/sq ft</span>
-                        <p>
-                          {tierKey === 'economy'
-                            ? 'Practical essentials and durable base finishes.'
-                            : tierKey === 'standard'
-                              ? 'Balanced quality for a comfortable family home.'
-                              : 'Upgraded finishes, fixtures, and detailing.'}
-                        </p>
+                        <strong>{tier.name}</strong>
+                        <span className="mono">
+                          {tier.indicative_rate_sqft === undefined
+                            ? t('wizard.quality.rateUnavailable')
+                            : `₹${tier.indicative_rate_sqft.toLocaleString('en-IN')}/sq ft`}
+                        </span>
+                        {tier.description && <p>{tier.description}</p>}
                       </button>
                     );
                   })}
@@ -493,7 +486,7 @@ export function WizardPage() {
               <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="structuralSystem" className="block text-xs font-semibold text-ink">
-                    <span>{t('wizard.fields.constructionType')}</span>
+                    <span>{t('wizard.fields.structuralSystem')}</span>
                   </label>
                   <select
                     id="structuralSystem"
@@ -503,8 +496,8 @@ export function WizardPage() {
                     }
                     className="mt-1.5 h-11 w-full rounded-lg border border-line bg-white px-3 text-xs text-ink outline-none focus:border-accent"
                   >
-                    <option value="rcc_framed">{t('wizard.options.construction.rcc_framed')}</option>
-                    <option value="load_bearing">{t('wizard.options.construction.load_bearing')}</option>
+                    <option value="rcc_framed">{t('enum.construction.rcc_framed')}</option>
+                    <option value="load_bearing">{t('enum.construction.load_bearing')}</option>
                   </select>
                 </div>
 
@@ -592,7 +585,7 @@ export function WizardPage() {
                 </button>
                 <div>
                   <span>Indicative planning total</span>
-                  <strong className="mono">{formatINR(calculatedTotal)}</strong>
+                  <strong className="mono">{totalLabel}</strong>
                 </div>
                 <button
                   type="button"

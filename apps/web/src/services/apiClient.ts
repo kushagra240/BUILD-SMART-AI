@@ -1,5 +1,6 @@
 import type { components } from '../types/api.generated';
-import { MOCK_META_OPTIONS } from './mockApi';
+import type { ConstructionType, MetaOptions, QualityTier } from '../types/estimate';
+import { calculateEstimateMock, fetchMetaOptions } from './mockApi';
 
 export type UserResponse = components['schemas']['UserResponse'];
 export type TokenResponse = components['schemas']['TokenResponse'];
@@ -10,6 +11,25 @@ export type ProjectListResponse = components['schemas']['ProjectListResponse'];
 export type EstimateCreate = components['schemas']['EstimateCreate'];
 export type EstimateResponse = components['schemas']['EstimateResponse'];
 export type EstimateZone = { id: string; name: string };
+
+/**
+ * The backend `/meta/options` contract types option ids as free strings. The
+ * wizard can only submit the frozen `EstimateCreate` unions, so an unexpected
+ * id is an explicit error rather than something silently dropped or guessed.
+ */
+function asQualityTier(id: string): QualityTier {
+  if (id === 'economy' || id === 'standard' || id === 'premium') {
+    return id;
+  }
+  throw new Error(`/meta/options returned an unknown quality tier: "${id}"`);
+}
+
+function asConstructionType(id: string): ConstructionType {
+  if (id === 'rcc_framed' || id === 'load_bearing') {
+    return id;
+  }
+  throw new Error(`/meta/options returned an unknown construction type: "${id}"`);
+}
 
 /**
  * Maps high-level UI location zones to the regulatory SSR rate zones used by
@@ -471,66 +491,54 @@ class ApiClient {
   }
 
   // Estimate flows
-  async getEstimateZones(): Promise<EstimateZone[]> {
+  /**
+   * The options shown by the wizard. Mock mode serves the in-browser mock layer;
+   * live mode serves `/meta/options` exactly as the backend defines it (ids and
+   * names only, no rates). Unknown ids are rejected instead of guessed.
+   */
+  async getMetaOptions(): Promise<MetaOptions> {
     if (isMockApi()) {
-      return MOCK_META_OPTIONS.zones.map((zone) => ({
-        id: zone.zone_id,
-        name: zone.zone_name,
-      }));
+      const mock = await fetchMetaOptions();
+      return {
+        ...mock,
+        quality_tiers: mock.quality_tiers.map((tier) => ({
+          ...tier,
+          id: asQualityTier(tier.id),
+        })),
+        construction_types: mock.construction_types.map((type) => ({
+          ...type,
+          id: asConstructionType(type.id),
+        })),
+      };
     }
+
     const response = await this.request<components['schemas']['MetaOptionsResponse']>(
       '/meta/options',
       { method: 'GET' }
     );
-    return response.zones.map((zone) => ({ id: zone.id, name: zone.name }));
+    return {
+      is_mock: false,
+      zones: response.zones.map((zone) => ({ id: zone.id, name: zone.name })),
+      quality_tiers: response.quality_tiers.map((tier) => ({
+        id: asQualityTier(tier.id),
+        name: tier.name,
+      })),
+      construction_types: response.construction_types.map((type) => ({
+        id: asConstructionType(type.id),
+        name: type.name,
+      })),
+    };
+  }
+
+  /** Zones only, for callers that do not need the rest of the options. */
+  async getEstimateZones(): Promise<EstimateZone[]> {
+    const meta = await this.getMetaOptions();
+    return meta.zones.map((zone) => ({ id: zone.id, name: zone.name }));
   }
 
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
     if (isMockApi()) {
-      const area = req.built_up_area_sqft;
-      const rate = req.quality_tier === 'economy' ? 2000 : req.quality_tier === 'premium' ? 3100 : 2400;
-      const totalP50 = area * rate;
-      const contingency = Math.round(totalP50 * 0.05);
-
-      return {
-        id: 'BS-2026-004',
-        project_id: projectId,
-        inputs: req,
-        total: {
-          p50: totalP50,
-          p10: Math.round(totalP50 * 0.90),
-          p90: Math.round(totalP50 * 1.10),
-          currency: 'INR',
-        },
-        confidence: {
-          label: 'High',
-          reason: 'Calibrated to Pune municipal norms and verified planning distributions.',
-        },
-        breakdown: [
-          { category: 'Site preparation & foundation', amount: Math.round(totalP50 * 0.12), share_pct: 12 },
-          { category: 'RCC structure', amount: Math.round(totalP50 * 0.31), share_pct: 31 },
-          { category: 'Masonry & plaster', amount: Math.round(totalP50 * 0.18), share_pct: 18 },
-          { category: 'Flooring & wall tiles', amount: Math.round(totalP50 * 0.10), share_pct: 10 },
-          { category: 'Doors & windows', amount: Math.round(totalP50 * 0.10), share_pct: 10 },
-          { category: 'Electrical works', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
-          { category: 'Plumbing & sanitary', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
-          { category: 'Painting & finishes', amount: Math.round(totalP50 * 0.07), share_pct: 7 },
-          { category: 'Contingency allowance', amount: contingency, share_pct: 5 },
-        ],
-        materials: [],
-        budget: {
-          status: 'within',
-          gap_inr: 0,
-        },
-        drivers: [],
-        model: {
-          version: '1.0.0-mock',
-          data_version: '2026-10-07-mock',
-        },
-        disclaimer: 'Preliminary indicative planning estimate for Pune region. Not a contractor quotation.',
-        is_mock: true,
-        created_at: new Date().toISOString(),
-      };
+      return calculateEstimateMock(req, projectId);
     }
 
     const payload: EstimateCreate = {

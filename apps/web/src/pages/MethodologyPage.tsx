@@ -2,24 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Database, Layers, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
-
-/**
- * Illustrative allocation, unchanged from the original page. These shares are
- * static copy, not engine output, and are the known gap tracked by T41 (one
- * category list, no hard-coded business numbers). Dot colours come from the
- * shared `chart` palette so the legend matches the results donut.
- */
-const CATEGORIES = [
-  { key: 'foundation', share: '12%', dot: 'bg-chart-foundation' },
-  { key: 'structure', share: '31%', dot: 'bg-chart-structure' },
-  { key: 'masonry', share: '18%', dot: 'bg-chart-masonry' },
-  { key: 'flooring', share: '10%', dot: 'bg-chart-flooring' },
-  { key: 'roofing', share: '10%', dot: 'bg-chart-roofing' },
-  { key: 'electrical', share: '7%', dot: 'bg-chart-electrical' },
-  { key: 'plumbing', share: '7%', dot: 'bg-chart-plumbing' },
-  { key: 'finishing', share: '7%', dot: 'bg-chart-finishing' },
-  { key: 'labour', share: '5%', dot: 'bg-chart-labour' },
-] as const;
+import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 export function MethodologyPage() {
   const { t } = useTranslation();
@@ -100,24 +83,27 @@ export function MethodologyPage() {
             </span>
           </div>
           <ul className="divide-y divide-line-soft">
-            {CATEGORIES.map((cat) => (
+            {ESTIMATE_CATEGORIES.map((category) => (
               <li
-                key={cat.key}
+                key={category.key}
                 className="flex flex-col justify-between gap-2 px-6 py-3.5 text-sm transition-colors hover:bg-paper-deep/30 sm:flex-row sm:items-center"
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className={`h-2.5 w-2.5 flex-none rounded-full ${cat.dot}`}
+                    className="h-2.5 w-2.5 flex-none rounded-full"
+                    style={{ backgroundColor: category.chartColor }}
                     aria-hidden="true"
                   />
                   <span className="font-semibold text-ink">
-                    {t(`methodology.categories.${cat.key}.name`)}
+                    {t(`enum.categories.${category.key}`)}
                   </span>
                   <span className="hidden text-[11px] text-ink-soft sm:inline">
-                    — {t(`methodology.categories.${cat.key}.desc`)}
+                    — {t(`methodology.categories.${category.key}.desc`)}
                   </span>
                 </div>
-                <span className="font-mono text-sm font-bold text-ink">{cat.share}</span>
+                <span className="font-mono text-sm font-bold text-ink">
+                  {category.sharePct}%
+                </span>
               </li>
             ))}
           </ul>

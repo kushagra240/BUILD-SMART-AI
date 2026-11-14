@@ -78,13 +78,11 @@ export function DashboardPage() {
           </div>
           <div>
             <span>Portfolio estimate</span>
-            <strong className="mono">
-              ₹{items.length === 0 ? '0.00' : (items.length * 43.2).toFixed(1)}L
-            </strong>
+            <strong className="mono">Not provided</strong>
           </div>
           <div>
             <span>Average rate</span>
-            <strong className="mono">₹2,400/sq ft</strong>
+            <strong className="mono">Not provided</strong>
           </div>
         </div>
 
@@ -120,7 +118,7 @@ export function DashboardPage() {
                         alt={project.name}
                       />
                       <span className={`project-status status-${index % 3}`}>
-                        Estimate ready
+                        Saved project
                       </span>
                     </div>
                     <div className="project-card-body">
@@ -128,15 +126,8 @@ export function DashboardPage() {
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <h2>{project.name}</h2>
-                      <p>{project.notes || 'Baner, Pune · G+1'}</p>
-                      <div className="project-cost">
-                        <span>Planning estimate</span>
-                        <strong className="mono">₹43,20,000</strong>
-                      </div>
+                      {project.notes && <p>{project.notes}</p>}
                       <div className="project-card-foot">
-                        <span>
-                          <Glyph name="area" size={13} /> 1,800 sq ft
-                        </span>
                         <span>
                           <Glyph name="calendar" size={13} />{' '}
                           {formatDate(project.updated_at || project.created_at)}
@@ -170,8 +161,8 @@ export function DashboardPage() {
               <div>
                 <strong>Planning note</strong>
                 <p>
-                  Estimates include a 5% contingency. Final construction costs depend on drawings,
-                  site conditions, and contractor quotations.
+                  Estimates are preliminary planning figures. Final construction costs depend on
+                  drawings, site conditions, and contractor quotations.
                 </p>
               </div>
               <Link to="/methodology" className="text-xs font-semibold text-accent hover:underline">

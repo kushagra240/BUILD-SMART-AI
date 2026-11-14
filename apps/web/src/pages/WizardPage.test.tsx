@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WizardPage } from './WizardPage';
 import { apiClient, ApiError, type EstimateResponse } from '../services/apiClient';
+import type { MetaOptions } from '../types/estimate';
 
 const project = {
   id: 'project-1',
@@ -40,6 +41,20 @@ const estimate: EstimateResponse = {
   created_at: '2026-11-10T10:00:00Z',
 };
 
+const metaOptions: MetaOptions = {
+  is_mock: false,
+  zones: [{ id: 'zone-west', name: 'West Pune' }],
+  quality_tiers: [
+    { id: 'economy', name: 'Economy', indicative_rate_sqft: 1550 },
+    { id: 'standard', name: 'Standard', indicative_rate_sqft: 1900 },
+    { id: 'premium', name: 'Premium', indicative_rate_sqft: 2500 },
+  ],
+  construction_types: [
+    { id: 'rcc_framed', name: 'RCC framed structure' },
+    { id: 'load_bearing', name: 'Load-bearing masonry' },
+  ],
+};
+
 function renderWizard() {
   return render(
     <MemoryRouter initialEntries={['/app/new']}>
@@ -66,9 +81,7 @@ describe('WizardPage estimate wiring', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
-    vi.spyOn(apiClient, 'getEstimateZones').mockResolvedValue([
-      { id: 'zone-west', name: 'West Pune' },
-    ]);
+    vi.spyOn(apiClient, 'getMetaOptions').mockResolvedValue(metaOptions);
   });
 
   afterEach(() => {
@@ -180,12 +193,60 @@ describe('WizardPage estimate wiring', () => {
     expect(createEstimateSpy).not.toHaveBeenCalled();
   });
 
+  it('serves quality rates from /meta/options instead of a UI constant', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+
+    renderWizard();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Location zone/)).toHaveTextContent('West Pune');
+    });
+    expect(screen.getByText('₹34,20,000')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText(/Location zone/), {
+      target: { value: 'zone-west' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Continue to preferences/ }));
+    await screen.findByRole('button', { name: /Calculate estimate/ });
+
+    expect(screen.getByText('₹1,900/sq ft')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Premium/ }));
+    expect(screen.getByText('₹45,00,000')).toBeInTheDocument();
+    expect(screen.getByText('₹2,500/sq ft')).toBeInTheDocument();
+  });
+
+  it('does not invent a rate when /meta/options omits it', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    vi.spyOn(apiClient, 'getMetaOptions').mockResolvedValue({
+      ...metaOptions,
+      quality_tiers: metaOptions.quality_tiers.map((tier) => ({
+        id: tier.id,
+        name: tier.name,
+      })),
+    });
+
+    renderWizard();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Location zone/)).toHaveTextContent('West Pune');
+    });
+
+    expect(screen.getAllByText('Rate not provided by /meta/options')).toHaveLength(1);
+
+    fireEvent.change(screen.getByLabelText(/Location zone/), {
+      target: { value: 'zone-west' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Continue to preferences/ }));
+    await screen.findByRole('button', { name: /Calculate estimate/ });
+
+    // Three quality cards plus the planning-total footer.
+    expect(screen.getAllByText('Rate not provided by /meta/options')).toHaveLength(4);
+  });
+
   it('shows an error when the zone options cannot be loaded and retries', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
-    const zonesSpy = vi
-      .spyOn(apiClient, 'getEstimateZones')
+    const optionsSpy = vi
+      .spyOn(apiClient, 'getMetaOptions')
       .mockRejectedValueOnce(new ApiError(500, 'INTERNAL_SERVER_ERROR', 'Options unavailable'))
-      .mockResolvedValueOnce([{ id: 'zone-west', name: 'West Pune' }]);
+      .mockResolvedValueOnce(metaOptions);
 
     renderWizard();
 
@@ -195,6 +256,6 @@ describe('WizardPage estimate wiring', () => {
     await waitFor(() => {
       expect(screen.getByLabelText(/Location zone/)).toHaveTextContent('West Pune');
     });
-    expect(zonesSpy).toHaveBeenCalledTimes(2);
+    expect(optionsSpy).toHaveBeenCalledTimes(2);
   });
 });

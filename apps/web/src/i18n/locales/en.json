@@ -186,6 +186,7 @@
       "economyDesc": "Simple, durable essentials",
       "standardDesc": "Balanced everyday comfort",
       "premiumDesc": "Higher-spec finishes",
+      "rateUnavailable": "Rate not provided by /meta/options",
       "note": "Illustrative rates include a 5% contingency. They are not supplier quotes or current verified market rates."
     },
     "coverage": {
@@ -334,6 +335,7 @@
       "item3": "Furniture, modular kitchen, lift, solar systems and major utility connections are also excluded."
     },
     "budget": {
+      "heading": "Budget status",
       "notProvided": "Not provided",
       "within": "Within budget",
       "above": "Above estimate by {{amount}}",
@@ -604,11 +606,11 @@
       "structure": { "name": "Structure", "desc": "Columns, beams, slabs, concrete grades and reinforcement steel" },
       "masonry": { "name": "Masonry", "desc": "External & internal walls, AAC blockwork or brickwork, and plastering" },
       "flooring": { "name": "Flooring", "desc": "Vitrified tiles, ceramic floor tiles, skirting, and waterproofing substrates" },
-      "roofing": { "name": "Roofing & Openings", "desc": "uPVC/aluminium windows, flush doors, hardware, and terrace parapet" },
+      "roofing": { "name": "Roofing", "desc": "Roof slab, waterproofing and terrace finishing" },
       "electrical": { "name": "Electrical", "desc": "Concealed copper wiring, distribution boards, modular switches, and earthing" },
       "plumbing": { "name": "Plumbing", "desc": "CPVC water supply, PVC drainage, soil waste pipes, and sanitary fixtures" },
       "finishing": { "name": "Finishing", "desc": "Interior primer and washable emulsion, exterior weather coat, and touch-ups" },
-      "labour": { "name": "Labour & Contingency", "desc": "General site allowance, minor variation reserve, and unexpected contingencies" }
+      "labour": { "name": "Labour", "desc": "Site labour across all work items, grouped into one category" }
     },
     "scope": {
       "title": "Scope Boundaries & Professional Disclaimer",

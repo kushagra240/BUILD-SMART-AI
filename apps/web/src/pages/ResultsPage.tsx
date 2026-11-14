@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { apiClient, type EstimateResponse } from '../services/apiClient';
+import { categoryChartColor } from '../domain/estimateCategories';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { formatDateTime, formatINR, formatNumber } from '../lib/formatters';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
@@ -18,25 +19,6 @@ import {
   translateQuality,
   translateZone,
 } from '../i18n/labels';
-
-const CATEGORY_CHART_COLORS: Record<string, string> = {
-  foundation: '#151820',
-  structure: '#315EFB',
-  masonry: '#6685F4',
-  roofing: '#2455E6',
-  flooring: '#8FA8F5',
-  plumbing: '#8F98A8',
-  electrical: '#B7C2D8',
-  finishing: '#5C6470',
-  labour: '#AFC4FB',
-};
-
-const CATEGORY_CHART_RAMP = Object.values(CATEGORY_CHART_COLORS);
-
-function getCategoryColor(name: string, index = 0): string {
-  const key = name.trim().toLowerCase();
-  return CATEGORY_CHART_COLORS[key] ?? CATEGORY_CHART_RAMP[index % CATEGORY_CHART_RAMP.length];
-}
 
 function titleCase(value: string): string {
   return value
@@ -341,8 +323,11 @@ export function ResultsPage() {
     category: item.category,
     amount: item.amount,
     share_pct: item.share_pct,
-    fill: getCategoryColor(item.category, index),
+    fill: categoryChartColor(item.category, index),
   }));
+
+  const largestShare = Math.max(0, ...donutData.map((item) => item.share_pct));
+  const topCategories = [...donutData].sort((a, b) => b.amount - a.amount).slice(0, 3);
 
   return (
     <main className="results-page">
@@ -507,11 +492,13 @@ export function ResultsPage() {
             </article>
             <article>
               <span>
-                <Glyph name="clock" size={17} />
+                <Glyph name="chart" size={17} />
               </span>
               <div>
-                <p>Build duration</p>
-                <strong className="mono">12–14 months</strong>
+                <p>Planning range</p>
+                <strong className="mono">
+                  {formatINR(estimate.total.p10)} – {formatINR(estimate.total.p90)}
+                </strong>
               </div>
             </article>
           </motion.section>
@@ -538,10 +525,10 @@ export function ResultsPage() {
                         stroke="#ffffff"
                         strokeWidth={2}
                       >
-                        {donutData.map((entry, index) => (
+                        {donutData.map((entry) => (
                           <Cell
                             key={entry.category}
-                            fill={getCategoryColor(entry.category, index)}
+                            fill={entry.fill}
                           />
                         ))}
                       </Pie>
@@ -556,27 +543,17 @@ export function ResultsPage() {
                   </span>
                 </div>
                 <div className="result-legend">
-                  {[
-                    ['Structure', '40%', 'one'],
-                    ['Finishes', '25%', 'two'],
-                    ['Services', '20%', 'three'],
-                    ['Buffer', '15%', 'four'],
-                  ].map(([label, percent, color]) => {
-                    const approxAmt = Math.round((estimate.total.p50 * parseInt(percent, 10)) / 100);
-                    return (
-                      <div key={label}>
-                        <i className={color} />
-                        <span>{label}</span>
-                        <strong className="mono">{formatINR(approxAmt)}</strong>
-                        <small>{percent}</small>
-                      </div>
-                    );
-                  })}
+                  {donutData.map((item) => (
+                    <div key={item.category}>
+                      <i style={{ backgroundColor: item.fill }} />
+                      <span>{translateCategory(t, item.category)}</span>
+                      <strong className="mono">{formatINR(item.amount)}</strong>
+                      <small>{item.share_pct}%</small>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <p className="result-note">
-                Includes materials, labour, and a 5% contingency allowance.
-              </p>
+              <p className="result-note">{t('results.breakdown.note')}</p>
             </section>
 
             <section className="result-panel insight-panel">
@@ -587,17 +564,19 @@ export function ResultsPage() {
                 </div>
               </div>
               <div className="insight-bars">
-                {[
-                  ['Material', Math.round(estimate.total.p50 * 0.6), 76],
-                  ['Labour', Math.round(estimate.total.p50 * 0.25), 42],
-                  ['Professional & buffer', Math.round(estimate.total.p50 * 0.15), 25],
-                ].map(([label, cost, width]) => (
-                  <div key={String(label)}>
+                {topCategories.map((item) => (
+                  <div key={item.category}>
                     <span>
-                      {label} <strong className="mono">{formatINR(Number(cost))}</strong>
+                      {translateCategory(t, item.category)}{' '}
+                      <strong className="mono">{formatINR(item.amount)}</strong>
                     </span>
                     <i>
-                      <b style={{ width: `${width}%` }} />
+                      <b
+                        style={{
+                          width: `${largestShare > 0 ? Math.round((item.share_pct / largestShare) * 100) : 0}%`,
+                          backgroundColor: item.fill,
+                        }}
+                      />
                     </i>
                   </div>
                 ))}
@@ -631,7 +610,6 @@ export function ResultsPage() {
             <div className="cost-table">
               <div className="cost-table-head">
                 <span>Category</span>
-                <span>Specification</span>
                 <span>Estimated cost</span>
                 <span>Share</span>
               </div>
@@ -641,7 +619,7 @@ export function ResultsPage() {
                     <i
                       data-testid="category-dot"
                       style={{
-                        backgroundColor: getCategoryColor(row.category, index),
+                        backgroundColor: categoryChartColor(row.category, index),
                         width: '8px',
                         height: '8px',
                         borderRadius: '50%',
@@ -652,7 +630,6 @@ export function ResultsPage() {
                     <i>{String(index + 1).padStart(2, '0')}</i>
                     <strong>{translateCategory(t, row.category)}</strong>
                   </span>
-                  <span>{index < 9 ? 'Standard specification' : 'Planning allowance'}</span>
                   <strong className="mono">{formatINR(row.amount)}</strong>
                   <span className="mono">{row.share_pct}%</span>
                 </div>
