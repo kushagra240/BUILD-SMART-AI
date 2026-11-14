@@ -1,6 +1,10 @@
 import type { components } from '../types/api.generated';
 import type { ConstructionType, MetaOptions, QualityTier } from '../types/estimate';
-import { calculateEstimateMock, fetchMetaOptions } from './mockApi';
+import {
+  calculateEstimateMock,
+  fetchMaterialCharacteristics,
+  fetchMetaOptions,
+} from './mockApi';
 
 export type UserResponse = components['schemas']['UserResponse'];
 export type TokenResponse = components['schemas']['TokenResponse'];
@@ -10,6 +14,8 @@ export type ProjectResponse = components['schemas']['ProjectResponse'];
 export type ProjectListResponse = components['schemas']['ProjectListResponse'];
 export type EstimateCreate = components['schemas']['EstimateCreate'];
 export type EstimateResponse = components['schemas']['EstimateResponse'];
+export type MaterialCharacteristicResponse =
+  components['schemas']['MaterialCharacteristicResponse'];
 export type EstimateZone = { id: string; name: string };
 
 /**
@@ -577,6 +583,24 @@ class ApiClient {
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
       method: 'GET',
     });
+  }
+
+  /**
+   * Retrieve scientific material characteristics and site verification checklists.
+   *
+   * GET /meta/material-characteristics?category={category}
+   */
+  async getMaterialCharacteristics(
+    category?: string
+  ): Promise<MaterialCharacteristicResponse[]> {
+    if (isMockApi()) {
+      return fetchMaterialCharacteristics(category);
+    }
+    const query = category ? `?category=${encodeURIComponent(category)}` : '';
+    return this.request<MaterialCharacteristicResponse[]>(
+      `/meta/material-characteristics${query}`,
+      { method: 'GET' }
+    );
   }
 
   /**

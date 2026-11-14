@@ -577,7 +577,7 @@
           "Estimates"
         ],
         "summary": "Create Estimate",
-        "description": "Create a new estimate snapshot for a project.\n\nWhen is_mock is False, stub placeholders are completely unreachable and return 501.",
+        "description": "Create a new estimate snapshot for a project using the bottom-up engine.\n\nValidates inputs, passes the AsyncSession and EstimationInput to the calculator,\ncatches MissingDataError raising HTTP 422 with MISSING_DATA details, and stores\nan immutable estimate record.",
         "operationId": "create_estimate_api_v1_projects__project_id__estimates_post",
         "security": [
           {
@@ -602,7 +602,7 @@
             "schema": {
               "type": "boolean",
               "description": "Whether to use mock stub engine",
-              "default": true,
+              "default": false,
               "title": "Is Mock"
             },
             "description": "Whether to use mock stub engine"
@@ -619,7 +619,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -691,6 +691,146 @@
         }
       }
     },
+    "/api/v1/projects/{project_id}/estimates/{estimate_id}/pdf": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Export Estimate Pdf",
+        "description": "Export a saved estimate snapshot as a downloadable PDF report.",
+        "operationId": "export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "estimate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Estimate Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "hi",
+                "mr"
+              ],
+              "type": "string",
+              "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the generated estimate PDF report",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "404": {
+            "description": "Estimate or Project not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estimates/{estimate_id}/pdf": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Export Estimate Pdf Direct",
+        "description": "Direct alias to export estimate PDF snapshot by estimate ID.",
+        "operationId": "export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "estimate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Estimate Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "hi",
+                "mr"
+              ],
+              "type": "string",
+              "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the generated estimate PDF report",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "404": {
+            "description": "Estimate not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/meta/options": {
       "get": {
         "tags": [
@@ -728,6 +868,60 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MetaModelResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/meta/material-characteristics": {
+      "get": {
+        "tags": [
+          "Metadata"
+        ],
+        "summary": "Get Material Characteristics",
+        "description": "Get scientifically accurate, real-world characteristics for standard Indian construction materials.",
+        "operationId": "get_material_characteristics_api_v1_meta_material_characteristics_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MaterialCharacteristicResponse"
+                  },
+                  "title": "Response Get Material Characteristics Api V1 Meta Material Characteristics Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -978,6 +1172,14 @@
             "type": "array",
             "title": "Materials"
           },
+          "material_characteristics": {
+            "items": {
+              "$ref": "#/components/schemas/MaterialCharacteristicResponse"
+            },
+            "type": "array",
+            "title": "Material Characteristics",
+            "description": "Scientific material characteristics"
+          },
           "budget": {
             "$ref": "#/components/schemas/BudgetAssessment"
           },
@@ -1061,6 +1263,80 @@
           "password"
         ],
         "title": "LoginRequest"
+      },
+      "MaterialCharacteristicResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "material_name": {
+            "type": "string",
+            "title": "Material Name"
+          },
+          "characteristic": {
+            "type": "string",
+            "title": "Characteristic"
+          },
+          "performance_focus": {
+            "type": "string",
+            "title": "Performance Focus"
+          },
+          "verify_on_site_field": {
+            "type": "string",
+            "title": "Verify On Site Field"
+          },
+          "professional_review_req": {
+            "type": "boolean",
+            "title": "Professional Review Req"
+          },
+          "image_url": {
+            "type": "string",
+            "title": "Image Url"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "material_name",
+          "characteristic",
+          "performance_focus",
+          "verify_on_site_field",
+          "professional_review_req",
+          "image_url"
+        ],
+        "title": "MaterialCharacteristicResponse"
       },
       "MaterialRecommendationItem": {
         "properties": {

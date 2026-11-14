@@ -25,7 +25,9 @@ from app.schemas.estimate import (
     ModelMetaItem,
     TotalEstimate,
 )
+from app.schemas.material import MaterialCharacteristicResponse
 from app.services import project_service
+from app.services.material_service import get_all_material_characteristics
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +231,10 @@ async def create_estimate_for_project(
             for b in result.breakdown
         ],
         materials=[],
+        material_characteristics=[
+            MaterialCharacteristicResponse.model_validate(m)
+            for m in await get_all_material_characteristics(db)
+        ],
         budget=BudgetAssessment(
             status=result.budget.status,
             gap_inr=result.budget.gap_inr,
@@ -294,6 +300,10 @@ async def get_estimate_by_id(
         ),
         breakdown=[BreakdownCategoryItem.model_validate(b) for b in estimate.breakdown],
         materials=[MaterialRecommendationItem.model_validate(m) for m in estimate.materials],
+        material_characteristics=[
+            MaterialCharacteristicResponse.model_validate(m)
+            for m in await get_all_material_characteristics(db)
+        ],
         budget=BudgetAssessment(
             status=saved_budget_status,
             gap_inr=0,

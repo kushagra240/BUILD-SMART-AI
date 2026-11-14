@@ -22,6 +22,33 @@ const estimate: EstimateResponse = {
       reason: 'Selected for structural RCC work.',
     },
   ],
+  material_characteristics: [
+    {
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      category: 'Masonry Blocks',
+      material_name: 'Autoclaved Aerated Concrete (AAC) Blocks',
+      characteristic:
+        'Dry density 551-650 kg/m³, compressive strength >= 4.0 N/mm² conforming to IS 2185 (Part 3).',
+      performance_focus: 'Dead-load reduction & thermal insulation',
+      verify_on_site_field:
+        'Batch test certificate for oven-dry density & compressive strength.',
+      professional_review_req: true,
+      image_url:
+        'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=600&q=80',
+    },
+    {
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa7',
+      category: 'Structural Steel',
+      material_name: 'Thermo-Mechanically Treated (TMT) Rebars Fe 500D',
+      characteristic:
+        'Conforming to IS 1786 Grade Fe 500D. 0.2% proof stress min 500 N/mm².',
+      performance_focus: 'Seismic ductility & structural flexural capacity',
+      verify_on_site_field: 'Manufacturer BIS embossed stamp every meter.',
+      professional_review_req: true,
+      image_url:
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80',
+    },
+  ],
   budget: { status: 'not_provided', gap_inr: 0 },
   drivers: [
     { label: 'Built-up Area', impact_pct: 30 },
@@ -259,13 +286,21 @@ describe('ResultsPage contract rendering', () => {
   });
 
 
-  it('renders the mock material-characteristics preview without reviews or ratings', () => {
+  it('renders the database-backed material characteristics without reviews or ratings', () => {
     renderResults({ state: { estimate } });
 
-    expect(screen.getByText('MOCK · DATABASE PREVIEW')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'AAC block walling' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Reinforcement steel' })).toBeInTheDocument();
-    expect(screen.getByText(/no reviews or ratings/i)).toBeInTheDocument();
+    expect(screen.getByText('IS COMPLIANT · PUNE CALIBRATED')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: 'Autoclaved Aerated Concrete (AAC) Blocks',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: 'Thermo-Mechanically Treated (TMT) Rebars Fe 500D',
+      })
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/star rating|customer review/i)).not.toBeInTheDocument();
   });
 
   it('collapses and expands the results sidebar', () => {

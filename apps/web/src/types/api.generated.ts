@@ -211,9 +211,11 @@ export interface paths {
         put?: never;
         /**
          * Create Estimate
-         * @description Create a new estimate snapshot for a project.
+         * @description Create a new estimate snapshot for a project using the bottom-up engine.
          *
-         *     When is_mock is False, stub placeholders are completely unreachable and return 501.
+         *     Validates inputs, passes the AsyncSession and EstimationInput to the calculator,
+         *     catches MissingDataError raising HTTP 422 with MISSING_DATA details, and stores
+         *     an immutable estimate record.
          */
         post: operations["create_estimate_api_v1_projects__project_id__estimates_post"];
         delete?: never;
@@ -234,6 +236,46 @@ export interface paths {
          * @description Get an existing estimate snapshot by ID.
          */
         get: operations["get_estimate_api_v1_estimates__estimate_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/estimates/{estimate_id}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Estimate Pdf
+         * @description Export a saved estimate snapshot as a downloadable PDF report.
+         */
+        get: operations["export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/estimates/{estimate_id}/pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Estimate Pdf Direct
+         * @description Direct alias to export estimate PDF snapshot by estimate ID.
+         */
+        get: operations["export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -274,6 +316,26 @@ export interface paths {
          * @description Get metadata for the currently active ML model version.
          */
         get: operations["get_meta_model_api_v1_meta_model_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/meta/material-characteristics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Material Characteristics
+         * @description Get scientifically accurate, real-world characteristics for standard Indian construction materials.
+         */
+        get: operations["get_material_characteristics_api_v1_meta_material_characteristics_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -400,6 +462,11 @@ export interface components {
             breakdown: components["schemas"]["BreakdownCategoryItem"][];
             /** Materials */
             materials: components["schemas"]["MaterialRecommendationItem"][];
+            /**
+             * Material Characteristics
+             * @description Scientific material characteristics
+             */
+            material_characteristics?: components["schemas"]["MaterialCharacteristicResponse"][];
             budget: components["schemas"]["BudgetAssessment"];
             /** Drivers */
             drivers: components["schemas"]["CostDriverItem"][];
@@ -433,6 +500,32 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** MaterialCharacteristicResponse */
+        MaterialCharacteristicResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Category */
+            category: string;
+            /** Material Name */
+            material_name: string;
+            /** Characteristic */
+            characteristic: string;
+            /** Performance Focus */
+            performance_focus: string;
+            /** Verify On Site Field */
+            verify_on_site_field: string;
+            /** Professional Review Req */
+            professional_review_req: boolean;
+            /** Image Url */
+            image_url: string;
+            /** Created At */
+            created_at?: string | null;
+            /** Updated At */
+            updated_at?: string | null;
         };
         /** MaterialRecommendationItem */
         MaterialRecommendationItem: {
@@ -1052,7 +1145,7 @@ export interface operations {
         };
         responses: {
             /** @description Successful Response */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1102,6 +1195,89 @@ export interface operations {
             };
         };
     };
+    export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__pdf_get: {
+        parameters: {
+            query?: {
+                /** @description PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi) */
+                lang?: "en" | "hi" | "mr";
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                estimate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the generated estimate PDF report */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Estimate or Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get: {
+        parameters: {
+            query?: {
+                /** @description PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi) */
+                lang?: "en" | "hi" | "mr";
+            };
+            header?: never;
+            path: {
+                estimate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the generated estimate PDF report */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Estimate not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_meta_options_api_v1_meta_options_get: {
         parameters: {
             query?: never;
@@ -1138,6 +1314,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MetaModelResponse"];
+                };
+            };
+        };
+    };
+    get_material_characteristics_api_v1_meta_material_characteristics_get: {
+        parameters: {
+            query?: {
+                category?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaterialCharacteristicResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
