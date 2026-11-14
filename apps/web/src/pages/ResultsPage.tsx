@@ -413,29 +413,35 @@ export function ResultsPage() {
         </button>
       </aside>
 
-      <section className="results-main">
+      <section className="results-main min-h-screen">
         <header className="results-topbar">
-          <button className="results-mobile-menu" aria-label="Open menu">
-            <Glyph name="menu" />
-          </button>
-          <div>
-            <span className="result-ready">
-              <i /> Estimate ready
-            </span>
-            <span>{formatDateTime(estimate.created_at)}</span>
+          <div className="mx-auto flex h-full w-full max-w-[1600px] items-center justify-between px-6 sm:px-8 lg:px-12">
+            <button className="results-mobile-menu" aria-label="Open menu">
+              <Glyph name="menu" />
+            </button>
+            <div className="ml-auto flex items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 sm:gap-4 text-xs font-semibold text-ink-soft">
+                <span className="result-ready flex items-center gap-2 font-bold text-accent">
+                  <i /> Estimate ready
+                </span>
+                <span className="hidden text-xs text-ink-soft sm:inline">
+                  {formatDateTime(estimate.created_at)}
+                </span>
+              </div>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={pdfStatus === 'loading'}
+                aria-busy={pdfStatus === 'loading'}
+              >
+                <Glyph name="download" size={15} />{' '}
+                {pdfStatus === 'loading' ? 'Generating PDF…' : 'Download PDF'}
+              </button>
+            </div>
           </div>
-          <button
-            onClick={handleDownloadPdf}
-            disabled={pdfStatus === 'loading'}
-            aria-busy={pdfStatus === 'loading'}
-          >
-            <Glyph name="download" size={15} />{' '}
-            {pdfStatus === 'loading' ? 'Generating PDF…' : 'Download PDF'}
-          </button>
         </header>
 
         <motion.div
-          className="results-content"
+          className="results-content mx-auto w-full max-w-[1600px] px-6 sm:px-8 lg:px-12 py-8 lg:py-10"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -470,29 +476,35 @@ export function ResultsPage() {
             </div>
           )}
 
-          <motion.div variants={itemVariants} className="results-heading">
+          <motion.div variants={itemVariants} className="results-heading mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="mb-1 flex flex-wrap items-center gap-2">
-                <p className="app-eyebrow">
-                  {projectName} · estimate
+                <p className="app-eyebrow text-xs font-bold uppercase tracking-wider text-accent">
+                  {projectName ? `${projectName} · estimate` : 'estimate'}
                 </p>
                 {estimate.is_mock && (
                   <SampleDataBadge text={t('results.mockBadge')} />
                 )}
               </div>
-              <h1>{t('results.title')}</h1>
-              <p>{subtitle}</p>
+              <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl lg:text-5xl">
+                {t('results.title')}
+              </h1>
+              <p className="mt-1 text-sm text-ink-soft leading-relaxed">{subtitle}</p>
             </div>
-            <Link to="/app/new" className="text-xs font-semibold text-accent hover:underline">
+            <Link to="/app/new" className="text-sm font-semibold text-accent hover:underline pb-1 transition-colors">
               Edit project details
             </Link>
           </motion.div>
 
           <motion.section variants={itemVariants} className="result-hero">
             <div>
-              <p>Total estimated construction cost</p>
-              <strong className="mono">{formatINR(estimate.total.p50)}</strong>
-              <span>
+              <p className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                Total estimated construction cost
+              </p>
+              <strong className="mono my-2 block text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                {formatINR(estimate.total.p50)}
+              </strong>
+              <span className="flex items-center gap-2 text-xs font-mono text-white/70">
                 <i /> ₹{formatNumber(ratePerSqFt)} per sq ft
               </span>
             </div>
@@ -502,19 +514,33 @@ export function ResultsPage() {
               ))}
             </div>
             <div className="result-confidence">
-              <span>Planning confidence</span>
-              <strong>{estimate.confidence.label}</strong>
-              <div>
-                <i />
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/60">
+                Planning confidence
+              </span>
+              <strong className="mt-1.5 block text-xl font-extrabold text-[#7893ff] sm:text-2xl">
+                {estimate.confidence.label}
+              </strong>
+              <div className="my-3 h-1.5 w-full rounded-full bg-white/10">
+                <i
+                  className="block h-full rounded-full bg-accent"
+                  style={{
+                    width:
+                      estimate.confidence.label === 'High'
+                        ? '90%'
+                        : estimate.confidence.label === 'Medium'
+                          ? '65%'
+                          : '40%',
+                  }}
+                />
               </div>
-              <small>{estimate.confidence.reason}</small>
+              <small className="block text-xs leading-relaxed text-white/50">{estimate.confidence.reason}</small>
             </div>
           </motion.section>
 
           <motion.section variants={itemVariants} className="result-kpis">
             <article>
               <span>
-                <Glyph name="area" size={17} />
+                <Glyph name="area" size={20} />
               </span>
               <div>
                 <p>{t('results.kpi.totalBuiltUp') || 'Built-up area'}</p>
@@ -523,7 +549,7 @@ export function ResultsPage() {
             </article>
             <article>
               <span>
-                <Glyph name="check" size={17} />
+                <Glyph name="check" size={20} />
               </span>
               <div>
                 <p>{t('results.inputs.quality') || 'Quality tier'}</p>
@@ -532,7 +558,7 @@ export function ResultsPage() {
             </article>
             <article>
               <span>
-                <Glyph name="chart" size={17} />
+                <Glyph name="chart" size={20} />
               </span>
               <div>
                 <p>{t('results.kpi.planningRate') || 'Planning rate'}</p>
@@ -541,7 +567,7 @@ export function ResultsPage() {
             </article>
             <article>
               <span>
-                <Glyph name="chart" size={17} />
+                <Glyph name="chart" size={20} />
               </span>
               <div>
                 <p>Planning range</p>
