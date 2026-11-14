@@ -71,6 +71,19 @@ export function LandingPage() {
                 aria-hidden="true"
               />
               <div className="relative space-y-5">
+                <div className="relative overflow-hidden rounded-xl border border-line-soft shadow-inner">
+                  <img
+                    src="https://images.unsplash.com/photo-1691272477702-0a2edae135f2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=88&w=2000"
+                    alt="Modern residential architecture in Pune"
+                    className="h-44 w-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute bottom-2.5 left-2.5 flex items-center gap-2 rounded-lg bg-night/85 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-md">
+                    <img src="/buildsmart-mark.png" alt="" className="h-4 w-4 object-contain" />
+                    <span>Pune Residential Reference</span>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between gap-2">
                   <span className="eyebrow">{t('nav.context')}</span>
                   <span className="rounded-md bg-accent-soft px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-accent">
@@ -119,36 +132,57 @@ export function LandingPage() {
           </h2>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <article className="surface-card-interactive space-y-3 p-6">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
-              <Layers className="h-4 w-4" aria-hidden="true" />
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-stretch">
+          <div className="relative min-h-[220px] overflow-hidden rounded-2xl border border-line-soft lg:col-span-5">
+            <img
+              src="https://images.unsplash.com/photo-1721815693498-cc28507c0ba2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=86&w=1200"
+              alt="Contemporary multi-storey Indian residence in Pune"
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <span className="absolute bottom-3 left-3 rounded-md bg-night/85 px-2.5 py-1 text-[10px] font-mono tracking-wider text-white backdrop-blur-md">
+              Residential reference · Pune
             </span>
-            <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
-              {t('landing.features.allocation.title')}
-            </h3>
-            <p className="text-xs leading-6 text-ink-soft">{t('landing.features.allocation.body')}</p>
-          </article>
+          </div>
 
-          <article className="surface-card-interactive space-y-3 p-6">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
-              <MapPin className="h-4 w-4" aria-hidden="true" />
-            </span>
-            <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
-              {t('landing.features.zone.title')}
-            </h3>
-            <p className="text-xs leading-6 text-ink-soft">{t('landing.features.zone.body')}</p>
-          </article>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:col-span-7">
+            <article className="surface-card-interactive flex flex-col justify-between space-y-3 p-6">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
+                <Layers className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
+                  {t('landing.features.allocation.title')}
+                </h3>
+                <p className="mt-2 text-xs leading-6 text-ink-soft">{t('landing.features.allocation.body')}</p>
+              </div>
+            </article>
 
-          <article className="surface-card-interactive space-y-3 p-6">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
-              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            </span>
-            <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
-              {t('landing.features.ranges.title')}
-            </h3>
-            <p className="text-xs leading-6 text-ink-soft">{t('landing.features.ranges.body')}</p>
-          </article>
+            <article className="surface-card-interactive flex flex-col justify-between space-y-3 p-6">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
+                <MapPin className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
+                  {t('landing.features.zone.title')}
+                </h3>
+                <p className="mt-2 text-xs leading-6 text-ink-soft">{t('landing.features.zone.body')}</p>
+              </div>
+            </article>
+
+            <article className="surface-card-interactive flex flex-col justify-between space-y-3 p-6">
+              <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent-soft text-accent">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+              </span>
+              <div>
+                <h3 className="text-base font-extrabold tracking-[-0.03em] text-ink">
+                  {t('landing.features.ranges.title')}
+                </h3>
+                <p className="mt-2 text-xs leading-6 text-ink-soft">{t('landing.features.ranges.body')}</p>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -165,6 +199,12 @@ export function LandingPage() {
           />
           <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div className="max-w-2xl space-y-2">
+              <div className="mb-2 flex items-center gap-2">
+                <img src="/buildsmart-mark.png" alt="" className="h-6 w-6 object-contain" />
+                <span className="font-mono text-xs font-bold uppercase tracking-widest text-accent-soft">
+                  BuildSmart AI
+                </span>
+              </div>
               <h2 className="text-2xl font-extrabold tracking-[-0.045em] text-white sm:text-3xl">
                 {t('landing.notice.title')}
               </h2>

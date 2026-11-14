@@ -8,9 +8,7 @@ export function Footer() {
       <div className="mx-auto w-full max-w-shell rounded-xl bg-[#E5E9EF] px-6 py-6 sm:px-10">
         <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-[9px] bg-accent-soft text-[11px] font-extrabold tracking-[-0.04em] text-accent-deep">
-              BS
-            </span>
+            <img src="/buildsmart-mark.png" alt="BuildSmart" className="h-7 w-7 object-contain" />
             <div className="flex flex-col leading-tight">
               <span className="font-headline text-sm font-extrabold tracking-[-0.04em] text-ink">
                 BuildSmart AI
