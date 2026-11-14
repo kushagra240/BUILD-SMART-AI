@@ -4,11 +4,9 @@ import { ArrowLeft, ArrowRight, CalendarDays, FileText, Info, Plus } from 'lucid
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { HouseSchematic } from '../components/common/HouseSchematic';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
 import { useProject } from '../hooks/useProjects';
-import { isMockApi } from '../services/apiClient';
 import { formatDate, formatDateTime } from '../lib/formatters';
 
 export function SavedProjectDetailPage() {
@@ -16,7 +14,6 @@ export function SavedProjectDetailPage() {
   const navigate = useNavigate();
   const { project, status, error, reload, remove } = useProject(id);
   const [actionError, setActionError] = useState<string | null>(null);
-  const mock = isMockApi();
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
 
@@ -82,7 +79,6 @@ export function SavedProjectDetailPage() {
               <span className="eyebrow text-accent">
                 {t('projectDetail.kicker', { id: project.id.slice(0, 8).toUpperCase() })}
               </span>
-              {mock && <SampleDataBadge text={t('common.sampleData')} />}
             </div>
             <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
               {project.name}

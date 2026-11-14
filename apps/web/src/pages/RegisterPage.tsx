@@ -5,7 +5,6 @@ import type { TFunction } from 'i18next';
 import { z } from 'zod';
 import { ApiError, isMockApi } from '../services/apiClient';
 import { useAuth } from '../auth/useAuth';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { AuthShell } from '../components/layout/AuthShell';
 import { Glyph } from '../components/common/Glyph';
 
@@ -131,7 +130,6 @@ export function RegisterPage() {
         <p className="app-eyebrow">Create your workspace</p>
         <div className="flex items-center gap-2">
           <h2>{t('auth.register.title')}</h2>
-          {mock && <SampleDataBadge text={t('common.mockAuth')} variant="subtle" />}
         </div>
         <p className="auth-intro">{t('auth.register.subtitle')}</p>
 

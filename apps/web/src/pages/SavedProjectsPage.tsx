@@ -3,18 +3,15 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, FolderX, Plus, Search } from 'lucide-react';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
 import { useProjects } from '../hooks/useProjects';
-import { isMockApi } from '../services/apiClient';
 import { formatDate, formatDateTime } from '../lib/formatters';
 
 export function SavedProjectsPage() {
   const [search, setSearch] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
   const { items, total, status, error, reload, remove } = useProjects();
-  const mock = isMockApi();
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
 
@@ -65,7 +62,6 @@ export function SavedProjectsPage() {
                   projectCount: String(total).padStart(2, '0'),
                 })}
               </span>
-              {mock && <SampleDataBadge text={t('projects.sampleData')} />}
             </div>
             <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
               {t('projects.title')}

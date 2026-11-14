@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Database, Layers, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 export function MethodologyPage() {
@@ -13,7 +12,6 @@ export function MethodologyPage() {
         <header className="max-w-2xl space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="eyebrow text-accent">{t('methodology.kicker')}</span>
-            <SampleDataBadge text={t('common.sampleData')} />
           </div>
           <h1 className="text-3xl font-extrabold leading-[1.05] tracking-[-0.055em] text-ink sm:text-4xl lg:text-5xl">
             {t('methodology.title')}

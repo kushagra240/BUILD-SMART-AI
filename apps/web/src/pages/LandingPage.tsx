@@ -10,7 +10,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { SampleDataBadge } from '../components/common/SampleDataBadge';
 
 const qualityRates = {
   Economy: 2000,
@@ -101,7 +100,6 @@ export function LandingPage() {
           <div className="space-y-6 lg:col-span-7">
             <div className="flex flex-wrap items-center gap-2">
               <span className="eyebrow text-accent">{t('landing.kicker')}</span>
-              <SampleDataBadge text={t('common.sampleDataPrototype')} />
             </div>
 
             <h1 className="text-4xl font-extrabold leading-[1.02] tracking-[-0.06em] text-ink sm:text-5xl lg:text-6xl">

@@ -9,7 +9,7 @@ describe('App Component', () => {
       screen.getByRole('heading', { level: 1 })
     ).toHaveTextContent(/Intelligent Construction Cost Estimation/i);
     expect(screen.getByText(/Start 4-Step Estimate Wizard/i)).toBeInTheDocument();
-    expect(screen.getAllByTestId('sample-data-badge').length).toBeGreaterThan(0);
+    expect(screen.queryByTestId('sample-data-badge')).not.toBeInTheDocument();
   });
 
   it('falls through to the not-found page for the removed /pdf route', () => {
