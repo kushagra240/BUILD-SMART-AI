@@ -43,7 +43,6 @@ async def create_project(
     project = await project_service.create_project(
         db, user_id=current_user.id, name=req.name, notes=req.notes
     )
-    project.estimates = []
     return ProjectResponse.model_validate(project)
 
 

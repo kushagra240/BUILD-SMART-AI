@@ -83,7 +83,6 @@ def test_project_response_model_validate_without_estimates() -> None:
         created_at=datetime.now(UTC),
         updated_at=datetime.now(UTC),
     )
-    proj.estimates = []
 
     res = ProjectResponse.model_validate(proj)
     assert res.name == "Freshly Created Project"
