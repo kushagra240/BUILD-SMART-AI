@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { apiClient, ApiError } from './apiClient';
+import { apiClient, ApiError, isMockApi } from './apiClient';
 import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -43,6 +43,27 @@ const unauthorizedError = {
     request_id: 'req-2',
   },
 };
+
+describe('isMockApi', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('defaults to false (live backend mode) when VITE_USE_MOCK is not set', () => {
+    vi.stubEnv('VITE_USE_MOCK', '');
+    expect(isMockApi()).toBe(false);
+  });
+
+  it('returns false when VITE_USE_MOCK is explicitly "false"', () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    expect(isMockApi()).toBe(false);
+  });
+
+  it('returns true only when VITE_USE_MOCK is explicitly "true"', () => {
+    vi.stubEnv('VITE_USE_MOCK', 'true');
+    expect(isMockApi()).toBe(true);
+  });
+});
 
 describe('apiClient auth wiring', () => {
   beforeEach(() => {

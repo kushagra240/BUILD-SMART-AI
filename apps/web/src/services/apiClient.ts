@@ -54,12 +54,12 @@ export function mapZoneToRatesZone(zoneId: string): string {
 }
 
 /**
- * Mock mode is opt-out: the app runs against the simulated API unless the
- * environment explicitly sets VITE_USE_MOCK=false. Evaluated at call time so
- * tests can stub the environment per test.
+ * Live mode is the default: the app runs against the live FastAPI backend
+ * unless the environment explicitly sets VITE_USE_MOCK=true.
+ * Evaluated at call time so tests can stub the environment per test.
  */
 export function isMockApi(): boolean {
-  return import.meta.env.VITE_USE_MOCK !== 'false';
+  return import.meta.env.VITE_USE_MOCK === 'true';
 }
 
 type ErrorEnvelope = {
