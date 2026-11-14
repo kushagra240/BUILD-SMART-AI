@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiClient, ApiError } from './apiClient';
+import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return {
@@ -363,6 +364,37 @@ describe('apiClient estimate wiring', () => {
     expect(init.method).toBe('GET');
   });
 
+  it('rejects unknown option ids from /meta/options instead of guessing', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        jsonResponse({
+          zones: [],
+          quality_tiers: [{ id: 'luxury', name: 'Luxury' }],
+          construction_types: [],
+        })
+      )
+    );
+
+    await expect(apiClient.getMetaOptions()).rejects.toThrow(/unknown quality tier/);
+  });
+
+  it('serves the mock estimate through the single canonical category list', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'true');
+    vi.stubGlobal('fetch', vi.fn());
+
+    const estimate = await apiClient.createEstimate(project.id, {
+      ...inputs,
+      zone_id: 'pune_west',
+    });
+
+    expect(estimate.breakdown.map((row) => row.category)).toEqual(
+      ESTIMATE_CATEGORIES.map((category) => category.value)
+    );
+    expect(estimate.breakdown.reduce((sum, row) => sum + row.share_pct, 0)).toBe(100);
+  });
+
   it('posts the estimate payload to the project estimate endpoint', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
     const fetchMock = vi.fn(async () =>
@@ -419,6 +451,24 @@ describe('apiClient estimate wiring', () => {
     const zones = await apiClient.getEstimateZones();
     expect(zones.some((zone) => zone.id === 'pune_west')).toBe(true);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('maps UI zone identifiers to regulatory backend rates zone codes in outgoing request', async () => {
+    vi.stubEnv('VITE_USE_MOCK', 'false');
+    const fetchMock = vi.fn(async () =>
+      jsonResponse({ id: 'estimate-2', project_id: project.id, is_mock: false }, 200)
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await apiClient.createEstimate(project.id, {
+      ...inputs,
+      zone_id: 'pune_west',
+    });
+
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe(`/api/v1/projects/${project.id}/estimates`);
+    const sentBody = JSON.parse(String(init.body));
+    expect(sentBody.zone_id).toBe('ZN-PMC');
   });
 });
 

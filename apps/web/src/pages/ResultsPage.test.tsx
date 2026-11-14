@@ -74,7 +74,11 @@ describe('ResultsPage contract rendering', () => {
     expect(screen.getByText(/Deshmukh residence · estimate/i)).toBeInTheDocument();
     // The total is rendered in the KPI block and in the breakdown total row.
     expect(screen.getAllByText(/36,00,000/).length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText('Foundation')).toBeInTheDocument();
+    expect(screen.getAllByText('Foundation').length).toBeGreaterThanOrEqual(1);
+    // The legend is derived from the breakdown, not a static grouping.
+    expect(screen.queryByText('Finishes')).not.toBeInTheDocument();
+    expect(screen.queryByText('Buffer')).not.toBeInTheDocument();
+    expect(screen.getAllByText('12%').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Mock \/ stub data:/i)).toBeInTheDocument();
     expect(screen.getByTestId('sample-data-badge')).toHaveTextContent('Mock / stub data');
     expect(screen.getByText(/Stub estimate for tests/)).toBeInTheDocument();

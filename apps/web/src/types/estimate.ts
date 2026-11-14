@@ -19,30 +19,37 @@ export type BudgetStatus = Schemas['BudgetAssessment'];
 export type CostDriver = Schemas['CostDriverItem'];
 export type EstimateResponse = Schemas['EstimateResponse'];
 
+/**
+ * Meta option shapes follow `MetaOptionsResponse` in `api.generated.ts`
+ * (`{ id, name }`). The mock layer adds a description and an indicative rate
+ * for the wizard preview; the real `/meta/options` endpoint does not return
+ * rates, so they stay optional and the UI must not invent one when absent.
+ */
 export interface LocationZone {
-  zone_id: string;
-  zone_name: string;
-  description: string;
+  id: string;
+  name: string;
+  description?: string;
 }
 
 export interface QualityTierOption {
   id: QualityTier;
   name: string;
-  description: string;
-  indicative_rate_sqft: number;
+  description?: string;
+  indicative_rate_sqft?: number;
 }
 
 export interface ConstructionTypeOption {
   id: ConstructionType;
   name: string;
-  description: string;
+  description?: string;
 }
 
 export interface MetaOptions {
   zones: LocationZone[];
   quality_tiers: QualityTierOption[];
   construction_types: ConstructionTypeOption[];
-  ranges: {
+  /** Mock only: input bounds used by the in-browser form. */
+  ranges?: {
     area_sqft: { min: number; max: number };
     floors: { min: number; max: number };
     bedrooms: { min: number; max: number };
