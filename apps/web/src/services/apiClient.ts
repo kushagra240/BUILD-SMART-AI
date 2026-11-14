@@ -568,8 +568,12 @@ class ApiClient {
 
   async getEstimate(estimateId: string): Promise<EstimateResponse> {
     if (isMockApi()) {
-      return this.createEstimate('deshmukh-residence', {
-        built_up_area_sqft: 1800,
+      const proj = MOCK_PROJECTS.find((p) => p.id === estimateId);
+      const area = proj
+        ? parseInt((proj.notes || '').match(/([\d,]+)\s*sq\s*ft/i)?.[1].replace(/,/g, '') || '1800', 10)
+        : 1800;
+      return this.createEstimate(estimateId, {
+        built_up_area_sqft: area,
         floors: 2,
         bedrooms: 3,
         bathrooms: 3,
@@ -577,10 +581,22 @@ class ApiClient {
         quality_tier: 'standard',
         construction_type: 'rcc_framed',
         plot_area_sqft: 1200,
-        budget_inr: 4320000,
+        budget_inr: area * 2400,
       });
     }
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * GET /projects/{projectId}/estimate -> retrieve latest estimate for a project.
+   */
+  async getProjectEstimate(projectId: string): Promise<EstimateResponse> {
+    if (isMockApi()) {
+      return this.getEstimate(projectId);
+    }
+    return this.request<EstimateResponse>(`/projects/${projectId}/estimate`, {
       method: 'GET',
     });
   }

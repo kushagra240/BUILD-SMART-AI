@@ -172,7 +172,8 @@ function MaterialComparison({
 
 export function ResultsPage() {
   const { t } = useTranslation();
-  const { id } = useParams<{ id: string }>();
+  const { id, projectId } = useParams<{ id?: string; projectId?: string }>();
+  const targetId = projectId || id;
   const location = useLocation();
   const navigate = useNavigate();
   const locationState = (location.state ?? null) as ResultsLocationState | null;
@@ -186,10 +187,11 @@ export function ResultsPage() {
   );
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'redirect'>(() => {
     if (estimate) return 'success';
-    return id ? 'loading' : 'redirect';
+    return targetId ? 'loading' : 'redirect';
   });
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [projectInfo, setProjectInfo] = useState<{ name: string; location: string } | null>(null);
   const [pdfStatus, setPdfStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [materialCharacteristics, setMaterialCharacteristics] = useState<
@@ -229,10 +231,10 @@ export function ResultsPage() {
   }, [estimate]);
 
   useEffect(() => {
-    if (estimate && estimate.id === id) {
+    if (estimate && (estimate.id === targetId || estimate.project_id === targetId)) {
       return;
     }
-    if (!id) {
+    if (!targetId) {
       setStatus('redirect');
       return;
     }
@@ -241,8 +243,11 @@ export function ResultsPage() {
     setStatus('loading');
     setError(null);
 
-    apiClient
-      .getEstimate(id)
+    const fetchPromise = projectId
+      ? apiClient.getProjectEstimate(projectId).catch(() => apiClient.getEstimate(projectId))
+      : apiClient.getEstimate(targetId);
+
+    fetchPromise
       .then((response) => {
         if (!active) return;
         setEstimate(response);
@@ -257,7 +262,28 @@ export function ResultsPage() {
     return () => {
       active = false;
     };
-  }, [estimate, id, reloadKey, t]);
+  }, [estimate, targetId, projectId, reloadKey, t]);
+
+  useEffect(() => {
+    const projId = estimate?.project_id || projectId;
+    if (!projId) return;
+    if (locationState?.projectName && locationState?.locality) return;
+    let active = true;
+    apiClient
+      .getProject(projId)
+      .then((proj) => {
+        if (!active) return;
+        const parts = (proj.notes || '').split('·').map((p) => p.trim());
+        setProjectInfo({
+          name: proj.name,
+          location: parts[0] || 'Pune, Maharashtra',
+        });
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [estimate?.project_id, projectId, locationState]);
 
   const handleDownloadPdf = async () => {
     if (!estimate || pdfStatus === 'loading') {
@@ -349,8 +375,8 @@ export function ResultsPage() {
     );
   }
 
-  const projectName = locationState?.projectName || 'Deshmukh residence';
-  const locality = locationState?.locality || 'Baner, Pune';
+  const projectName = locationState?.projectName || projectInfo?.name || 'Deshmukh residence';
+  const locality = locationState?.locality || projectInfo?.location || 'Baner, Pune';
   const areaSqFt = estimate.inputs.built_up_area_sqft;
   const totalCost = estimate.total.p50;
   const ratePerSqFt = areaSqFt > 0 ? Math.round(totalCost / areaSqFt) : 0;

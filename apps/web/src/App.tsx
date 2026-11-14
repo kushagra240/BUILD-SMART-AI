@@ -25,7 +25,9 @@ function AppLayout() {
     location.pathname === '/register' ||
     location.pathname === '/app' ||
     location.pathname === '/app/new' ||
-    location.pathname.startsWith('/app/estimates');
+    location.pathname.startsWith('/app/estimates') ||
+    location.pathname.startsWith('/projects') ||
+    location.pathname.includes('/estimate');
 
   return (
     <div className="app-surface flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-accent/20 selection:text-ink">
@@ -40,6 +42,8 @@ function AppLayout() {
             <Route path="/app" element={<DashboardPage />} />
             <Route path="/app/new" element={<WizardPage />} />
             <Route path="/app/estimates/:id" element={<ResultsPage />} />
+            <Route path="/projects/:projectId/estimate" element={<ResultsPage />} />
+            <Route path="/app/projects/:projectId/estimate" element={<ResultsPage />} />
             <Route path="/app/projects" element={<SavedProjectsPage />} />
             <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
           </Route>

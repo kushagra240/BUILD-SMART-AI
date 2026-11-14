@@ -176,6 +176,19 @@ async def get_estimate(
     return await estimation.get_estimate_by_id(db, user_id=current_user.id, estimate_id=estimate_id)
 
 
+@router.get("/projects/{project_id}/estimate", response_model=EstimateResponse)
+@router.get("/projects/{project_id}/estimates/latest", response_model=EstimateResponse)
+async def get_project_latest_estimate(
+    project_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> EstimateResponse:
+    """Get the latest estimate snapshot for a project."""
+    return await estimation.get_latest_estimate_for_project(
+        db, user_id=current_user.id, project_id=project_id
+    )
+
+
 @router.get(
     "/projects/{project_id}/estimates/{estimate_id}/pdf",
     response_class=Response,

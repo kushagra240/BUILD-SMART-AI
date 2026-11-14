@@ -8,7 +8,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.engine.calculator import calculate_estimate
@@ -463,14 +463,19 @@ async def get_estimate_by_id(
     user_id: uuid.UUID,
     estimate_id: uuid.UUID,
 ) -> EstimateResponse:
-    """Fetch an estimate by ID checking user ownership of parent project."""
+    """Fetch an estimate by ID or parent project ID checking user ownership."""
     stmt = (
         select(Estimate)
         .join(Estimate.project)
         .where(
-            Estimate.id == estimate_id,
+            or_(
+                Estimate.id == estimate_id,
+                Estimate.project_id == estimate_id,
+            ),
             Estimate.project.has(user_id=user_id, deleted_at=None),
         )
+        .order_by(Estimate.created_at.desc())
+        .limit(1)
     )
     res = await db.execute(stmt)
     estimate = res.scalar_one_or_none()
@@ -525,3 +530,12 @@ async def get_estimate_by_id(
         is_mock=getattr(estimate, "is_mock", False),
         created_at=estimate.created_at,
     )
+
+
+async def get_latest_estimate_for_project(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+    project_id: uuid.UUID,
+) -> EstimateResponse:
+    """Fetch the latest estimate for a project checking user ownership."""
+    return await get_estimate_by_id(db, user_id=user_id, estimate_id=project_id)

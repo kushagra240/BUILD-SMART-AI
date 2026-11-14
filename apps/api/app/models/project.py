@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import UUID, DateTime, ForeignKey, Index, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -40,3 +40,21 @@ class Project(Base):
     estimates: Mapped[list["Estimate"]] = relationship(
         "Estimate", back_populates="project", cascade="all, delete-orphan"
     )
+
+    @property
+    def latest_estimate(self) -> dict[str, Any] | None:
+        if self.estimates:
+            sorted_ests = sorted(self.estimates, key=lambda e: e.created_at, reverse=True)
+            newest = sorted_ests[0]
+            area = (
+                newest.inputs.get("built_up_area_sqft")
+                if isinstance(newest.inputs, dict)
+                else None
+            )
+            return {
+                "id": newest.id,
+                "total_p50": newest.total_p50,
+                "built_up_area_sqft": area,
+                "created_at": newest.created_at,
+            }
+        return None
