@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import UUID, DateTime, ForeignKey, Index, String, Text, func
+from sqlalchemy import UUID, DateTime, ForeignKey, Index, String, Text, func, inspect
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -43,6 +43,9 @@ class Project(Base):
 
     @property
     def latest_estimate(self) -> dict[str, Any] | None:
+        insp = inspect(self)
+        if "estimates" in insp.unloaded:
+            return None
         if self.estimates:
             sorted_ests = sorted(self.estimates, key=lambda e: e.created_at, reverse=True)
             newest = sorted_ests[0]

@@ -1,4 +1,10 @@
+import uuid
+from datetime import UTC, datetime
+
 import pytest
+from app.models.estimate import Estimate
+from app.models.project import Project
+from app.schemas.project import ProjectResponse
 from httpx import AsyncClient
 
 
@@ -65,3 +71,54 @@ async def test_projects_crud_and_idor_protection(client: AsyncClient) -> None:
     # 7. User A attempts to view deleted project -> 404
     deleted_get_res = await client.get(f"/api/v1/projects/{proj_id}", headers=headers_user_a)
     assert deleted_get_res.status_code == 404
+
+
+def test_project_response_model_validate_without_estimates() -> None:
+    """Ensure ProjectResponse.model_validate handles fresh Project without lazy-load crash."""
+    proj = Project(
+        id=uuid.uuid4(),
+        user_id=uuid.uuid4(),
+        name="Freshly Created Project",
+        notes="Kothrud, Pune",
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
+    )
+    proj.estimates = []
+
+    res = ProjectResponse.model_validate(proj)
+    assert res.name == "Freshly Created Project"
+    assert res.latest_estimate is None
+
+
+def test_project_response_model_validate_with_estimates() -> None:
+    """Ensure ProjectResponse.model_validate handles Project with loaded estimates."""
+    proj_id = uuid.uuid4()
+    proj = Project(
+        id=proj_id,
+        user_id=uuid.uuid4(),
+        name="Project with Estimate",
+        notes="Baner, Pune",
+        created_at=datetime.now(UTC),
+        updated_at=datetime.now(UTC),
+    )
+    est = Estimate(
+        id=uuid.uuid4(),
+        project_id=proj_id,
+        inputs={"built_up_area_sqft": 2000.0},
+        total_p50=5700000,
+        total_p10=5000000,
+        total_p90=6500000,
+        confidence_label="Medium",
+        breakdown=[],
+        materials=[],
+        drivers=[],
+        is_mock=False,
+        created_at=datetime.now(UTC),
+    )
+    proj.estimates = [est]
+
+    res = ProjectResponse.model_validate(proj)
+    assert res.name == "Project with Estimate"
+    assert res.latest_estimate is not None
+    assert res.latest_estimate.total_p50 == 5700000
+    assert res.latest_estimate.built_up_area_sqft == 2000.0

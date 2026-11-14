@@ -21,6 +21,7 @@ async def create_project(
     db.add(project)
     await db.commit()
     await db.refresh(project)
+    project.estimates = []
     return project
 
 
@@ -48,10 +49,14 @@ async def get_user_projects(
 
 async def get_project_by_id(db: AsyncSession, user_id: uuid.UUID, project_id: uuid.UUID) -> Project:
     """Fetch project with strict object-level authorization (returns 404 for unowned/deleted)."""
-    stmt = select(Project).where(
-        Project.id == project_id,
-        Project.user_id == user_id,
-        Project.deleted_at.is_(None),
+    stmt = (
+        select(Project)
+        .options(selectinload(Project.estimates))
+        .where(
+            Project.id == project_id,
+            Project.user_id == user_id,
+            Project.deleted_at.is_(None),
+        )
     )
     res = await db.execute(stmt)
     project = res.scalar_one_or_none()
