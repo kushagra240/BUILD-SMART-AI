@@ -157,6 +157,11 @@ async def get_all_material_characteristics(
         items = list(res.scalars().all())
         if items:
             return items
+
+        # If table is populated but no items match the requested category, return empty
+        total_res = await db.execute(select(MaterialCharacteristic.id).limit(1))
+        if total_res.scalar_one_or_none() is not None:
+            return []
     except Exception as exc:
         logger.warning("Could not query material_characteristics table: %s", exc)
 
@@ -173,7 +178,7 @@ async def get_all_material_characteristics(
             image_url=d["image_url"],
         )
         for d in SCIENTIFIC_MATERIAL_DATA
-        if not category or d["category"] == category
+        if not category or d["category"].lower() == category.lower()
     ]
     return defaults
 

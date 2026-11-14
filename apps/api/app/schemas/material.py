@@ -22,3 +22,4 @@ class MaterialCharacteristicResponse(BaseSchema):
 class MaterialCharacteristicListResponse(BaseSchema):
     items: list[MaterialCharacteristicResponse]
     total: int = Field(default=0, ge=0)
+

@@ -130,3 +130,4 @@ def downgrade() -> None:
         table_name="material_characteristics",
     )
     op.drop_table("material_characteristics")
+

@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+from sqlalchemy import UUID, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -12,7 +12,7 @@ class MaterialCharacteristic(Base):
     __tablename__ = "material_characteristics"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     category: Mapped[str] = mapped_column(sa.String(100), nullable=False, index=True)
     material_name: Mapped[str] = mapped_column(sa.String(255), nullable=False, unique=True)
@@ -24,8 +24,8 @@ class MaterialCharacteristic(Base):
     )
     image_url: Mapped[str] = mapped_column(sa.String(1000), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False
+        sa.DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     updated_at: Mapped[datetime] = mapped_column(
-        sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False
+        sa.DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
