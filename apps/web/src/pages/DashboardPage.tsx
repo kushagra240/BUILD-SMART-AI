@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useAuth } from '../auth/useAuth';
@@ -8,7 +8,8 @@ import { DeleteProjectButton } from '../components/projects/DeleteProjectButton'
 import { ProductHeader } from '../components/layout/ProductHeader';
 import { Glyph } from '../components/common/Glyph';
 import buildSmartMark from '../assets/buildsmart-mark.png';
-import type { ProjectResponse } from '../services/apiClient';
+import { apiClient, type ProjectResponse } from '../services/apiClient';
+import type { EstimateResponse } from '../types/estimate';
 
 const CARD_IMAGES = [
   'https://images.unsplash.com/photo-1721815693498-cc28507c0ba2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
@@ -16,23 +17,58 @@ const CARD_IMAGES = [
   'https://images.unsplash.com/photo-1608619769165-25647672335f?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
 ];
 
-function getProjectDetails(project: ProjectResponse) {
+type ProjectWithEstimate = ProjectResponse & {
+  latest_estimate?: {
+    id?: string;
+    total_p50?: number;
+    built_up_area_sqft?: number | null;
+    created_at?: string;
+  } | null;
+};
+
+function getProjectDetails(
+  project: ProjectWithEstimate,
+  estimate?: EstimateResponse | null
+) {
   const notes = project.notes ?? '';
   const parts = notes.split('·').map((p) => p.trim());
   const location = parts[0] || 'Pune, Maharashtra';
 
-  const areaMatch = notes.match(/([\d,]+)\s*sq\s*ft/i);
+  const est = estimate || project.latest_estimate;
+
   let areaSqFt = 1800;
   let areaText = '1,800 sq ft';
-  if (areaMatch) {
-    const parsed = parseInt(areaMatch[1].replace(/,/g, ''), 10);
-    if (!isNaN(parsed) && parsed > 0) {
-      areaSqFt = parsed;
-      areaText = `${areaSqFt.toLocaleString('en-IN')} sq ft`;
+
+  const rawArea =
+    (est && 'inputs' in est && est.inputs?.built_up_area_sqft) ||
+    (est && 'built_up_area_sqft' in est && est.built_up_area_sqft) ||
+    null;
+
+  if (rawArea) {
+    areaSqFt = Math.round(Number(rawArea));
+    areaText = `${areaSqFt.toLocaleString('en-IN')} sq ft`;
+  } else {
+    const areaMatch = notes.match(/([\d,]+)\s*sq\s*ft/i);
+    if (areaMatch) {
+      const parsed = parseInt(areaMatch[1].replace(/,/g, ''), 10);
+      if (!isNaN(parsed) && parsed > 0) {
+        areaSqFt = parsed;
+        areaText = `${areaSqFt.toLocaleString('en-IN')} sq ft`;
+      }
     }
   }
 
-  const totalCost = areaSqFt * 2400;
+  let totalCost: number;
+  const rawCost =
+    (est && 'total' in est && est.total?.p50) ||
+    (est && 'total_p50' in est && est.total_p50) ||
+    null;
+
+  if (rawCost) {
+    totalCost = Number(rawCost);
+  } else {
+    totalCost = areaSqFt * 2400;
+  }
   const costText = formatINR(totalCost);
 
   return {
@@ -47,13 +83,39 @@ export function DashboardPage() {
   const { user } = useAuth();
   const { items, status, error, reload, remove } = useProjects();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [projectEstimates, setProjectEstimates] = useState<Record<string, EstimateResponse>>({});
+
+  useEffect(() => {
+    if (!items || items.length === 0) return;
+    let active = true;
+
+    items.forEach((p) => {
+      if ((p as ProjectWithEstimate).latest_estimate?.total_p50) return;
+      apiClient
+        .getProjectEstimate(p.id)
+        .catch(() => apiClient.getEstimate(p.id))
+        .then((est) => {
+          if (active && est) {
+            setProjectEstimates((prev) => ({ ...prev, [p.id]: est }));
+          }
+        })
+        .catch(() => {});
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [items]);
 
   const handleDelete = async (projectId: string) => {
     setActionError(null);
     await remove(projectId);
   };
 
-  const portfolioTotal = items.reduce((sum, p) => sum + getProjectDetails(p).costValue, 0);
+  const portfolioTotal = items.reduce(
+    (sum, p) => sum + getProjectDetails(p as ProjectWithEstimate, projectEstimates[p.id]).costValue,
+    0
+  );
   const reduceMotion = useReducedMotion();
 
   const containerVariants: Variants = {
@@ -167,7 +229,7 @@ export function DashboardPage() {
               animate="show"
             >
               {items.map((project, index) => {
-                const details = getProjectDetails(project);
+                const details = getProjectDetails(project as ProjectWithEstimate, projectEstimates[project.id]);
                 return (
                   <motion.div
                     className="saved-project-card relative group"
@@ -175,7 +237,11 @@ export function DashboardPage() {
                     variants={itemVariants}
                   >
                     <Link
-                      to={`/app/estimates/${project.id}`}
+                      to={`/projects/${project.id}/estimate`}
+                      state={{
+                        projectName: project.name,
+                        locality: details.location,
+                      }}
                       className="block text-inherit no-underline"
                     >
                       <div className="project-image">
@@ -192,7 +258,11 @@ export function DashboardPage() {
                           {String(index + 1).padStart(2, '0')}
                         </span>
                         <h2>{project.name}</h2>
-                        {project.notes && <p>{project.notes}</p>}
+                        {project.notes ? (
+                          <p>{project.notes}</p>
+                        ) : (
+                          <p className="text-xs text-ink-soft">{details.location}</p>
+                        )}
                         <div className="project-cost">
                           <span>Planning estimate</span>
                           <strong className="mono">{details.costText}</strong>

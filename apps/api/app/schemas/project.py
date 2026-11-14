@@ -16,6 +16,13 @@ class ProjectUpdate(BaseSchema):
     notes: str | None = Field(default=None, max_length=2000)
 
 
+class ProjectEstimateSummary(BaseSchema):
+    id: uuid.UUID
+    total_p50: int
+    built_up_area_sqft: float | None = None
+    created_at: datetime
+
+
 class ProjectResponse(BaseSchema):
     id: uuid.UUID
     user_id: uuid.UUID
@@ -23,6 +30,7 @@ class ProjectResponse(BaseSchema):
     notes: str | None
     created_at: datetime
     updated_at: datetime
+    latest_estimate: ProjectEstimateSummary | None = None
 
 
 class ProjectListResponse(BaseSchema):

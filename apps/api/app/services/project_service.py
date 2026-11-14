@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.project import Project
 
@@ -33,7 +34,12 @@ async def get_user_projects(
     count_res = await db.execute(count_stmt)
     total = count_res.scalar_one()
 
-    list_stmt = base_stmt.order_by(Project.created_at.desc()).offset(offset).limit(limit)
+    list_stmt = (
+        base_stmt.options(selectinload(Project.estimates))
+        .order_by(Project.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+    )
     list_res = await db.execute(list_stmt)
     items = list(list_res.scalars().all())
 
