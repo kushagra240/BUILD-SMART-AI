@@ -1978,3 +1978,64 @@
     animation: none;
   }
 }
+
+/* T48: collapsible estimate rail and mock material-characteristics preview */
+.results-sidebar { transition: width .3s cubic-bezier(.16,1,.3,1), padding .3s cubic-bezier(.16,1,.3,1); }
+.results-sidebar-head { display:flex; align-items:center; justify-content:space-between; gap:5px; }
+.sidebar-collapse { width:32px; height:32px; flex:0 0 auto; display:grid; place-items:center; border:1px solid #dfe4ec; border-radius:7px; background:#f8f9fb; color:#6d7480; }
+.results-main { transition: margin-left .3s cubic-bezier(.16,1,.3,1); }
+.sidebar-is-collapsed .results-sidebar { width:76px; padding-inline:10px; }
+.sidebar-is-collapsed .results-sidebar-head { flex-direction:column; }
+.sidebar-is-collapsed .results-logo { width:48px; height:54px; padding:4px; }
+.sidebar-is-collapsed .sidebar-collapse { transform:rotate(180deg); }
+.sidebar-is-collapsed .results-sidebar nav { align-items:center; margin-top:24px; }
+.sidebar-is-collapsed .results-sidebar nav button,.sidebar-is-collapsed .sidebar-logout { width:43px; justify-content:center; padding:0; }
+.sidebar-is-collapsed .results-sidebar nav button span,.sidebar-is-collapsed .sidebar-logout span,.sidebar-is-collapsed .sidebar-project { display:none; }
+.sidebar-is-collapsed .sidebar-logout { margin-top:auto; }
+.sidebar-is-collapsed .results-main { margin-left:76px; }
+.mock-materials-panel { margin-top:16px; overflow:hidden; }
+.mock-data-badge { border:1px solid #bfcaf1; border-radius:20px; background:#e8edff; padding:6px 9px; color:#244cc8; font-size:8px; font-weight:700; }
+.mock-materials-intro { margin:0; padding:16px 20px 0; color:#747c88; font-size:10px; }
+.mock-materials-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:18px 20px 20px; }
+.mock-material-card { overflow:hidden; border:1px solid #dfe4ec; border-radius:10px; background:white; transition:.25s ease; }
+.mock-material-card:hover { transform:translateY(-4px); box-shadow:0 13px 26px rgba(17,19,25,.09); }
+.mock-material-image { height:125px; position:relative; overflow:hidden; background:#e5e9ef; }
+.mock-material-image img { width:100%; height:100%; object-fit:cover; filter:saturate(.4) contrast(1.06); }
+.mock-material-image span { position:absolute; top:10px; left:10px; border-radius:5px; background:rgba(255,255,255,.92); padding:5px 7px; color:#315efb; font:600 8px "IBM Plex Mono",monospace; }
+.mock-material-copy { padding:14px; }
+.mock-material-copy small { color:#315efb; font-size:8px; font-weight:700; text-transform:uppercase; }
+.mock-material-copy h3 { margin:6px 0 12px; color:#222630; font-size:13px; }
+.mock-material-copy dl { margin:0; }
+.mock-material-copy dl div { border-top:1px solid #e7eaf0; padding:8px 0; }
+.mock-material-copy dt { color:#969da8; font-size:7px; }
+.mock-material-copy dd { margin:3px 0 0; color:#505762; font-size:9px; font-weight:600; }
+@media (max-width:1000px){.mock-materials-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.sidebar-is-collapsed .results-main{margin-left:0}}
+@media (max-width:520px){.mock-materials-grid{grid-template-columns:1fr}.mock-materials-panel .result-panel-head{align-items:flex-start;flex-direction:column;gap:10px}}
+
+/* T48: richer analytical category table */
+.cost-table-head,.cost-table-row { grid-template-columns:1.7fr .75fr .7fr; }
+.themed-cost-row { position:relative; overflow:hidden; transition:background .2s ease,transform .2s ease,box-shadow .2s ease; }
+.themed-cost-row::before { content:""; width:4px; position:absolute; inset:7px auto 7px 0; border-radius:0 4px 4px 0; background:var(--category-color); }
+.themed-cost-row:hover { z-index:2; background:color-mix(in srgb,var(--category-color) 7%,white); transform:translateX(3px); box-shadow:0 8px 20px rgba(17,19,25,.07); }
+.themed-cost-row > span:first-child > i:nth-of-type(2) { width:25px; height:25px; display:grid; place-items:center; border-radius:6px; background:color-mix(in srgb,var(--category-color) 13%,white); color:var(--category-color); }
+.category-share-cell { display:grid; grid-template-columns:38px 1fr; align-items:center; gap:8px; }
+.category-share-cell > span { color:#3c424d; font-size:9px; }
+.category-share-cell > i { height:6px; display:block; overflow:hidden; border-radius:4px; background:#e9edf3; }
+.category-share-cell > i > b { min-width:4px; height:100%; display:block; border-radius:inherit; background:var(--category-color); }
+.cost-table-total { position:relative; overflow:hidden; }
+.cost-table-total::after { content:""; width:140px; height:140px; position:absolute; top:-105px; right:7%; border:24px solid rgba(49,94,251,.18); border-radius:50%; }
+.cost-table-total > * { position:relative; z-index:2; }
+
+/* T48: editorial polish for category breakdown */
+.cost-table-panel .result-panel-head { position:relative; overflow:hidden; border-bottom-color:#272c37; background:#111319; padding-block:20px; }
+.cost-table-panel .result-panel-head::after { content:""; width:180px; height:180px; position:absolute; top:-137px; right:22%; border:28px solid rgba(49,94,251,.2); border-radius:50%; }
+.cost-table-panel .result-panel-head > * { position:relative; z-index:2; }
+.cost-table-panel .result-panel-head h2 { color:white; }
+.cost-table-panel .result-panel-head .app-eyebrow { color:#7893ff; }
+.cost-table { display:flex; flex-direction:column; gap:6px; margin:18px 20px 20px; }
+.cost-table-head { margin-bottom:3px; border:0; background:#315efb; padding:11px 14px; color:white; font-size:9px; box-shadow:0 7px 16px rgba(49,94,251,.16); }
+.cost-table-row { min-height:49px; border:1px solid color-mix(in srgb,var(--category-color) 15%,#dfe4ec); border-radius:8px; background:white; padding:9px 15px; }
+.cost-table-row:nth-child(odd) { background:color-mix(in srgb,var(--category-color) 2.5%,white); }
+.cost-table-row > strong { justify-self:start; border:1px solid color-mix(in srgb,var(--category-color) 14%,#e2e6ed); border-radius:6px; background:color-mix(in srgb,var(--category-color) 6%,white); padding:6px 9px; }
+.cost-table-total { min-height:60px; margin-top:3px; border-radius:10px; }

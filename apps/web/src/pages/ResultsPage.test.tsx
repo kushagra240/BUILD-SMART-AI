@@ -257,6 +257,25 @@ describe('ResultsPage contract rendering', () => {
       screen.getByText('No material recommendations were returned for this estimate.')
     ).toBeInTheDocument();
   });
+
+
+  it('renders the mock material-characteristics preview without reviews or ratings', () => {
+    renderResults({ state: { estimate } });
+
+    expect(screen.getByText('MOCK · DATABASE PREVIEW')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'AAC block walling' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Reinforcement steel' })).toBeInTheDocument();
+    expect(screen.getByText(/no reviews or ratings/i)).toBeInTheDocument();
+  });
+
+  it('collapses and expands the results sidebar', () => {
+    renderResults({ state: { estimate } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
+    expect(screen.getByRole('button', { name: 'Expand sidebar' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Expand sidebar' }));
+    expect(screen.getByRole('button', { name: 'Collapse sidebar' })).toBeInTheDocument();
+  });
 });
 
 describe('ResultsPage PDF download', () => {
