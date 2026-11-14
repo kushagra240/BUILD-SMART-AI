@@ -881,7 +881,7 @@
           "Metadata"
         ],
         "summary": "Get Material Characteristics",
-        "description": "Get scientifically accurate, real-world characteristics for standard Indian construction materials.",
+        "description": "Get scientifically accurate characteristics for Indian construction materials.",
         "operationId": "get_material_characteristics_api_v1_meta_material_characteristics_get",
         "parameters": [
           {
@@ -1381,6 +1381,17 @@
           "reason": {
             "type": "string",
             "title": "Reason"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
           }
         },
         "additionalProperties": false,

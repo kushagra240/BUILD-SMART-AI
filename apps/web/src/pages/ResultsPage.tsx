@@ -100,7 +100,10 @@ function MaterialComparison({
   alternative: Record<string, string | number>;
 }) {
   const { t } = useTranslation();
-  const keys = Array.from(new Set([...Object.keys(primary), ...Object.keys(alternative)]));
+  const ignoredKeys = new Set(['material_id', 'category', 'quality_level']);
+  const keys = Array.from(
+    new Set([...Object.keys(primary), ...Object.keys(alternative)]),
+  ).filter((k) => !ignoredKeys.has(k));
 
   if (keys.length === 0) {
     return (
@@ -115,30 +118,30 @@ function MaterialComparison({
     if (value === undefined || value === '') {
       return <span className="italic text-ink-soft/70">{t('common.notProvided')}</span>;
     }
-    return typeof value === 'number' ? formatNumber(value) : value;
+    return typeof value === 'number' ? formatNumber(value) : String(value);
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full table-fixed text-sm">
+    <div className="overflow-x-auto rounded-xl border border-line-soft bg-surface">
+      <table className="w-full table-fixed text-xs sm:text-sm">
         <caption className="sr-only">{label}</caption>
         <thead>
-          <tr className="border-y border-line-soft bg-paper-deep/50 text-left">
+          <tr className="border-b border-line-soft bg-surface-subtle text-left">
             <th
               scope="col"
-              className="w-[30%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
+              className="w-[30%] px-4 sm:px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
             >
               {t('results.materials.specification')}
             </th>
             <th
               scope="col"
-              className="w-[35%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
+              className="w-[35%] px-4 sm:px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-accent font-bold"
             >
               {t('results.materials.primary')}
             </th>
             <th
               scope="col"
-              className="w-[35%] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
+              className="w-[35%] px-4 sm:px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] text-ink-soft"
             >
               {t('results.materials.alternative')}
             </th>
@@ -146,15 +149,19 @@ function MaterialComparison({
         </thead>
         <tbody className="divide-y divide-line-soft">
           {keys.map((key) => (
-            <tr key={key} className="align-top">
+            <tr key={key} className="align-top hover:bg-surface-subtle/30 transition-colors">
               <th
                 scope="row"
-                className="break-words px-5 py-3 text-left font-semibold text-ink-soft"
+                className="break-words px-4 sm:px-5 py-2.5 sm:py-3 text-left font-semibold text-ink-soft text-xs"
               >
                 {titleCase(key)}
               </th>
-              <td className="break-words px-5 py-3 text-ink">{renderValue(primary, key)}</td>
-              <td className="break-words px-5 py-3 text-ink">{renderValue(alternative, key)}</td>
+              <td className="break-words px-4 sm:px-5 py-2.5 sm:py-3 text-ink font-semibold text-xs sm:text-sm bg-accent/[0.02]">
+                {renderValue(primary, key)}
+              </td>
+              <td className="break-words px-4 sm:px-5 py-2.5 sm:py-3 text-ink text-xs sm:text-sm">
+                {renderValue(alternative, key)}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -732,7 +739,7 @@ export function ResultsPage() {
 
           {/* Material Recommendations Panel */}
           <motion.section variants={itemVariants} className="result-panel materials-panel p-6">
-            <div className="result-panel-head mb-4">
+            <div className="result-panel-head mb-2">
               <div>
                 <p className="app-eyebrow">Specification comparison</p>
                 <h2>{t('results.materials.title')}</h2>
@@ -741,16 +748,48 @@ export function ResultsPage() {
                 {t('results.materials.openGuide')} →
               </Link>
             </div>
+            <p className="text-xs sm:text-sm text-ink-soft mb-6 leading-relaxed">
+              Recommended materials calibrated for Pune structural durability, seismic zone III safety, and regional microclimate conditions.
+            </p>
+
             {estimate.materials.length > 0 ? (
-              <div className="divide-y divide-line-soft">
-                {estimate.materials.map((material) => (
-                  <section key={material.category} className="py-4">
-                    <div className="mb-3 space-y-1">
-                      <h3 className="text-sm font-bold text-ink">
-                        {translateMaterialCategory(t, material.category)}
-                      </h3>
-                      <p className="text-xs text-ink-soft">{material.reason}</p>
+              <div className="space-y-6">
+                {estimate.materials.map((material, idx) => (
+                  <article
+                    key={material.category}
+                    className="material-recommendation-card p-5 sm:p-6 space-y-4"
+                  >
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
+                      {material.image_url && (
+                        <div className="material-recommendation-thumb w-full sm:w-44 md:w-48 h-36 sm:h-32 shrink-0">
+                          <img
+                            src={material.image_url}
+                            alt={material.category}
+                            loading="lazy"
+                          />
+                          <span className="material-card-num">0{idx + 1}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[11px] font-bold text-accent uppercase tracking-wider bg-accent/10 px-2.5 py-0.5 rounded-full">
+                            IS Compliant Recommendation
+                          </span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-bold text-ink tracking-tight">
+                          {translateMaterialCategory(t, material.category)}
+                        </h3>
+                        <div className="rounded-lg bg-surface-subtle p-3 border border-line-soft/80">
+                          <p className="text-xs text-ink leading-relaxed">
+                            <span className="font-semibold text-accent mr-1.5">
+                              Engineering Rationale:
+                            </span>
+                            {material.reason}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+
                     <MaterialComparison
                       label={t('results.materials.comparisonLabel', {
                         category: translateMaterialCategory(t, material.category),
@@ -758,7 +797,7 @@ export function ResultsPage() {
                       primary={material.primary}
                       alternative={material.alternative}
                     />
-                  </section>
+                  </article>
                 ))}
               </div>
             ) : (

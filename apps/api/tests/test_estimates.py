@@ -10,6 +10,7 @@ from app.engine.contracts import (
     MissingDataError,
     TotalCost,
 )
+from app.services.estimation import get_pune_material_recommendations
 from httpx import AsyncClient
 
 
@@ -112,12 +113,25 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
         sum_categories = sum(item["amount"] for item in breakdown)
         assert sum_categories == total_p50
 
+        # Verify material recommendations returned with image_url
+        materials = est_data["materials"]
+        assert len(materials) >= 5
+        for mat in materials:
+            assert mat["category"]
+            assert mat["primary"]
+            assert mat["alternative"]
+            assert mat["reason"]
+            assert mat["image_url"] and mat["image_url"].startswith("http")
+
         # Fetch estimate by ID
         est_id = est_data["id"]
         get_res = await client.get(f"/api/v1/estimates/{est_id}", headers=headers)
         assert get_res.status_code == 200
-        assert get_res.json()["id"] == est_id
-        assert get_res.json()["is_mock"] is False
+        get_data = get_res.json()
+        assert get_data["id"] == est_id
+        assert get_data["is_mock"] is False
+        assert len(get_data["materials"]) >= 5
+        assert get_data["materials"][0]["image_url"] is not None
 
 
 @pytest.mark.asyncio
@@ -152,3 +166,21 @@ async def test_missing_data_returns_422(client: AsyncClient) -> None:
         )
         assert est_res.status_code == 422
         assert "zone_id:ZN-UNKNOWN" in str(est_res.json())
+
+
+def test_pune_material_recommendations_unit() -> None:
+    """Verify material recommendations generation without database dependencies."""
+    recs = get_pune_material_recommendations("standard")
+    assert len(recs) == 5
+    categories = [r.category for r in recs]
+    assert "Steel Reinforcement" in categories
+    assert "Masonry Blocks" in categories
+    assert "Flooring" in categories
+    assert "Cement" in categories
+    assert "Plumbing" in categories
+
+    for r in recs:
+        assert r.image_url and r.image_url.startswith("https://")
+        assert r.primary["name"]
+        assert r.alternative["name"]
+        assert len(r.reason) > 20

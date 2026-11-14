@@ -49,6 +49,7 @@ class MaterialRecommendationItem(BaseSchema):
     primary: dict[str, str | float | int]
     alternative: dict[str, str | float | int]
     reason: str
+    image_url: str | None = None
 
 
 class BudgetAssessment(BaseSchema):
