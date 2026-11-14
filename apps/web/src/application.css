@@ -2067,11 +2067,78 @@
 .cost-table-total > * { position:relative; z-index:2; }
 
 /* T48: editorial polish for category breakdown */
-.cost-table-panel .result-panel-head { position:relative; overflow:hidden; border-bottom-color:#272c37; background:#111319; padding-block:20px; }
-.cost-table-panel .result-panel-head::after { content:""; width:180px; height:180px; position:absolute; top:-137px; right:22%; border:28px solid rgba(49,94,251,.2); border-radius:50%; }
-.cost-table-panel .result-panel-head > * { position:relative; z-index:2; }
-.cost-table-panel .result-panel-head h2 { color:white; }
-.cost-table-panel .result-panel-head .app-eyebrow { color:#7893ff; }
+.cost-table-panel {
+  margin-top: 24px;
+  padding: 0 !important;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.cost-table-panel .result-panel-head,
+.cost-breakdown-header {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid #272c37;
+  background: #111319;
+  background-size: cover;
+  background-position: center;
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: auto;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+@media (max-width: 640px) {
+  .cost-table-panel .result-panel-head,
+  .cost-breakdown-header {
+    padding: 1.75rem 1.25rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
+
+.cost-table-panel .result-panel-head::after,
+.cost-breakdown-header::after {
+  content: "";
+  width: 220px;
+  height: 220px;
+  position: absolute;
+  top: -110px;
+  right: 18%;
+  border: 32px solid rgba(49, 94, 251, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cost-table-panel .result-panel-head > *,
+.cost-breakdown-header > * {
+  position: relative;
+  z-index: 2;
+}
+
+.cost-table-panel .result-panel-head h2,
+.cost-breakdown-header h2 {
+  color: white;
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.cost-table-panel .result-panel-head .app-eyebrow,
+.cost-breakdown-header .app-eyebrow {
+  color: #7893ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
 .cost-table { display:flex; flex-direction:column; gap:6px; margin:18px 20px 20px; }
 .cost-table-head { margin-bottom:3px; border:0; background:#315efb; padding:11px 14px; color:white; font-size:9px; box-shadow:0 7px 16px rgba(49,94,251,.16); }
 .cost-table-row { min-height:49px; border:1px solid color-mix(in srgb,var(--category-color) 15%,#dfe4ec); border-radius:8px; background:white; padding:9px 15px; }

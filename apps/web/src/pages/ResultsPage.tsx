@@ -681,8 +681,8 @@ export function ResultsPage() {
             </section>
           </motion.div>
 
-          <motion.section variants={itemVariants} className="result-panel cost-table-panel">
-            <div className="result-panel-head">
+          <motion.section variants={itemVariants} className="result-panel cost-table-panel p-0 overflow-hidden rounded-2xl">
+            <div className="result-panel-head cost-breakdown-header py-8 px-6 sm:px-10 rounded-t-2xl flex items-center justify-between gap-4 bg-cover bg-center">
               <div>
                 <p className="app-eyebrow">Detailed allocation</p>
                 <h2>Category cost breakdown</h2>
