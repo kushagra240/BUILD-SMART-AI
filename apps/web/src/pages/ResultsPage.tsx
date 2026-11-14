@@ -561,40 +561,46 @@ export function ResultsPage() {
                 </div>
               </div>
               <div className="result-donut-layout" data-testid="budget-donut">
-                <div className="result-donut relative">
-                  <ResponsiveContainer width="100%" height={220} initialDimension={{ width: 220, height: 220 }}>
-                    <PieChart>
-                      <Pie
-                        data={donutData}
-                        dataKey="amount"
-                        nameKey="category"
-                        innerRadius={65}
-                        outerRadius={88}
-                        paddingAngle={2}
-                        stroke="#ffffff"
-                        strokeWidth={2}
-                      >
-                        {donutData.map((entry) => (
-                          <Cell
-                            key={entry.category}
-                            fill={entry.fill}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(val) => formatINR(Number(val))}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <span className="pointer-events-none">
-                    <small>Total</small>
-                    <strong className="mono">{formatINR(estimate.total.p50)}</strong>
-                  </span>
+                <div className="result-donut">
+                  <div className="relative h-[220px] w-[220px]">
+                    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 220, height: 220 }}>
+                      <PieChart width={220} height={220}>
+                        <Pie
+                          data={donutData}
+                          dataKey="amount"
+                          nameKey="category"
+                          innerRadius={62}
+                          outerRadius={88}
+                          paddingAngle={2}
+                          stroke="#ffffff"
+                          strokeWidth={2}
+                        >
+                          {donutData.map((entry, index) => (
+                            <Cell
+                              key={entry.category}
+                              fill={categoryChartColor(entry.category, index)}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(val) => formatINR(Number(val))}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="result-donut-total mt-2 text-center pointer-events-none">
+                    <small className="block text-[10px] font-bold uppercase tracking-wider text-ink-soft">
+                      {t('results.breakdown.total') || 'Total'}
+                    </small>
+                    <strong className="block text-xl font-extrabold text-ink mono">
+                      {formatINR(estimate.total.p50)}
+                    </strong>
+                  </div>
                 </div>
                 <div className="result-legend">
-                  {donutData.map((item) => (
+                  {donutData.map((item, index) => (
                     <div key={item.category}>
-                      <i style={{ backgroundColor: item.fill }} />
+                      <i style={{ backgroundColor: categoryChartColor(item.category, index) }} />
                       <span>{translateCategory(t, item.category)}</span>
                       <strong className="mono">{formatINR(item.amount)}</strong>
                       <small>{item.share_pct}%</small>
