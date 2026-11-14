@@ -112,12 +112,10 @@ export function LandingPage() {
             <p className="max-w-xl text-base leading-7 text-ink-soft">{t('landing.subtitle')}</p>
 
             <div className="flex flex-col items-stretch gap-3 pt-1 sm:flex-row sm:items-center">
-              <Link to="/app/new" className="hero-cta btn-primary">
-                <Calculator className="h-4 w-4" aria-hidden="true" />
-                <span>{t('landing.cta.start')}</span>
-                <span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </span>
+              <Link to="/app/new" className="hero-cta group">
+                <Calculator className="h-4 w-4 shrink-0 text-white" aria-hidden="true" />
+                <span className="whitespace-nowrap">{t('landing.cta.start')}</span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-white transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
               <Link to="/app" className="btn-ghost">
                 <span>{t('landing.cta.overview')}</span>
