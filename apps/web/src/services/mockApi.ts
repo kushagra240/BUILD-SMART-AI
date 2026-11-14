@@ -6,8 +6,103 @@ import {
   MaterialRecommendationItem,
   BudgetStatus,
   CostDriver,
+  MaterialCharacteristicItem,
 } from '../types/estimate';
 import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
+
+export const MOCK_MATERIAL_CHARACTERISTICS: MaterialCharacteristicItem[] = [
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    category: 'Masonry Blocks',
+    material_name: 'Autoclaved Aerated Concrete (AAC) Blocks',
+    characteristic:
+      'Dry density 551-650 kg/m³, compressive strength >= 4.0 N/mm² conforming to IS 2185 (Part 3). Thermal conductivity ~0.16 W/m-K.',
+    performance_focus: 'Dead-load reduction & thermal insulation',
+    verify_on_site_field:
+      'Batch test certificate for oven-dry density & compressive strength; check for edge transit chipping < 5%.',
+    professional_review_req: true,
+    image_url:
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afa7',
+    category: 'Structural Steel',
+    material_name: 'Thermo-Mechanically Treated (TMT) Rebars Fe 500D',
+    characteristic:
+      'High-ductility reinforcing bar conforming to IS 1786 Grade Fe 500D. 0.2% proof stress min 500 N/mm², elongation min 16.0%, TS/YS ratio >= 1.10.',
+    performance_focus: 'Seismic ductility & structural flexural capacity',
+    verify_on_site_field:
+      'Manufacturer BIS embossed stamp every meter, mill test certificate, 180° bend test with mandrel.',
+    professional_review_req: true,
+    image_url:
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afa8',
+    category: 'Flooring',
+    material_name: 'Double Charged Vitrified Tiles (Group BIa)',
+    characteristic:
+      'Fully vitrified pressed ceramic tile conforming to IS 15622 (Group BIa). Water absorption <= 0.08%, MOR >= 35 N/mm², Mohs scratch hardness >= 6.',
+    performance_focus: 'Wear resistance & low moisture absorption',
+    verify_on_site_field:
+      'Surface flatness diagonal tolerance (< 0.22%), shade variation rating, right-angle orthogonality check.',
+    professional_review_req: false,
+    image_url:
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afa9',
+    category: 'Doors & Windows',
+    material_name: 'Multi-Chambered uPVC Window Profiles',
+    characteristic:
+      'Unplasticized Polyvinyl Chloride profile systems conforming to IS 16560. Min outer wall thickness 2.2 mm, galvanised steel reinforcement >= 1.2 mm.',
+    performance_focus: 'Acoustic attenuation & thermal resistance',
+    verify_on_site_field:
+      'Internal GI reinforcement verification with magnet, fusion welded corner strength, EPDM gasket sealing continuity.',
+    professional_review_req: true,
+    image_url:
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afaa',
+    category: 'Cement & Concrete',
+    material_name: 'Portland Pozzolana Cement (PPC - Fly Ash Based)',
+    characteristic:
+      'Conforming to IS 1489 (Part 1). Fly ash pozzolana content 15-35%. 28-day compressive strength min 33 MPa (typically achieving 43-53 MPa).',
+    performance_focus: 'Long-term hydration strength & sulphate resistance',
+    verify_on_site_field:
+      'Weekly manufacturer test certificate, bag manufacture date (< 90 days from bagging), lump-free consistency.',
+    professional_review_req: true,
+    image_url:
+      'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80',
+  },
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afab',
+    category: 'Plumbing & Sanitary',
+    material_name: 'Chlorinated Polyvinyl Chloride (CPVC) SDR-11 Piping',
+    characteristic:
+      'Pressure rated hot & cold water piping conforming to IS 15778. Working pressure rating 2.76 MPa at 23°C and 0.69 MPa at 82°C.',
+    performance_focus: 'Corrosion resistance & hot-water pressure integrity',
+    verify_on_site_field:
+      'SDR-11 wall thickness marking, solvent cement date (ASTM F493 standard), hydro-testing at 10 kg/cm² for 24 hours.',
+    professional_review_req: true,
+    image_url:
+      'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&w=600&q=80',
+  },
+];
+
+export async function fetchMaterialCharacteristics(
+  category?: string
+): Promise<MaterialCharacteristicItem[]> {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  if (category) {
+    const filter = category.toLowerCase();
+    return MOCK_MATERIAL_CHARACTERISTICS.filter((m) =>
+      m.category.toLowerCase().includes(filter)
+    );
+  }
+  return MOCK_MATERIAL_CHARACTERISTICS;
+}
 
 export const MOCK_META_OPTIONS: MetaOptions = {
   is_mock: true,
@@ -289,6 +384,7 @@ export async function calculateEstimateMock(
     },
     breakdown,
     materials,
+    material_characteristics: MOCK_MATERIAL_CHARACTERISTICS,
     budget: budgetStatus,
     drivers,
     model: {

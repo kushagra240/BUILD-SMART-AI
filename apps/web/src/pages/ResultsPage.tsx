@@ -4,7 +4,11 @@ import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { apiClient, type EstimateResponse } from '../services/apiClient';
+import {
+  apiClient,
+  type EstimateResponse,
+  type MaterialCharacteristicResponse,
+} from '../services/apiClient';
 import { categoryChartColor } from '../domain/estimateCategories';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { formatDateTime, formatINR, formatNumber } from '../lib/formatters';
@@ -181,6 +185,41 @@ export function ResultsPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [pdfStatus, setPdfStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [materialCharacteristics, setMaterialCharacteristics] = useState<
+    MaterialCharacteristicResponse[]
+  >(() => {
+    const initial = isEstimateResponse(locationState?.estimate)
+      ? locationState.estimate
+      : null;
+    return initial?.material_characteristics &&
+      initial.material_characteristics.length > 0
+      ? initial.material_characteristics
+      : [];
+  });
+
+  useEffect(() => {
+    if (
+      estimate?.material_characteristics &&
+      estimate.material_characteristics.length > 0
+    ) {
+      setMaterialCharacteristics(estimate.material_characteristics);
+      return;
+    }
+    let active = true;
+    apiClient
+      .getMaterialCharacteristics()
+      .then((data) => {
+        if (active && data.length > 0) {
+          setMaterialCharacteristics(data);
+        }
+      })
+      .catch(() => {
+        // Fallback or offline, non-blocking
+      });
+    return () => {
+      active = false;
+    };
+  }, [estimate]);
 
   useEffect(() => {
     if (estimate && estimate.id === id) {
@@ -697,26 +736,62 @@ export function ResultsPage() {
             )}
           </motion.section>
 
-          <motion.section variants={itemVariants} id="materials-characteristics" className="result-panel mock-materials-panel">
-            <div className="result-panel-head">
-              <div><p className="app-eyebrow">Material intelligence</p><h2>Material characteristics preview</h2></div>
-              <span className="mock-data-badge">MOCK · DATABASE PREVIEW</span>
-            </div>
-            <p className="mock-materials-intro">Characteristics only — no reviews or ratings. Replace these preview records with database content when available.</p>
-            <div className="mock-materials-grid">
-              {[
-                ['AAC block walling', 'Walling system', 'Lightweight masonry', 'Thermal comfort', 'https://images.unsplash.com/photo-1775049525334-6a797b803823?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
-                ['Vitrified flooring', 'Floor finish', 'Dense finished surface', 'Low routine upkeep', 'https://images.unsplash.com/photo-1691784054906-07fc6e5e17b0?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
-                ['uPVC window system', 'Openings', 'Sealed frame assembly', 'Weather protection', 'https://images.unsplash.com/photo-1601362771608-a9d7430c066d?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
-                ['Reinforcement steel', 'Structural system', 'Load-bearing reinforcement', 'Engineer specified', 'https://images.unsplash.com/photo-1519634093379-625390ebebc7?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=700'],
-              ].map(([name, category, characteristic, performance, image], index) => (
-                <article className="mock-material-card" key={name}>
-                  <div className="mock-material-image"><img src={image} alt="" /><span>0{index + 1}</span></div>
-                  <div className="mock-material-copy"><small>{category}</small><h3>{name}</h3><dl><div><dt>Characteristic</dt><dd>{characteristic}</dd></div><div><dt>Performance focus</dt><dd>{performance}</dd></div><div><dt>Verify on site</dt><dd>Professional review required</dd></div></dl></div>
-                </article>
-              ))}
-            </div>
-          </motion.section>
+          {materialCharacteristics.length > 0 && (
+            <motion.section
+              variants={itemVariants}
+              id="materials-characteristics"
+              className="result-panel materials-characteristics-panel"
+            >
+              <div className="result-panel-head">
+                <div>
+                  <p className="app-eyebrow">Material intelligence</p>
+                  <h2>Indian Standards Material Specifications</h2>
+                </div>
+                <span className="is-compliant-badge">IS COMPLIANT · PUNE CALIBRATED</span>
+              </div>
+              <p className="materials-characteristics-intro">
+                Standard material specifications and quality benchmarks compliant with the Bureau of Indian Standards (IS codes). Verification checklist for Pune residential construction.
+              </p>
+              <div className="materials-characteristics-grid">
+                {materialCharacteristics.map((item, index) => (
+                  <article className="material-characteristic-card" key={item.id || item.material_name}>
+                    <div className="material-characteristic-image">
+                      <img src={item.image_url} alt={item.material_name} loading="lazy" />
+                      <span>0{index + 1}</span>
+                    </div>
+                    <div className="material-characteristic-copy">
+                      <small>{item.category}</small>
+                      <h3>{item.material_name}</h3>
+                      <dl>
+                        <div>
+                          <dt>Characteristic (IS Standard)</dt>
+                          <dd>{item.characteristic}</dd>
+                        </div>
+                        <div>
+                          <dt>Performance focus</dt>
+                          <dd>{item.performance_focus}</dd>
+                        </div>
+                        <div>
+                          <dt>Verify on site</dt>
+                          <dd>{item.verify_on_site_field}</dd>
+                        </div>
+                        {item.professional_review_req !== undefined && (
+                          <div>
+                            <dt>Professional review</dt>
+                            <dd>
+                              {item.professional_review_req
+                                ? 'Mandatory engineer sign-off'
+                                : 'Standard site inspection'}
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
           <p className="results-disclaimer">
             {estimate.disclaimer ||

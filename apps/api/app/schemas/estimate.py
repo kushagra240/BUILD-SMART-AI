@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import Field
 
 from app.schemas.base import BaseSchema
+from app.schemas.material import MaterialCharacteristicResponse
 
 
 class EstimateCreate(BaseSchema):
@@ -72,6 +73,9 @@ class EstimateResponse(BaseSchema):
     confidence: ConfidenceEstimate
     breakdown: list[BreakdownCategoryItem]
     materials: list[MaterialRecommendationItem]
+    material_characteristics: list[MaterialCharacteristicResponse] = Field(
+        default_factory=list, description="Scientific material characteristics"
+    )
     budget: BudgetAssessment
     drivers: list[CostDriverItem]
     model: ModelMetaItem

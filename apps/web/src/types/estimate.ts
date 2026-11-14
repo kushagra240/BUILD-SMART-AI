@@ -18,6 +18,7 @@ export type MaterialRecommendationItem = Schemas['MaterialRecommendationItem'];
 export type BudgetStatus = Schemas['BudgetAssessment'];
 export type CostDriver = Schemas['CostDriverItem'];
 export type EstimateResponse = Schemas['EstimateResponse'];
+export type MaterialCharacteristicItem = Schemas['MaterialCharacteristicResponse'];
 
 /**
  * Meta option shapes follow `MetaOptionsResponse` in `api.generated.ts`

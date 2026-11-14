@@ -1,5 +1,6 @@
 from app.models.audit_log import AuditLog
 from app.models.estimate import Estimate
+from app.models.material_characteristic import MaterialCharacteristic
 from app.models.model_version import ModelVersion
 from app.models.project import Project
 from app.models.refresh_token import RefreshToken
@@ -12,4 +13,5 @@ __all__ = [
     "Estimate",
     "ModelVersion",
     "AuditLog",
+    "MaterialCharacteristic",
 ]

@@ -21,7 +21,9 @@ from app.schemas.estimate import (
     ModelMetaItem,
     TotalEstimate,
 )
+from app.schemas.material import MaterialCharacteristicResponse
 from app.services import estimation, project_service
+from app.services.material_service import get_all_material_characteristics
 from app.services.pdf_generator import generate_estimate_pdf
 
 router = APIRouter(tags=["Estimates"])
@@ -115,6 +117,10 @@ async def create_estimate(
             for b in result.breakdown
         ],
         materials=[],
+        material_characteristics=[
+            MaterialCharacteristicResponse.model_validate(m)
+            for m in await get_all_material_characteristics(db)
+        ],
         budget=BudgetAssessment(
             status=result.budget.status,
             gap_inr=result.budget.gap_inr,

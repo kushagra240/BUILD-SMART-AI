@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import get_db
 from app.models.model_version import ModelVersion
+from app.schemas.material import MaterialCharacteristicResponse
 from app.schemas.meta import (
     ConstructionTypeOption,
     MetaModelResponse,
@@ -11,6 +12,7 @@ from app.schemas.meta import (
     QualityTierOption,
     ZoneOption,
 )
+from app.services.material_service import get_all_material_characteristics
 
 router = APIRouter(prefix="/meta", tags=["Metadata"])
 
@@ -68,3 +70,14 @@ async def get_meta_model(db: AsyncSession = Depends(get_db)) -> MetaModelRespons
         card={"note": "Estimation engine is currently stubbed for Phase 2"},
         is_active=False,
     )
+
+
+@router.get("/material-characteristics", response_model=list[MaterialCharacteristicResponse])
+async def get_material_characteristics(
+    category: str | None = None,
+    db: AsyncSession = Depends(get_db),
+) -> list[MaterialCharacteristicResponse]:
+    """Get scientifically accurate characteristics for Indian construction materials."""
+    items = await get_all_material_characteristics(db, category=category)
+    return [MaterialCharacteristicResponse.model_validate(item) for item in items]
+

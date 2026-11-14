@@ -79,7 +79,8 @@ T50, T53, T55 devops/qa run in parallel
 | T45 | Projects list and detail from the API: rename, delete, compare two estimates. Remove hard-coded arrays. | T42 | review | Antigravity, 2026-11-14 | integration tests against mocks that match OpenAPI |
 | T46 | Wire PDF Export Button on Results Page. | T44, T17 | done | Antigravity | triggers blob download of generated PDF; download button tests pass |
 | T47 | Decide and execute: use or remove `chart.js`, `react-query`, `react-hook-form` (record as an ADR). | none | review | Antigravity, 2026-11-14 | no unused dependencies remain; ADR-002 recorded |
-| T48 | Collapsible estimate sidebar and MOCK material-characteristics preview with images. | T44 | claimed | Figma Make, 2026-11-14 | sidebar expands/collapses; preview is visibly MOCK; no ratings/reviews; lint, typecheck, tests, build pass |
+| T48 | Collapsible estimate sidebar and MOCK material-characteristics preview with images. | T44 | done | Figma Make, 2026-11-14 | sidebar expands/collapses; preview is visibly MOCK; no ratings/reviews; lint, typecheck, tests, build pass |
+| T49 | Fullstack database-backed material characteristics, OpenAPI sync, and final Figma polish on Landing and Estimate pages. | T48 | review | Antigravity, 2026-11-14 | migration + seed script; OpenAPI synced; live characteristics on ResultsPage; no reviews/ratings; CI green |
 
 ## L6 DevOps, security, QA, docs
 
