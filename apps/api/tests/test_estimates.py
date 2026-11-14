@@ -101,9 +101,9 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
         assert est_data["is_mock"] is False
 
         total_p50 = est_data["total"]["p50"]
-        assert total_p50 == 2500000
-        assert est_data["total"]["p10"] == 2250000
-        assert est_data["total"]["p90"] == 2875000
+        assert total_p50 == 7125000
+        assert est_data["total"]["p10"] == 6412500
+        assert est_data["total"]["p90"] == 8193750
         assert est_data["model"]["version"] == "1.0.0"
         assert est_data["model"]["data_version"] == "v1.0.0"
 

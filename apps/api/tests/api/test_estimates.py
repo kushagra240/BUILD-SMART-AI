@@ -107,16 +107,16 @@ async def test_create_estimate_route_success(client: AsyncClient) -> None:
 
         assert data["project_id"] == proj_id
         assert data["is_mock"] is False
-        assert data["total"]["p50"] == 2500000
-        assert data["total"]["p10"] == 2250000
-        assert data["total"]["p90"] == 2875000
+        assert data["total"]["p50"] == 7125000
+        assert data["total"]["p10"] == 6412500
+        assert data["total"]["p90"] == 8193750
         assert data["model"]["version"] == "1.0.0"
         assert data["model"]["data_version"] == "v1.0.0"
 
         # Check 9 exact categories
         breakdown = data["breakdown"]
         assert len(breakdown) == 9
-        assert sum(item["amount"] for item in breakdown) == 2500000
+        assert sum(item["amount"] for item in breakdown) == 7125000
 
         # Verify engine received session and EstimationInput correctly
         assert mock_engine.called
@@ -351,7 +351,7 @@ async def test_create_estimate_ml_calibrated_variance(client: AsyncClient) -> No
         "quality_tier": "premium",
         "construction_type": "rcc_framed",
         "plot_area_sqft": 2500.0,
-        "budget_inr": 2300000,
+        "budget_inr": 6555000,
     }
 
     mock_result = _dummy_engine_result()
@@ -371,12 +371,13 @@ async def test_create_estimate_ml_calibrated_variance(client: AsyncClient) -> No
         data = est_res.json()
         assert mock_ml.called
 
-        # Calibrated bounds:
-        # P10 = 2500000 * (1 - 0.15) = 2125000
-        # P90 = 2500000 * (1 + 0.15 * 1.5) = 3062500
-        assert data["total"]["p50"] == 2500000
-        assert data["total"]["p10"] == 2125000
-        assert data["total"]["p90"] == 3062500
+        # Calibrated bounds (with 2.85 Pune market contractor multiplier):
+        # Base P50 = 2500000 * 2.85 = 7125000
+        # P10 = 2500000 * (1 - 0.15) * 2.85 = 6056250
+        # P90 = 2500000 * (1 + 0.15 * 1.5) * 2.85 = 8728125
+        assert data["total"]["p50"] == 7125000
+        assert data["total"]["p10"] == 6056250
+        assert data["total"]["p90"] == 8728125
         assert "Secondary ML calibration applied" in data["confidence"]["reason"]
         assert data["budget"]["status"] == "tight"
 

@@ -31,6 +31,9 @@ from app.services.material_service import get_all_material_characteristics
 
 logger = logging.getLogger(__name__)
 
+# Calibration factor: Maharashtra PWD SSR base rates -> realistic Pune market contractor rates
+PUNE_MARKET_MULTIPLIER: float = 2.85
+
 FEATURE_COLUMNS: list[str] = [
     "built_up_area",
     "floors",
@@ -366,20 +369,48 @@ async def create_estimate_for_project(
     result = await calculate_estimate(db, engine_input)
     result = apply_ml_calibration(result, engine_input)
 
+    # Scale category breakdown amounts and totals by Pune market calibration
+    calibrated_breakdown = [
+        BreakdownCategoryItem(
+            category=b.category,
+            amount=int(round(b.amount * PUNE_MARKET_MULTIPLIER)),
+            share_pct=b.share_pct,
+        )
+        for b in result.breakdown
+    ]
+    # Re-normalize total_p50 exactly to the sum of breakdown amounts to prevent rounding drift
+    total_p50 = sum(b.amount for b in calibrated_breakdown)
+    total_p10 = int(round(result.total.p10 * PUNE_MARKET_MULTIPLIER))
+    total_p90 = int(round(result.total.p90 * PUNE_MARKET_MULTIPLIER))
+
+    # Recalculate budget assessment against calibrated total
+    new_budget_status = result.budget.status
+    new_budget_gap = result.budget.gap_inr
+    if inputs.budget_inr is not None and inputs.budget_inr > 0:
+        if inputs.budget_inr >= total_p50:
+            new_budget_status = "within"
+            new_budget_gap = int(inputs.budget_inr - total_p50)
+        elif inputs.budget_inr >= total_p10:
+            new_budget_status = "tight"
+            new_budget_gap = int(total_p50 - inputs.budget_inr)
+        else:
+            new_budget_status = "below_minimum"
+            new_budget_gap = int(total_p10 - inputs.budget_inr)
+
     material_recs = get_pune_material_recommendations(inputs.quality_tier)
 
     estimate = Estimate(
         project_id=project.id,
         inputs=inputs.model_dump(),
-        total_p50=result.total.p50,
-        total_p10=result.total.p10,
-        total_p90=result.total.p90,
+        total_p50=total_p50,
+        total_p10=total_p10,
+        total_p90=total_p90,
         confidence_label=result.confidence.label,
-        breakdown=[b.model_dump() for b in result.breakdown],
+        breakdown=[b.model_dump() for b in calibrated_breakdown],
         materials=[m.model_dump() for m in material_recs],
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=inputs.budget_inr,
-        budget_status=result.budget.status,
+        budget_status=new_budget_status,
         is_mock=result.is_mock,
     )
     db.add(estimate)
@@ -390,31 +421,24 @@ async def create_estimate_for_project(
         id=estimate.id,
         project_id=project.id,
         total=TotalEstimate(
-            p50=result.total.p50,
-            p10=result.total.p10,
-            p90=result.total.p90,
+            p50=total_p50,
+            p10=total_p10,
+            p90=total_p90,
             currency=result.total.currency,
         ),
         confidence=ConfidenceEstimate(
             label=result.confidence.label,
             reason=result.confidence.reason,
         ),
-        breakdown=[
-            BreakdownCategoryItem(
-                category=b.category,
-                amount=b.amount,
-                share_pct=b.share_pct,
-            )
-            for b in result.breakdown
-        ],
+        breakdown=calibrated_breakdown,
         materials=material_recs,
         material_characteristics=[
             MaterialCharacteristicResponse.model_validate(m)
             for m in await get_all_material_characteristics(db)
         ],
         budget=BudgetAssessment(
-            status=result.budget.status,
-            gap_inr=result.budget.gap_inr,
+            status=new_budget_status,
+            gap_inr=new_budget_gap,
         ),
         drivers=[
             CostDriverItem(
