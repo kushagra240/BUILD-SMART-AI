@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, type CSSProperties } from 'react';
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -624,7 +624,11 @@ export function ResultsPage() {
                 <span>Share</span>
               </div>
               {estimate.breakdown.map((row, index) => (
-                <div className="cost-table-row" key={row.category}>
+                <div
+                  className="cost-table-row themed-cost-row"
+                  key={row.category}
+                  style={{ '--category-color': categoryChartColor(row.category, index) } as CSSProperties}
+                >
                   <span className="flex items-center gap-2">
                     <i
                       data-testid="category-dot"
@@ -641,7 +645,10 @@ export function ResultsPage() {
                     <strong>{translateCategory(t, row.category)}</strong>
                   </span>
                   <strong className="mono">{formatINR(row.amount)}</strong>
-                  <span className="mono">{row.share_pct}%</span>
+                  <span className="category-share-cell">
+                    <span className="mono">{row.share_pct}%</span>
+                    <i><b style={{ width: `${row.share_pct}%` }} /></i>
+                  </span>
                 </div>
               ))}
               <div className="cost-table-total">
