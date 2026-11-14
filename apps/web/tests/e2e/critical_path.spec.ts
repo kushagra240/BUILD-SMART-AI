@@ -31,15 +31,18 @@ test.describe('BuildSmart critical path', () => {
     await page.getByRole('link', { name: 'Start a new estimate' }).first().click();
     await expect(page).toHaveURL(/\/app\/new$/);
     await expect(
-      page.getByRole('heading', { name: 'Tell us about the home you have in mind.' })
+      page.getByRole('heading', { name: 'Set up your project.' })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Home size and site setup' })
     ).toBeVisible();
 
-    await page.locator('#zone').selectOption({ index: 1 });
+    await page.locator('#zoneId').selectOption({ index: 1 });
     await page.getByRole('button', { name: /continue to preferences/i }).click();
 
     // 4. Wizard step 2: construction preferences (defaults are valid).
     await expect(
-      page.getByRole('heading', { name: 'Choose how you want to build.' })
+      page.getByRole('heading', { name: 'Quality and material specifications' })
     ).toBeVisible();
     await expect(page.locator('#structuralSystem')).toHaveValue('rcc_framed');
     await page.getByRole('button', { name: /calculate estimate/i }).click();
