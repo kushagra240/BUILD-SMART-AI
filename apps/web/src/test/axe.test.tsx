@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 import { MemoryRouter } from 'react-router-dom';
 import { LandingPage } from '../pages/LandingPage';
@@ -12,8 +12,28 @@ import { SavedProjectsPage } from '../pages/SavedProjectsPage';
 import { SavedProjectDetailPage } from '../pages/SavedProjectDetailPage';
 import { MaterialsGuidePage } from '../pages/MaterialsGuidePage';
 import { AuthProvider } from '../auth/AuthProvider';
+import { apiClient } from '../services/apiClient';
+
+const sampleProject = {
+  id: '22222222-2222-2222-2222-222222222222',
+  user_id: '11111111-1111-1111-1111-111111111111',
+  name: 'Deshmukh residence',
+  notes: 'Baner, Pune · G+1',
+  created_at: '2026-10-01T10:00:00Z',
+  updated_at: '2026-10-07T11:42:00Z',
+  latest_estimate: {
+    id: 'est-1',
+    project_id: '22222222-2222-2222-2222-222222222222',
+    total_p50: 4320000,
+    created_at: '2026-10-07T11:42:00Z',
+  },
+};
 
 describe('Accessibility Checks (WCAG 2.1 AA)', () => {
+  beforeEach(() => {
+    vi.spyOn(apiClient, 'getProjects').mockResolvedValue({ items: [sampleProject], total: 1 });
+    vi.spyOn(apiClient, 'listProjects').mockResolvedValue({ items: [sampleProject], total: 1 });
+  });
   it('LandingPage has no accessibility violations', async () => {
     const { container } = render(
       <MemoryRouter>

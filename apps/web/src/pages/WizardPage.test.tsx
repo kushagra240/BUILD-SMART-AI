@@ -179,20 +179,6 @@ describe('WizardPage estimate wiring', () => {
     expect(createEstimateSpy).toHaveBeenNthCalledWith(2, project.id, expect.any(Object));
   });
 
-  it('keeps the in-browser mock flow without touching the real API in mock mode', async () => {
-    vi.stubEnv('VITE_USE_MOCK', 'true');
-    const createProjectSpy = vi.spyOn(apiClient, 'createProject');
-    const createEstimateSpy = vi.spyOn(apiClient, 'createEstimate');
-
-    renderWizard();
-    await advanceToStep2();
-    fireEvent.click(screen.getByRole('button', { name: /Calculate estimate/ }));
-
-    expect(await screen.findByText('estimate result page')).toBeInTheDocument();
-    expect(createProjectSpy).not.toHaveBeenCalled();
-    expect(createEstimateSpy).not.toHaveBeenCalled();
-  });
-
   it('serves quality rates from /meta/options instead of a UI constant', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
 

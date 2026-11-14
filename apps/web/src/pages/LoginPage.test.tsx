@@ -28,6 +28,11 @@ function renderLogin() {
   );
 }
 
+function fillCredentials(email = 'owner@example.com', password = 'password12345') {
+  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: email } });
+  fireEvent.change(screen.getByLabelText('Password'), { target: { value: password } });
+}
+
 function NewEstimateProbe() {
   const location = useLocation();
   return <div>{`new estimate ${location.search}`}</div>;
@@ -60,6 +65,7 @@ describe('LoginPage API errors', () => {
     );
 
     renderLogin();
+    fillCredentials('invalid@example.com', 'password12345');
     fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
 
     expect(await screen.findByText('value is not a valid email address')).toBeInTheDocument();
@@ -72,6 +78,7 @@ describe('LoginPage API errors', () => {
     );
 
     renderLogin();
+    fillCredentials();
     fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Invalid email or password');
@@ -90,6 +97,7 @@ describe('LoginPage API errors', () => {
       </MemoryRouter>
     );
 
+    fillCredentials();
     fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
 
     expect(await screen.findByText('Projects dashboard')).toBeInTheDocument();
@@ -115,6 +123,7 @@ describe('LoginPage API errors', () => {
       </MemoryRouter>
     );
 
+    fillCredentials();
     fireEvent.click(screen.getByRole('button', { name: /sign in to notebook/i }));
 
     expect(await screen.findByText('new estimate ?step=2')).toBeInTheDocument();

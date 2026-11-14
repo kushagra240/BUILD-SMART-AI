@@ -53,13 +53,19 @@ export function mapZoneToRatesZone(zoneId: string): string {
   return ZONE_ID_MAP[zoneId] || zoneId;
 }
 
+export const API_URL = (() => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return 'http://localhost:8000/api/v1';
+  const trimmed = envUrl.replace(/\/+$/, '');
+  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+})();
+
 /**
- * Live mode is the default: the app runs against the live FastAPI backend
- * unless the environment explicitly sets VITE_USE_MOCK=true.
- * Evaluated at call time so tests can stub the environment per test.
+ * Live mode is permanent: the app runs against the live FastAPI backend.
+ * Mock mode is disabled.
  */
 export function isMockApi(): boolean {
-  return import.meta.env.VITE_USE_MOCK === 'true';
+  return false;
 }
 
 type ErrorEnvelope = {

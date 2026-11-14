@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiClient, ApiError, isMockApi } from './apiClient';
-import { ESTIMATE_CATEGORIES } from '../domain/estimateCategories';
 
 function jsonResponse(body: unknown, status = 200): Response {
   return {
@@ -59,9 +58,9 @@ describe('isMockApi', () => {
     expect(isMockApi()).toBe(false);
   });
 
-  it('returns true only when VITE_USE_MOCK is explicitly "true"', () => {
+  it('returns false even when VITE_USE_MOCK is explicitly "true"', () => {
     vi.stubEnv('VITE_USE_MOCK', 'true');
-    expect(isMockApi()).toBe(true);
+    expect(isMockApi()).toBe(false);
   });
 });
 
@@ -223,22 +222,6 @@ describe('apiClient auth wiring', () => {
     expect(apiClient.getAccessToken()).toBeNull();
     expect(onUnauthorized).toHaveBeenCalledTimes(1);
   });
-
-  it('keeps working in mock mode without any network calls', async () => {
-    vi.stubEnv('VITE_USE_MOCK', 'true');
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
-
-    const token = await apiClient.login({
-      email: 'demo@example.com',
-      password: 'password12345',
-    });
-    const me = await apiClient.getMe();
-
-    expect(token.access_token).toBe('mock_jwt_token_for_demo');
-    expect(me.email).toBe('demo@example.com');
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
 });
 
 const project = {
@@ -321,22 +304,6 @@ describe('apiClient projects wiring', () => {
       message: 'Project not found',
     });
   });
-
-  it('deletes mock projects locally and returns 404 for unknown ids', async () => {
-    vi.stubEnv('VITE_USE_MOCK', 'true');
-    const created = await apiClient.createProject({
-      name: 'Temp mock project',
-      notes: 'To be deleted',
-    });
-
-    await apiClient.deleteProject(created.id);
-    const remaining = await apiClient.listProjects();
-    expect(remaining.items.some((item) => item.id === created.id)).toBe(false);
-
-    await expect(apiClient.getProject(created.id)).rejects.toMatchObject({
-      status: 404,
-    });
-  });
 });
 
 describe('apiClient estimate wiring', () => {
@@ -401,21 +368,6 @@ describe('apiClient estimate wiring', () => {
     await expect(apiClient.getMetaOptions()).rejects.toThrow(/unknown quality tier/);
   });
 
-  it('serves the mock estimate through the single canonical category list', async () => {
-    vi.stubEnv('VITE_USE_MOCK', 'true');
-    vi.stubGlobal('fetch', vi.fn());
-
-    const estimate = await apiClient.createEstimate(project.id, {
-      ...inputs,
-      zone_id: 'pune_west',
-    });
-
-    expect(estimate.breakdown.map((row) => row.category)).toEqual(
-      ESTIMATE_CATEGORIES.map((category) => category.value)
-    );
-    expect(estimate.breakdown.reduce((sum, row) => sum + row.share_pct, 0)).toBe(100);
-  });
-
   it('posts the estimate payload to the project estimate endpoint', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
     const fetchMock = vi.fn(async () =>
@@ -462,16 +414,6 @@ describe('apiClient estimate wiring', () => {
     expect(error.fieldErrors()).toEqual({
       bedrooms: 'Input should be less than or equal to 20',
     });
-  });
-
-  it('returns mock zones without a network call in mock mode', async () => {
-    vi.stubEnv('VITE_USE_MOCK', 'true');
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
-
-    const zones = await apiClient.getEstimateZones();
-    expect(zones.some((zone) => zone.id === 'pune_west')).toBe(true);
-    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('maps UI zone identifiers to regulatory backend rates zone codes in outgoing request', async () => {
