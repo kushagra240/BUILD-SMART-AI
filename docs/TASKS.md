@@ -74,11 +74,11 @@ T50, T53, T55 devops/qa run in parallel
 | T40 | Apply Figma tokens: Tailwind theme, CSS variables, fonts with fallbacks, base components. Work from the screenshots and the token list. | none | review | OpenCode (DeepSeek V4.1 Flash) | tokens match `frontend-design.md` exactly; lint, typecheck, tests, build pass; screenshot comparison in the PR |
 | T41 | Single category list and one mock layer aligned to OpenAPI v1; delete the three conflicting rate tables; fake numbers are round placeholders with a visible badge. | none | review | OpenCode (Big Pickle), 2026-11-14 | grep finds one category source; mock response validates against generated types |
 | T42 | Auth context, route guards for `/app/*`, silent refresh (single-flight), real logout, remove the hard-coded user. | none | review | Antigravity, 2026-11-14 | tests for guard redirect, refresh on 401, logout calls API |
-| T43 | Wizard with 4 steps using `/meta/options`; remove hard-coded zone and rooms; send only fields the API supports. | T41 | todo | | wizard tests; no literal zone ids in components |
+| T43 | Wizard with 4 steps using `/meta/options`; remove hard-coded zone and rooms; send only fields the API supports. | T41 | review | Antigravity, 2026-11-14 | wizard tests; no literal zone ids in components |
 | T44 | Reconcile Estimate Types and Update Results Page with every v1 section (range, confidence, doughnut with table toggle, breakdown, materials, budget, drivers, badge, versions, disclaimer). | T41 | done | Antigravity | render tests; badge shown whenever `is_mock` true; contrast not claimed without real-browser check |
-| T45 | Projects list and detail from the API: rename, delete, compare two estimates. Remove hard-coded arrays. | T42 | todo | | integration tests against mocks that match OpenAPI |
+| T45 | Projects list and detail from the API: rename, delete, compare two estimates. Remove hard-coded arrays. | T42 | review | Antigravity, 2026-11-14 | integration tests against mocks that match OpenAPI |
 | T46 | Wire PDF Export Button on Results Page. | T44, T17 | done | Antigravity | triggers blob download of generated PDF; download button tests pass |
-| T47 | Decide and execute: use or remove `chart.js`, `react-query`, `react-hook-form` (record as an ADR). | none | todo | | no unused dependencies remain |
+| T47 | Decide and execute: use or remove `chart.js`, `react-query`, `react-hook-form` (record as an ADR). | none | review | Antigravity, 2026-11-14 | no unused dependencies remain; ADR-002 recorded |
 
 ## L6 DevOps, security, QA, docs
 

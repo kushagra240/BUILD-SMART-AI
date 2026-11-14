@@ -181,7 +181,7 @@ export function ResultsPage() {
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (estimate) {
+    if (estimate && estimate.id === id) {
       return;
     }
     if (!id) {
