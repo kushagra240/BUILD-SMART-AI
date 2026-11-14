@@ -166,6 +166,181 @@ def apply_ml_calibration(
     )
 
 
+def get_pune_material_recommendations(
+    quality_tier: str = "standard",
+) -> list[MaterialRecommendationItem]:
+    """Generate realistic, IS-compliant material recommendations for Pune homes."""
+    return [
+        MaterialRecommendationItem(
+            category="Steel Reinforcement",
+            primary={
+                "material_id": "mat_s02",
+                "name": "Fe 500D TMT Steel (IS 1786)",
+                "grade_spec": "Fe 500D Thermo-Mechanically Treated Rebars",
+                "description": (
+                    "High-ductility ribbed rebar with min 16% elongation "
+                    "and 0.2% proof stress of 500 N/mm²."
+                ),
+                "unit": "Metric Ton",
+                "unit_cost_range_inr": "₹60,000 - ₹64,000",
+                "quality_level": quality_tier,
+            },
+            alternative={
+                "material_id": "mat_s01",
+                "name": "Fe 500 TMT Steel (IS 1786)",
+                "grade_spec": "Standard Fe 500 TMT Rebars",
+                "description": "Standard ductility rebar with min 12% elongation.",
+                "unit": "Metric Ton",
+                "unit_cost_range_inr": "₹56,000 - ₹59,000",
+                "quality_level": "economy",
+            },
+            reason=(
+                "Fe 500D provides superior elongation and energy dissipation required for "
+                "Pune Seismic Zone III framing and structural crack containment."
+            ),
+            image_url=(
+                "https://images.unsplash.com/photo-1504307651254-35680f356dfd"
+                "?auto=format&fit=crop&w=800&q=80"
+            ),
+        ),
+        MaterialRecommendationItem(
+            category="Masonry Blocks",
+            primary={
+                "material_id": "mat_b01",
+                "name": "AAC Blocks 600x200x150mm (IS 2185 Part 3)",
+                "grade_spec": "Autoclaved Aerated Concrete Grade I",
+                "description": (
+                    "Lightweight cellular precast concrete block (dry density 550-650 kg/m³) "
+                    "with thin-bed polymer mortar."
+                ),
+                "unit": "Cu. Meter",
+                "unit_cost_range_inr": "₹3,400 - ₹3,800",
+                "quality_level": quality_tier,
+            },
+            alternative={
+                "material_id": "mat_b02",
+                "name": "Red Clay Bricks Class 35 (IS 1077)",
+                "grade_spec": "Traditional Burnt Clay Modular Bricks",
+                "description": (
+                    "Kiln-burnt solid clay bricks with compressive strength > 3.5 N/mm²."
+                ),
+                "unit": "1,000 pcs",
+                "unit_cost_range_inr": "₹7,500 - ₹9,000",
+                "quality_level": "economy",
+            },
+            reason=(
+                "AAC blocks reduce structural dead load by up to 40% and provide superior "
+                "thermal insulation (K-value 0.16-0.18 W/m·K) against Pune summer heat."
+            ),
+            image_url=(
+                "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f"
+                "?auto=format&fit=crop&w=800&q=80"
+            ),
+        ),
+        MaterialRecommendationItem(
+            category="Flooring",
+            primary={
+                "material_id": "mat_f01",
+                "name": "Double-Charged Vitrified Tiles (IS 15622 Group BIa)",
+                "grade_spec": "600x600mm / 800x800mm Vitrified Tiles",
+                "description": (
+                    "Ultra-low water absorption (< 0.05%) sintered porcelain with "
+                    "3-4mm double-layer wear surface."
+                ),
+                "unit": "Sq. Ft.",
+                "unit_cost_range_inr": "₹55 - ₹85",
+                "quality_level": quality_tier,
+            },
+            alternative={
+                "material_id": "mat_f02",
+                "name": "Polished Kota Stone / Ceramic Tiles (IS 15622 Group BIIa)",
+                "grade_spec": "Natural Kota Limestone or Glazed Ceramic",
+                "description": (
+                    "Standard natural stone slab or ceramic tile with 3-6% water absorption."
+                ),
+                "unit": "Sq. Ft.",
+                "unit_cost_range_inr": "₹35 - ₹50",
+                "quality_level": "economy",
+            },
+            reason=(
+                "Double-charged vitrified tiles deliver Mohs hardness 6-7, exceptional abrasion "
+                "resistance, and stain resistance suited for high-traffic Pune homes."
+            ),
+            image_url=(
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+                "?auto=format&fit=crop&w=800&q=80"
+            ),
+        ),
+        MaterialRecommendationItem(
+            category="Cement",
+            primary={
+                "material_id": "mat_c02",
+                "name": "OPC 53 / 43 Grade (IS 269 / IS 8112)",
+                "grade_spec": "Ordinary Portland Cement (Ultratech / Ambuja equivalent)",
+                "description": (
+                    "High-early-strength cement engineered for RCC foundation, columns, "
+                    "beams, and slabs."
+                ),
+                "unit": "50kg bag",
+                "unit_cost_range_inr": "₹380 - ₹420",
+                "quality_level": quality_tier,
+            },
+            alternative={
+                "material_id": "mat_c01",
+                "name": "PPC Fly-ash Based (IS 1489 Part 1)",
+                "grade_spec": "Portland Pozzolana Cement",
+                "description": (
+                    "Pozzolanic cement with lower hydration heat, optimal for brickwork "
+                    "and external plaster."
+                ),
+                "unit": "50kg bag",
+                "unit_cost_range_inr": "₹340 - ₹370",
+                "quality_level": "economy",
+            },
+            reason=(
+                "OPC 43/53 achieves faster curing and structural compressive strength for "
+                "framework; PPC is ideal for secondary plastering."
+            ),
+            image_url=(
+                "https://images.unsplash.com/photo-1518709268805-4e9042af9f23"
+                "?auto=format&fit=crop&w=800&q=80"
+            ),
+        ),
+        MaterialRecommendationItem(
+            category="Plumbing",
+            primary={
+                "material_id": "mat_pl01",
+                "name": "CPVC SDR 11 & Lead-Free UPVC (IS 15778 / ASTM D2846)",
+                "grade_spec": "Chlorinated Polyvinyl Chloride Pipes & Fittings",
+                "description": (
+                    "Pressure-rated hot and cold water distribution pipes resisting "
+                    "temperature up to 93°C and scaling."
+                ),
+                "unit": "Running Meter",
+                "unit_cost_range_inr": "₹120 - ₹240",
+                "quality_level": quality_tier,
+            },
+            alternative={
+                "material_id": "mat_pl02",
+                "name": "Standard PVC / GI Class B Pipes (IS 4985)",
+                "grade_spec": "Rigid PVC Schedule 40 or Galvanized Iron",
+                "description": "Conventional cold-water plumbing pipes.",
+                "unit": "Running Meter",
+                "unit_cost_range_inr": "₹80 - ₹150",
+                "quality_level": "economy",
+            },
+            reason=(
+                "CPVC pipes prevent internal calcification and corrosion from hard groundwater "
+                "common in eastern and western Pune corridors."
+            ),
+            image_url=(
+                "https://images.unsplash.com/photo-1581094288338-2314dddb7ece"
+                "?auto=format&fit=crop&w=800&q=80"
+            ),
+        ),
+    ]
+
+
 async def create_estimate_for_project(
     db: AsyncSession,
     user_id: uuid.UUID,
@@ -191,6 +366,8 @@ async def create_estimate_for_project(
     result = await calculate_estimate(db, engine_input)
     result = apply_ml_calibration(result, engine_input)
 
+    material_recs = get_pune_material_recommendations(inputs.quality_tier)
+
     estimate = Estimate(
         project_id=project.id,
         inputs=inputs.model_dump(),
@@ -199,7 +376,7 @@ async def create_estimate_for_project(
         total_p90=result.total.p90,
         confidence_label=result.confidence.label,
         breakdown=[b.model_dump() for b in result.breakdown],
-        materials=[],
+        materials=[m.model_dump() for m in material_recs],
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=inputs.budget_inr,
         budget_status=result.budget.status,
@@ -230,7 +407,7 @@ async def create_estimate_for_project(
             )
             for b in result.breakdown
         ],
-        materials=[],
+        materials=material_recs,
         material_characteristics=[
             MaterialCharacteristicResponse.model_validate(m)
             for m in await get_all_material_characteristics(db)
@@ -285,6 +462,13 @@ async def get_estimate_by_id(
         estimate.budget_status or "not_provided"  # type: ignore[assignment]
     )
 
+    saved_inputs = EstimateCreate.model_validate(estimate.inputs)
+    material_recs = (
+        [MaterialRecommendationItem.model_validate(m) for m in estimate.materials]
+        if estimate.materials
+        else get_pune_material_recommendations(saved_inputs.quality_tier)
+    )
+
     return EstimateResponse(
         id=estimate.id,
         project_id=estimate.project_id,
@@ -299,7 +483,7 @@ async def get_estimate_by_id(
             reason="Calculated bottom-up from Maharashtra PWD SSR 2022-23 rates.",
         ),
         breakdown=[BreakdownCategoryItem.model_validate(b) for b in estimate.breakdown],
-        materials=[MaterialRecommendationItem.model_validate(m) for m in estimate.materials],
+        materials=material_recs,
         material_characteristics=[
             MaterialCharacteristicResponse.model_validate(m)
             for m in await get_all_material_characteristics(db)
@@ -313,7 +497,7 @@ async def get_estimate_by_id(
         disclaimer=(
             "Preliminary estimate calculated bottom-up using Maharashtra PWD SSR 2022-23 rates."
         ),
-        inputs=EstimateCreate.model_validate(estimate.inputs),
+        inputs=saved_inputs,
         is_mock=getattr(estimate, "is_mock", False),
         created_at=estimate.created_at,
     )

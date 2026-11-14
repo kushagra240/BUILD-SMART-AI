@@ -216,6 +216,7 @@ export async function calculateEstimateMock(
       category: 'Cement',
       primary: {
         material_id: 'mat_c02',
+        name: 'OPC 43 (IS 8112)',
         category: 'Cement',
         grade_spec: 'OPC 43 (IS 8112)',
         description: 'Ordinary Portland Cement for structural RCC columns & slabs',
@@ -225,6 +226,7 @@ export async function calculateEstimateMock(
       },
       alternative: {
         material_id: 'mat_c01',
+        name: 'PPC (IS 1489)',
         category: 'Cement',
         grade_spec: 'PPC (IS 1489)',
         description: 'Portland Pozzolana Cement for masonry and plastering',
@@ -233,11 +235,13 @@ export async function calculateEstimateMock(
         quality_level: 'economy',
       },
       reason: 'OPC 43 is suited to RCC framework; PPC is commonly used for masonry and plastering.',
+      image_url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
     },
     {
       category: 'Steel Reinforcement',
       primary: {
         material_id: 'mat_s02',
+        name: 'Fe 500D (IS 1786)',
         category: 'Steel',
         grade_spec: 'Fe 500D (IS 1786)',
         description: 'High ductility TMT rebars for seismic zone compliance',
@@ -247,6 +251,7 @@ export async function calculateEstimateMock(
       },
       alternative: {
         material_id: 'mat_s01',
+        name: 'Fe 500 (IS 1786)',
         category: 'Steel',
         grade_spec: 'Fe 500 (IS 1786)',
         description: 'Standard ductility TMT rebars',
@@ -255,11 +260,13 @@ export async function calculateEstimateMock(
         quality_level: 'economy',
       },
       reason: 'Fe 500D provides superior elongation for earthquake resistance in Pune region.',
+      image_url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
     },
     {
       category: 'Masonry Blocks',
       primary: {
         material_id: 'mat_b01',
+        name: 'AAC Blocks 600x200x150mm',
         category: 'Bricks/Blocks',
         grade_spec: 'AAC Blocks 600x200x150mm',
         description: 'Autoclaved Aerated Concrete thermal lightweight blocks',
@@ -269,6 +276,7 @@ export async function calculateEstimateMock(
       },
       alternative: {
         material_id: 'mat_b02',
+        name: 'Red Clay Bricks Class 35',
         category: 'Bricks/Blocks',
         grade_spec: 'Red Clay Bricks Class 35',
         description: 'Traditional burnt red clay bricks',
@@ -277,11 +285,13 @@ export async function calculateEstimateMock(
         quality_level: 'economy',
       },
       reason: 'AAC blocks reduce dead load and speed up masonry compared with clay brick.',
+      image_url: 'https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80',
     },
     {
       category: 'Flooring',
       primary: {
         material_id: 'mat_f01',
+        name: 'Vitrified Tiles 600x600mm',
         category: 'Flooring',
         grade_spec: 'Vitrified Tiles 600x600mm',
         description: 'Double charged glazed vitrified tiles',
@@ -291,6 +301,7 @@ export async function calculateEstimateMock(
       },
       alternative: {
         material_id: 'mat_f02',
+        name: 'Italian Marble',
         category: 'Flooring',
         grade_spec: 'Italian Marble / Large Slab Porcelain',
         description: 'High-end polished natural marble',
@@ -299,11 +310,13 @@ export async function calculateEstimateMock(
         quality_level: 'premium',
       },
       reason: 'Vitrified tiles offer high stain resistance and low water absorption.',
+      image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
     },
     {
       category: 'Paint & Finishes',
       primary: {
         material_id: 'mat_p02',
+        name: 'Premium Acrylic Emulsion',
         category: 'Paint',
         grade_spec: 'Premium Acrylic Emulsion',
         description: 'Washable low-VOC interior wall paint',
@@ -313,6 +326,7 @@ export async function calculateEstimateMock(
       },
       alternative: {
         material_id: 'mat_p01',
+        name: 'Economy Acrylic Emulsion',
         category: 'Paint',
         grade_spec: 'Economy Acrylic Emulsion',
         description: 'Basic acrylic interior wall paint',
@@ -321,6 +335,7 @@ export async function calculateEstimateMock(
         quality_level: 'economy',
       },
       reason: 'Premium acrylic emulsion provides a washable, low-VOC interior finish.',
+      image_url: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80',
     },
   ];
 

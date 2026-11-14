@@ -333,7 +333,7 @@ export interface paths {
         };
         /**
          * Get Material Characteristics
-         * @description Get scientifically accurate, real-world characteristics for standard Indian construction materials.
+         * @description Get scientifically accurate characteristics for Indian construction materials.
          */
         get: operations["get_material_characteristics_api_v1_meta_material_characteristics_get"];
         put?: never;
@@ -541,6 +541,8 @@ export interface components {
             };
             /** Reason */
             reason: string;
+            /** Image Url */
+            image_url?: string | null;
         };
         /** MetaModelResponse */
         MetaModelResponse: {
