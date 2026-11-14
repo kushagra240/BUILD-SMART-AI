@@ -47,6 +47,7 @@
     "subNavigation": "उप नेविगेशन",
     "toggleMenu": "नेविगेशन मेनू टॉगल करें",
     "projectOverview": "प्रोजेक्ट अवलोकन",
+    "projectOwner": "प्रोजेक्ट स्वामी",
     "signedInAs": "{{name}} के रूप में साइन इन",
     "logout": "लॉग आउट",
     "login": "लॉग इन",
@@ -61,6 +62,7 @@
   },
   "auth": {
     "checkingSession": "आपका सत्र जाँचा जा रहा है…",
+    "logout": "लॉग आउट",
     "shared": {
       "emailLabel": "ईमेल पता",
       "emailPlaceholder": "name@example.com",
@@ -186,15 +188,13 @@
       "economyDesc": "सरल, टिकाऊ बुनियादी चीज़ें",
       "standardDesc": "संतुलित रोज़मर्रा का आराम",
       "premiumDesc": "उच्च-स्तरीय फिनिश",
-      "rateUnavailable": "/meta/options द्वारा दर उपलब्ध नहीं कराई गई",
-      "note": "उदाहरणात्मक दरों में 5% आकस्मिकता शामिल है। ये आपूर्तिकर्ता के कोट या वर्तमान सत्यापित बाज़ार दरें नहीं हैं।"
+      "rateUnavailable": "/meta/options द्वारा दर उपलब्ध नहीं कराई गई"
     },
     "coverage": {
       "includedTitle": "इस अनुमान में शामिल",
       "included1": "सिविल संरचना और बुनियादी फिनिश",
       "included2": "बिजली और प्लंबिंग कार्य",
       "included3": "मानक सैनिटरी फिटिंग",
-      "included4": "5% आकस्मिकता भत्ता",
       "excludedTitle": "अलग से बजट रखें",
       "excluded1": "भूमि और वैधानिक अनुमोदन शुल्क",
       "excluded2": "आर्किटेक्ट और प्रोफेशनल फीस",
@@ -211,7 +211,6 @@
       "floorsValue_one": "G+{{above}} · {{count}} मंज़िल",
       "floorsValue_other": "G+{{above}} · {{count}} मंज़िलें",
       "formula": "{{area}} वर्ग फीट × ₹{{rate}} / वर्ग फीट",
-      "totalNote": "प्रारंभिक कुल, आकस्मिकता सहित",
       "assumptionTitle": "एक उचित शुरुआती मान्यता",
       "assumptionBody": "सामान्य साइट, सामान्य नींव और बिना तहखाने का अनुमान। मिट्टी की स्थिति और पहुँच लागत को प्रभावित कर सकती है।"
     },

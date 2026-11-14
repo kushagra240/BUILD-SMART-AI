@@ -60,4 +60,24 @@ test.describe('BuildSmart critical path', () => {
     await expect(downloadButton).toBeEnabled();
     await expect(page.getByRole('link', { name: /PDF preview/i })).toHaveCount(0);
   });
+
+  test('redirects unauthenticated visitor to login and handles real logout', async ({
+    page,
+  }) => {
+    // 1. Visiting /app directly while unauthenticated redirects to /login
+    await page.goto('/app');
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(
+      page.getByRole('heading', { name: 'Welcome back.' })
+    ).toBeVisible();
+
+    // 2. Logging in returns the visitor to the requested protected area (/app)
+    await page.getByRole('button', { name: /sign in to notebook/i }).click();
+    await expect(page).toHaveURL(/\/app$/);
+    await expect(page.getByText('Aniket Deshmukh', { exact: true })).toBeVisible();
+
+    // 3. Clicking "Log out" clears session and redirects to /login
+    await page.getByRole('button', { name: 'Log out' }).click();
+    await expect(page).toHaveURL(/\/login$/);
+  });
 });

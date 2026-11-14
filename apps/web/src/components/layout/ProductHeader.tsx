@@ -7,7 +7,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 
 function initialsFor(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'AN';
+  if (parts.length === 0) return '';
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
@@ -20,13 +20,16 @@ export function ProductHeader({ active }: { active?: 'projects' | 'estimate' | s
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    if (logout) {
-      await logout();
+    try {
+      await logout?.();
+    } finally {
+      // Leave the protected area even if the server call fails; the provider
+      // has already cleared the in-memory session.
+      navigate('/login', { replace: true });
     }
-    navigate('/login', { replace: true });
   };
 
-  const displayName = user?.full_name || 'Aniket N.';
+  const displayName = user?.full_name ?? '';
   const initials = initialsFor(displayName);
 
   return (
@@ -56,19 +59,23 @@ export function ProductHeader({ active }: { active?: 'projects' | 'estimate' | s
       </nav>
       <div className="product-user">
         <LanguageSwitcher />
-        <span aria-hidden="true">{initials}</span>
-        <div>
-          <strong>{displayName}</strong>
-          <small>{t('nav.projectOwner') || 'Project owner'}</small>
-        </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="text-[10px] text-ink-soft hover:text-ink ml-2"
-          title={t('auth.logout') || 'Log out'}
-        >
-          {t('auth.logout') || 'Log out'}
-        </button>
+        {user && (
+          <>
+            <span aria-hidden="true">{initials}</span>
+            <div>
+              <strong>{displayName}</strong>
+              <small>{t('nav.projectOwner')}</small>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-[10px] text-ink-soft hover:text-ink ml-2"
+              title={t('auth.logout')}
+            >
+              {t('auth.logout')}
+            </button>
+          </>
+        )}
       </div>
     </header>
   );
