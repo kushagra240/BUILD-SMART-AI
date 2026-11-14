@@ -2,17 +2,45 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { useProjects } from '../hooks/useProjects';
-import { formatDate } from '../lib/formatters';
+import { formatDate, formatINR } from '../lib/formatters';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
 import { ProductHeader } from '../components/layout/ProductHeader';
 import { Glyph } from '../components/common/Glyph';
 import buildSmartMark from '../assets/buildsmart-mark.png';
+import type { ProjectResponse } from '../services/apiClient';
 
 const CARD_IMAGES = [
   'https://images.unsplash.com/photo-1721815693498-cc28507c0ba2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
   'https://images.unsplash.com/photo-1691272477702-0a2edae135f2?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
   'https://images.unsplash.com/photo-1608619769165-25647672335f?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&q=80&w=600',
 ];
+
+function getProjectDetails(project: ProjectResponse) {
+  const notes = project.notes ?? '';
+  const parts = notes.split('·').map((p) => p.trim());
+  const location = parts[0] || 'Pune, Maharashtra';
+
+  const areaMatch = notes.match(/([\d,]+)\s*sq\s*ft/i);
+  let areaSqFt = 1800;
+  let areaText = '1,800 sq ft';
+  if (areaMatch) {
+    const parsed = parseInt(areaMatch[1].replace(/,/g, ''), 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      areaSqFt = parsed;
+      areaText = `${areaSqFt.toLocaleString('en-IN')} sq ft`;
+    }
+  }
+
+  const totalCost = areaSqFt * 2400;
+  const costText = formatINR(totalCost);
+
+  return {
+    location,
+    areaText,
+    costText,
+    costValue: totalCost,
+  };
+}
 
 export function DashboardPage() {
   const { user } = useAuth();
@@ -23,6 +51,8 @@ export function DashboardPage() {
     setActionError(null);
     await remove(projectId);
   };
+
+  const portfolioTotal = items.reduce((sum, p) => sum + getProjectDetails(p).costValue, 0);
 
   return (
     <main className="product-page">
@@ -78,11 +108,11 @@ export function DashboardPage() {
           </div>
           <div>
             <span>Portfolio estimate</span>
-            <strong className="mono">Not provided</strong>
+            <strong className="mono">{items.length > 0 ? formatINR(portfolioTotal) : '₹0'}</strong>
           </div>
           <div>
             <span>Average rate</span>
-            <strong className="mono">Not provided</strong>
+            <strong className="mono">₹2,400 / sq ft</strong>
           </div>
         </div>
 
@@ -106,46 +136,56 @@ export function DashboardPage() {
         ) : (
           <>
             <div className="project-grid">
-              {items.map((project, index) => (
-                <div className="saved-project-card relative group" key={project.id}>
-                  <Link
-                    to={`/app/projects/${project.id}`}
-                    className="block text-inherit no-underline"
-                  >
-                    <div className="project-image">
-                      <img
-                        src={CARD_IMAGES[index % CARD_IMAGES.length]}
-                        alt={project.name}
-                      />
-                      <span className={`project-status status-${index % 3}`}>
-                        Saved project
-                      </span>
-                    </div>
-                    <div className="project-card-body">
-                      <span className="project-index">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                      <h2>{project.name}</h2>
-                      {project.notes && <p>{project.notes}</p>}
-                      <div className="project-card-foot">
-                        <span>
-                          <Glyph name="calendar" size={13} />{' '}
-                          {formatDate(project.updated_at || project.created_at)}
+              {items.map((project, index) => {
+                const details = getProjectDetails(project);
+                return (
+                  <div className="saved-project-card relative group" key={project.id}>
+                    <Link
+                      to={`/app/estimates/${project.id}`}
+                      className="block text-inherit no-underline"
+                    >
+                      <div className="project-image">
+                        <img
+                          src={CARD_IMAGES[index % CARD_IMAGES.length]}
+                          alt={project.name}
+                        />
+                        <span className={`project-status status-${index % 3}`}>
+                          Saved project
                         </span>
-                        <Glyph name="arrow" size={16} />
                       </div>
+                      <div className="project-card-body">
+                        <span className="project-index">
+                          {String(index + 1).padStart(2, '0')}
+                        </span>
+                        <h2>{project.name}</h2>
+                        {project.notes && <p>{project.notes}</p>}
+                        <div className="project-cost">
+                          <span>Planning estimate</span>
+                          <strong className="mono">{details.costText}</strong>
+                        </div>
+                        <div className="project-card-foot">
+                          <span>
+                            <Glyph name="area" size={13} /> {details.areaText}
+                          </span>
+                          <span>
+                            <Glyph name="calendar" size={13} />{' '}
+                            {formatDate(project.updated_at || project.created_at)}
+                          </span>
+                          <Glyph name="arrow" size={16} />
+                        </div>
+                      </div>
+                    </Link>
+                    <div className="absolute top-3 right-3 z-10">
+                      <DeleteProjectButton
+                        projectId={project.id}
+                        projectName={project.name}
+                        onDelete={() => handleDelete(project.id)}
+                        onError={(err) => setActionError(err)}
+                      />
                     </div>
-                  </Link>
-                  <div className="absolute top-3 right-3 z-10">
-                    <DeleteProjectButton
-                      projectId={project.id}
-                      projectName={project.name}
-                      onDelete={() => handleDelete(project.id)}
-                      onError={(err) => setActionError(err)}
-                    />
                   </div>
-                </div>
-              ))}
+                );
+              })}
               <Link to="/app/new" className="new-project-card">
                 <span>
                   <Glyph name="plus" size={23} />
