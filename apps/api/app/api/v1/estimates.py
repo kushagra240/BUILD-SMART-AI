@@ -1,5 +1,5 @@
 import uuid
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import select
@@ -119,6 +119,11 @@ async def create_estimate(
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=req.budget_inr,
         budget_status=new_budget_status,
+        gap_inr=new_budget_gap,
+        confidence_reason=result.confidence.reason,
+        engine_version=result.engine_version,
+        dataset_version=result.dataset_version,
+        disclaimer=result.disclaimer,
         is_mock=result.is_mock,
     )
     db.add(estimate)
@@ -189,16 +194,66 @@ async def get_project_latest_estimate(
     )
 
 
+_PDF_RESPONSES: dict[int | str, dict[str, Any]] = {
+    200: {
+        "content": {"application/pdf": {}},
+        "description": "Returns the generated estimate PDF report",
+    },
+    404: {"description": "Estimate not found"},
+}
+
+
+async def _load_estimate_for_pdf(
+    db: AsyncSession,
+    user_id: uuid.UUID,
+    estimate_id: uuid.UUID,
+    project_id: uuid.UUID | None = None,
+) -> Estimate:
+    """Load an owned estimate with its project, scoped to a project when given."""
+    stmt = (
+        select(Estimate)
+        .options(selectinload(Estimate.project))
+        .where(
+            Estimate.id == estimate_id,
+            Estimate.project.has(user_id=user_id, deleted_at=None),
+        )
+    )
+    if project_id is not None:
+        stmt = stmt.where(Estimate.project_id == project_id)
+
+    res = await db.execute(stmt)
+    estimate = res.scalar_one_or_none()
+    if estimate is None or estimate.project is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Estimate not found",
+        )
+    return estimate
+
+
+def _estimate_pdf_response(estimate: Estimate, lang: str) -> Response:
+    """Render the PDF from the saved estimate row and wrap it as a download."""
+    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate, lang=lang)
+    filename = f"buildsmart-estimate-{estimate.id}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Length": str(len(pdf_bytes)),
+        },
+    )
+
+
+@router.get(
+    "/projects/{project_id}/estimates/{estimate_id}/report.pdf",
+    response_class=Response,
+    responses=_PDF_RESPONSES,
+)
 @router.get(
     "/projects/{project_id}/estimates/{estimate_id}/pdf",
     response_class=Response,
-    responses={
-        200: {
-            "content": {"application/pdf": {}},
-            "description": "Returns the generated estimate PDF report",
-        },
-        404: {"description": "Estimate or Project not found"},
-    },
+    responses=_PDF_RESPONSES,
 )
 async def export_estimate_pdf(
     project_id: uuid.UUID,
@@ -211,47 +266,19 @@ async def export_estimate_pdf(
     db: AsyncSession = Depends(get_db),
 ) -> Response:
     """Export a saved estimate snapshot as a downloadable PDF report."""
-    stmt = (
-        select(Estimate)
-        .options(selectinload(Estimate.project))
-        .where(
-            Estimate.id == estimate_id,
-            Estimate.project_id == project_id,
-            Estimate.project.has(user_id=current_user.id, deleted_at=None),
-        )
-    )
-    res = await db.execute(stmt)
-    estimate = res.scalar_one_or_none()
-
-    if not estimate or not estimate.project:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estimate not found or does not belong to project",
-        )
-
-    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate, lang=lang)
-    filename = f"buildsmart-estimate-{estimate_id}.pdf"
-
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-            "Content-Length": str(len(pdf_bytes)),
-        },
-    )
+    estimate = await _load_estimate_for_pdf(db, current_user.id, estimate_id, project_id)
+    return _estimate_pdf_response(estimate, lang)
 
 
 @router.get(
+    "/estimates/{estimate_id}/report.pdf",
+    response_class=Response,
+    responses=_PDF_RESPONSES,
+)
+@router.get(
     "/estimates/{estimate_id}/pdf",
     response_class=Response,
-    responses={
-        200: {
-            "content": {"application/pdf": {}},
-            "description": "Returns the generated estimate PDF report",
-        },
-        404: {"description": "Estimate not found"},
-    },
+    responses=_PDF_RESPONSES,
 )
 async def export_estimate_pdf_direct(
     estimate_id: uuid.UUID,
@@ -262,32 +289,6 @@ async def export_estimate_pdf_direct(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Response:
-    """Direct alias to export estimate PDF snapshot by estimate ID."""
-    stmt = (
-        select(Estimate)
-        .options(selectinload(Estimate.project))
-        .where(
-            Estimate.id == estimate_id,
-            Estimate.project.has(user_id=current_user.id, deleted_at=None),
-        )
-    )
-    res = await db.execute(stmt)
-    estimate = res.scalar_one_or_none()
-
-    if not estimate or not estimate.project:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Estimate not found",
-        )
-
-    pdf_bytes = generate_estimate_pdf(project=estimate.project, estimate=estimate, lang=lang)
-    filename = f"buildsmart-estimate-{estimate_id}.pdf"
-
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-            "Content-Length": str(len(pdf_bytes)),
-        },
-    )
+    """Direct alias to export an estimate PDF snapshot by estimate ID."""
+    estimate = await _load_estimate_for_pdf(db, current_user.id, estimate_id)
+    return _estimate_pdf_response(estimate, lang)

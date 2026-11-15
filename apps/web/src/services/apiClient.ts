@@ -630,9 +630,9 @@ class ApiClient {
    *
    * GET /projects/{projectId}/estimates/{estimateId}/pdf -> application/pdf
    *
-   * The backend PDF service (board task T17) is not built yet, so non-mock mode
-   * currently fails with the server's own error, or with NOT_A_PDF if the dev
-   * server answers with its SPA HTML fallback.
+   * The backend renders this PDF from the saved estimate row (ReportLab), so it
+   * reflects the persisted totals, breakdown, inputs and budget. A response that
+   * is not `application/pdf` is rejected instead of being saved as a report.
    */
   async downloadEstimatePdf(projectId: string, estimateId: string): Promise<Blob> {
     return this.requestBlob(`/projects/${projectId}/estimates/${estimateId}/pdf`, {

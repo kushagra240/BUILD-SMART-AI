@@ -301,7 +301,24 @@ async def test_export_estimate_pdf_success(client: AsyncClient) -> None:
         assert "application/pdf" in direct_res.headers["content-type"]
         assert direct_res.content.startswith(b"%PDF")
 
-    # 5. Invalid language parameter returns 422 Unprocessable Entity
+    # 5. The /report.pdf aliases serve the same generated report
+    report_res = await client.get(
+        f"/api/v1/projects/{proj_id}/estimates/{est_id}/report.pdf",
+        headers=headers,
+    )
+    assert report_res.status_code == 200
+    assert "application/pdf" in report_res.headers["content-type"]
+    assert report_res.content.startswith(b"%PDF")
+
+    direct_report_res = await client.get(
+        f"/api/v1/estimates/{est_id}/report.pdf",
+        headers=headers,
+    )
+    assert direct_report_res.status_code == 200
+    assert "application/pdf" in direct_report_res.headers["content-type"]
+    assert direct_report_res.content.startswith(b"%PDF")
+
+    # 6. Invalid language parameter returns 422 Unprocessable Entity
     invalid_lang_res = await client.get(
         f"/api/v1/estimates/{est_id}/pdf?lang=invalid_lang",
         headers=headers,

@@ -411,6 +411,11 @@ async def create_estimate_for_project(
         drivers=[d.model_dump() for d in result.drivers],
         budget_inr=inputs.budget_inr,
         budget_status=new_budget_status,
+        gap_inr=new_budget_gap,
+        confidence_reason=result.confidence.reason,
+        engine_version=result.engine_version,
+        dataset_version=result.dataset_version,
+        disclaimer=result.disclaimer,
         is_mock=result.is_mock,
     )
     db.add(estimate)
@@ -458,6 +463,21 @@ async def create_estimate_for_project(
     )
 
 
+def _legacy_budget_gap(estimate: Estimate) -> int:
+    """Recompute the budget gap for rows saved before ``gap_inr`` was persisted."""
+    budget = estimate.budget_inr
+    status = estimate.budget_status or "not_provided"
+    if budget is None or budget <= 0 or status == "not_provided":
+        return 0
+    if status == "within":
+        return int(budget - estimate.total_p50)
+    if status == "tight":
+        return int(estimate.total_p50 - budget)
+    if status == "below_minimum":
+        return int(estimate.total_p10 - budget)
+    return 0
+
+
 async def get_estimate_by_id(
     db: AsyncSession,
     user_id: uuid.UUID,
@@ -498,6 +518,15 @@ async def get_estimate_by_id(
         else get_pune_material_recommendations(saved_inputs.quality_tier)
     )
 
+    saved_gap = estimate.gap_inr if estimate.gap_inr is not None else _legacy_budget_gap(estimate)
+    saved_reason = estimate.confidence_reason or (
+        f"Saved estimate labelled {saved_confidence_label}. The original engine reason "
+        "was not recorded for this row."
+    )
+    saved_disclaimer = estimate.disclaimer or (
+        "Preliminary estimate calculated bottom-up using Maharashtra PWD SSR 2022-23 rates."
+    )
+
     return EstimateResponse(
         id=estimate.id,
         project_id=estimate.project_id,
@@ -509,7 +538,7 @@ async def get_estimate_by_id(
         ),
         confidence=ConfidenceEstimate(
             label=saved_confidence_label,
-            reason="Calculated bottom-up from Maharashtra PWD SSR 2022-23 rates.",
+            reason=saved_reason,
         ),
         breakdown=[BreakdownCategoryItem.model_validate(b) for b in estimate.breakdown],
         materials=material_recs,
@@ -519,13 +548,14 @@ async def get_estimate_by_id(
         ],
         budget=BudgetAssessment(
             status=saved_budget_status,
-            gap_inr=0,
+            gap_inr=saved_gap,
         ),
         drivers=[CostDriverItem.model_validate(d) for d in (estimate.drivers or [])],
-        model=ModelMetaItem(version="1.0.0", data_version="v1.0.0"),
-        disclaimer=(
-            "Preliminary estimate calculated bottom-up using Maharashtra PWD SSR 2022-23 rates."
+        model=ModelMetaItem(
+            version=estimate.engine_version or "unknown",
+            data_version=estimate.dataset_version or "unknown",
         ),
+        disclaimer=saved_disclaimer,
         inputs=saved_inputs,
         is_mock=getattr(estimate, "is_mock", False),
         created_at=estimate.created_at,

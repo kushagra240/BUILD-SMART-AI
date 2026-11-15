@@ -82,7 +82,12 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
         "budget_inr": 4000000,
     }
 
-    mock_result = _dummy_engine_result()
+    mock_result = _dummy_engine_result().model_copy(
+        update={
+            "engine_version": "test-engine-9.9",
+            "dataset_version": "test-dataset-9.9",
+        }
+    )
     with (
         patch(
             "app.api.v1.estimates.calculate_estimate",
@@ -132,6 +137,16 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
         assert get_data["is_mock"] is False
         assert len(get_data["materials"]) >= 5
         assert get_data["materials"][0]["image_url"] is not None
+
+        # The saved row must be served back verbatim, not as placeholders.
+        assert get_data["budget"]["status"] == est_data["budget"]["status"]
+        assert get_data["budget"]["gap_inr"] == est_data["budget"]["gap_inr"]
+        assert get_data["budget"]["gap_inr"] > 0
+        assert get_data["confidence"]["reason"] == est_data["confidence"]["reason"]
+        assert get_data["disclaimer"] == est_data["disclaimer"]
+        assert get_data["model"] == est_data["model"]
+        assert get_data["model"]["version"] == "test-engine-9.9"
+        assert get_data["model"]["data_version"] == "test-dataset-9.9"
 
 
 @pytest.mark.asyncio

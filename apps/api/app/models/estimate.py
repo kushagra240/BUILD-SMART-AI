@@ -12,6 +12,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     String,
+    Text,
     func,
     text,
 )
@@ -57,6 +58,11 @@ class Estimate(Base):
     drivers: Mapped[list[dict[str, Any]] | None] = mapped_column(JSON_TYPE, nullable=True)
     budget_inr: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     budget_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    gap_inr: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    confidence_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    engine_version: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    dataset_version: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    disclaimer: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_mock: Mapped[bool] = mapped_column(
         Boolean, default=True, nullable=False, server_default=text("true")
     )

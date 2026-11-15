@@ -691,6 +691,104 @@
         }
       }
     },
+    "/api/v1/projects/{project_id}/estimates/latest": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Get Project Latest Estimate",
+        "description": "Get the latest estimate snapshot for a project.",
+        "operationId": "get_project_latest_estimate_api_v1_projects__project_id__estimates_latest_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/estimate": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Get Project Latest Estimate",
+        "description": "Get the latest estimate snapshot for a project.",
+        "operationId": "get_project_latest_estimate_api_v1_projects__project_id__estimate_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects/{project_id}/estimates/{estimate_id}/pdf": {
       "get": {
         "tags": [
@@ -751,7 +849,82 @@
             }
           },
           "404": {
-            "description": "Estimate or Project not found"
+            "description": "Estimate not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{project_id}/estimates/{estimate_id}/report.pdf": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Export Estimate Pdf",
+        "description": "Export a saved estimate snapshot as a downloadable PDF report.",
+        "operationId": "export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__report_pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "estimate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Estimate Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "hi",
+                "mr"
+              ],
+              "type": "string",
+              "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the generated estimate PDF report",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "404": {
+            "description": "Estimate not found"
           },
           "422": {
             "description": "Validation Error",
@@ -772,8 +945,73 @@
           "Estimates"
         ],
         "summary": "Export Estimate Pdf Direct",
-        "description": "Direct alias to export estimate PDF snapshot by estimate ID.",
+        "description": "Direct alias to export an estimate PDF snapshot by estimate ID.",
         "operationId": "export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "estimate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Estimate Id"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "en",
+                "hi",
+                "mr"
+              ],
+              "type": "string",
+              "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)",
+              "default": "en",
+              "title": "Lang"
+            },
+            "description": "PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the generated estimate PDF report",
+            "content": {
+              "application/pdf": {}
+            }
+          },
+          "404": {
+            "description": "Estimate not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/estimates/{estimate_id}/report.pdf": {
+      "get": {
+        "tags": [
+          "Estimates"
+        ],
+        "summary": "Export Estimate Pdf Direct",
+        "description": "Direct alias to export an estimate PDF snapshot by estimate ID.",
+        "operationId": "export_estimate_pdf_direct_api_v1_estimates__estimate_id__report_pdf_get",
         "security": [
           {
             "HTTPBearer": []
@@ -1539,6 +1777,43 @@
         ],
         "title": "ProjectCreate"
       },
+      "ProjectEstimateSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "total_p50": {
+            "type": "integer",
+            "title": "Total P50"
+          },
+          "built_up_area_sqft": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Built Up Area Sqft"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "total_p50",
+          "created_at"
+        ],
+        "title": "ProjectEstimateSummary"
+      },
       "ProjectListResponse": {
         "properties": {
           "items": {
@@ -1597,6 +1872,16 @@
             "type": "string",
             "format": "date-time",
             "title": "Updated At"
+          },
+          "latest_estimate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectEstimateSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,

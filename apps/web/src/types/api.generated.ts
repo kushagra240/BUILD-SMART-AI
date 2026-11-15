@@ -244,6 +244,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/estimates/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Project Latest Estimate
+         * @description Get the latest estimate snapshot for a project.
+         */
+        get: operations["get_project_latest_estimate_api_v1_projects__project_id__estimates_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{project_id}/estimate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Project Latest Estimate
+         * @description Get the latest estimate snapshot for a project.
+         */
+        get: operations["get_project_latest_estimate_api_v1_projects__project_id__estimate_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{project_id}/estimates/{estimate_id}/pdf": {
         parameters: {
             query?: never;
@@ -264,6 +304,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{project_id}/estimates/{estimate_id}/report.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Estimate Pdf
+         * @description Export a saved estimate snapshot as a downloadable PDF report.
+         */
+        get: operations["export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__report_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/estimates/{estimate_id}/pdf": {
         parameters: {
             query?: never;
@@ -273,9 +333,29 @@ export interface paths {
         };
         /**
          * Export Estimate Pdf Direct
-         * @description Direct alias to export estimate PDF snapshot by estimate ID.
+         * @description Direct alias to export an estimate PDF snapshot by estimate ID.
          */
         get: operations["export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/estimates/{estimate_id}/report.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Estimate Pdf Direct
+         * @description Direct alias to export an estimate PDF snapshot by estimate ID.
+         */
+        get: operations["export_estimate_pdf_direct_api_v1_estimates__estimate_id__report_pdf_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -592,6 +672,23 @@ export interface components {
              */
             notes?: string | null;
         };
+        /** ProjectEstimateSummary */
+        ProjectEstimateSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Total P50 */
+            total_p50: number;
+            /** Built Up Area Sqft */
+            built_up_area_sqft?: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** ProjectListResponse */
         ProjectListResponse: {
             /** Items */
@@ -625,6 +722,7 @@ export interface components {
              * Format: date-time
              */
             updated_at: string;
+            latest_estimate?: components["schemas"]["ProjectEstimateSummary"] | null;
         };
         /** ProjectUpdate */
         ProjectUpdate: {
@@ -1197,6 +1295,68 @@ export interface operations {
             };
         };
     };
+    get_project_latest_estimate_api_v1_projects__project_id__estimates_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EstimateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_project_latest_estimate_api_v1_projects__project_id__estimate_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EstimateResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__pdf_get: {
         parameters: {
             query?: {
@@ -1221,7 +1381,49 @@ export interface operations {
                     "application/pdf": unknown;
                 };
             };
-            /** @description Estimate or Project not found */
+            /** @description Estimate not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_estimate_pdf_api_v1_projects__project_id__estimates__estimate_id__report_pdf_get: {
+        parameters: {
+            query?: {
+                /** @description PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi) */
+                lang?: "en" | "hi" | "mr";
+            };
+            header?: never;
+            path: {
+                project_id: string;
+                estimate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the generated estimate PDF report */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Estimate not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1240,6 +1442,47 @@ export interface operations {
         };
     };
     export_estimate_pdf_direct_api_v1_estimates__estimate_id__pdf_get: {
+        parameters: {
+            query?: {
+                /** @description PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi) */
+                lang?: "en" | "hi" | "mr";
+            };
+            header?: never;
+            path: {
+                estimate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Returns the generated estimate PDF report */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Estimate not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_estimate_pdf_direct_api_v1_estimates__estimate_id__report_pdf_get: {
         parameters: {
             query?: {
                 /** @description PDF report language: 'en' (English), 'hi' (Hindi), 'mr' (Marathi) */
