@@ -20,4 +20,5 @@ dependencies = [
     "slowapi>=0.1.9",
     "reportlab>=4.1.0",
     "matplotlib>=3.8.0",
+    "greenlet>=3.0.0"
 ]
