@@ -9,6 +9,7 @@ from app.core.rate_limit import PerAccountLockout, RateLimiter
 from app.db.base import Base
 from app.main import app
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -46,6 +47,11 @@ async def test_engine() -> AsyncGenerator[AsyncEngine, None]:
     try:
         engine = create_async_engine(db_url, echo=False, pool_pre_ping=True)
         async with engine.begin() as conn:
+            if engine.dialect.name == "postgresql":
+                # ``users.email`` uses CITEXT (see models/user.py); the Alembic
+                # migration creates this extension, so test-only schema
+                # creation must do the same instead of failing on a fresh DB.
+                await conn.execute(text("CREATE EXTENSION IF NOT EXISTS citext"))
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
     except Exception as exc:
