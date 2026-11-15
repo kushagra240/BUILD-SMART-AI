@@ -21,6 +21,20 @@ T40..T43 frontend (mock-based) run in parallel with all backend work
 T50, T53, T55 devops/qa run in parallel
 ```
 
+## Closeout reconciliation (Phase A, 2026-11-15)
+
+Verified by reading merged code on `main` at `0ae720d`. Rows below were corrected where the board disagreed with the code. Where code merged but an acceptance test is still mocked or missing, the row is `review` and the gap is listed under "Found issues".
+
+| Task | Board said | Verified state | Acceptance still open |
+|---|---|---|---|
+| T10 | todo | migration `0002_create_rates_schema` and `make seed-rates` exist | CI never runs alembic or the seed; row-count/no-duplicate tests not found |
+| T14 | todo | route maps `MissingDataError` to 422 `MISSING_DATA`; tests exist | none |
+| T21 | todo | `engine/contracts.py` and `rates/repository.py` are merged | repository tests are mocked, not run against loaded rates (F2) |
+| T22 | todo | per-item pricing and labour split exist in `engine/calculator.py` | `rate_rule` is not read from the DB by the calculator; no hand-priced golden BOQ (F2) |
+| T23 | todo | largest-remainder rounding exists in `engine/calculator.py` | no property test |
+| T27 | blocked | `estimation.py` calls `calculate_estimate`; `is_mock` comes from the result | no end-to-end test with seeded rates; stub-unreachable test absent (F2) |
+| T51 | todo | Playwright suite runs in CI | browser-level API stubs only; no real-API run (F2) |
+
 ## L1 Data and rates
 
 | ID | Task | Depends | Status | Claimed by | Acceptance |
@@ -36,11 +50,11 @@ T50, T53, T55 devops/qa run in parallel
 
 | ID | Task | Depends | Status | Claimed by | Acceptance |
 |---|---|---|---|---|---|
-| T10 | Alembic migration that creates the `rates` schema from `sql/schema.sql`; idempotent `make seed-rates` that loads the CSVs; run in CI against Postgres 16. | T01 | todo | | CI green; row counts asserted in tests (895, 986, 91, 9, 371, 92, 21, 840); re-running seed does not duplicate |
+| T10 | Alembic migration that creates the `rates` schema from `sql/schema.sql`; idempotent `make seed-rates` that loads the CSVs; run in CI against Postgres 16. | T01 | review | | CI green; row counts asserted in tests (895, 986, 91, 9, 371, 92, 21, 840); re-running seed does not duplicate |
 | T11 | Read-only DB role and connection for the rates schema; API never writes to it. | T10 | todo | | test that an INSERT through the API connection fails |
 | T12 | Write security events to `audit_log` (login ok/fail, lockout, token reuse, password change); hashed IPs, no secrets. | none | todo | | tests assert rows written; no token or full email in rows |
 | T13 | Fix `gap_inr` in `get_estimate_by_id`; set `model_version_id` (or its engine-version replacement); make `/meta/options` data-driven from `rates.zone` and one shared category list. | T10 | todo | | tests for each; OpenAPI regenerated; frontend types regenerated |
-| T14 | Return `MISSING_DATA` (HTTP 422) from the estimate endpoint when the engine raises `MissingDataError`; map error envelope. | T21 | todo | | test with a missing zone factor returns code and the missing keys |
+| T14 | Return `MISSING_DATA` (HTTP 422) from the estimate endpoint when the engine raises `MissingDataError`; map error envelope. | T21 | done | | test with a missing zone factor returns code and the missing keys |
 | T15 | Wire FastAPI Estimates Route to the Math Engine (`POST /api/v1/projects/{project_id}/estimates` calls `calculate_estimate`, handles 422 `MISSING_DATA`). | T21, T22 | done | Antigravity | 200 on success, 422 on missing data; OpenAPI response mapped |
 | T16 | Account deletion endpoint and password reset (Should-have). | none | todo | | deletion removes the user's projects and estimates; reset always returns 202 |
 | T17 | Backend PDF Export Service (ReportLab) and `GET /api/v1/projects/{project_id}/estimates/{estimate_id}/pdf` from the saved estimate. | T15 | done | Antigravity | text-extraction test matches stored figures; MOCK/DEV notice present when applicable; A4 |
@@ -50,13 +64,13 @@ T50, T53, T55 devops/qa run in parallel
 | ID | Task | Depends | Status | Claimed by | Acceptance |
 |---|---|---|---|---|---|
 | T20 | Write `docs/engine_design.md`: which tables feed each category, how each `rate_rule` is applied, labour split, indicative-update policy, error contract, and the full ASSUMPTIONS list (quantities for a 2-floor RCC house) with **empty values** and an engineer question per row. | T01 | todo | | zero invented numbers; each assumption names the SSR items it prices; human can hand it to an engineer |
-| T21 | `engine/contracts.py` (`EstimationInput`, `EstimationResult`, `MissingDataError`) and `rates/repository.py` (typed, read-only). | T10 | todo | | tests against the loaded rates; `MissingDataError` lists every missing key; no SQL writes |
-| T22 | Item pricing with `rate_rule` application and a per-item audit trail; golden test from a hand-priced 3-item BOQ supplied by the human. | T21, H3 | todo | | golden test passes with human numbers; rules read values from the database, not code |
-| T23 | `rounding.py` (largest remainder) with property tests. | none | todo | | categories always sum exactly to the total for random valid inputs |
+| T21 | `engine/contracts.py` (`EstimationInput`, `EstimationResult`, `MissingDataError`) and `rates/repository.py` (typed, read-only). | T10 | review | | tests against the loaded rates; `MissingDataError` lists every missing key; no SQL writes |
+| T22 | Item pricing with `rate_rule` application and a per-item audit trail; golden test from a hand-priced 3-item BOQ supplied by the human. | T21, H3 | review | | golden test passes with human numbers; rules read values from the database, not code |
+| T23 | `rounding.py` (largest remainder) with property tests. | none | review | | categories always sum exactly to the total for random valid inputs |
 | T24 | BOQ template and `item -> category` tables as reviewed data, loaded from CSV with `reviewed_by` and date. | H3 | blocked | | unreviewed rows refuse to price |
 | T25 | Range and confidence method per the human's decision (`rates-database-and-engine.md` section 5). | H7 | blocked | | method documented; labels capped without real validation |
 | T26 | Rule-based material recommendations using `material_rate_ssr` and a reviewed tier specification table. | H3, T24 | blocked | | explainable reason per category; no brands; missing spec refuses |
-| T27 | Replace the stub in `estimation.py` with the engine; keep `is_mock=true` until a result is computed entirely from sourced and reviewed data; stub-unreachable test stays. | T21, T22, T23, T14 | blocked | | end-to-end test; stub numbers cannot appear when `is_mock=false` |
+| T27 | Replace the stub in `estimation.py` with the engine; keep `is_mock=true` until a result is computed entirely from sourced and reviewed data; stub-unreachable test stays. | T21, T22, T23, T14 | review | | end-to-end test; stub numbers cannot appear when `is_mock=false` |
 
 ## L4 ML and calibration (infrastructure only until real data exists)
 
@@ -87,7 +101,7 @@ T50, T53, T55 devops/qa run in parallel
 | ID | Task | Depends | Status | Claimed by | Acceptance |
 |---|---|---|---|---|---|
 | T50 | CI additions: rates `validate.py`, seed and rates tests; PR template with the Definition-of-Done checklist; document branch protection for `main`. | T01 | todo | | CI green; PR template present |
-| T51 | Playwright e2e: first on mock mode, then real API when available (register, login, estimate, results, delete). | T42 | todo | | passes in CI; artifacts on failure |
+| T51 | Playwright e2e: first on mock mode, then real API when available (register, login, estimate, results, delete). | T42 | review | | passes in CI; artifacts on failure |
 | T52 | Rewrite README sections 8 to 11 and the methodology docs to match decision D-01; remove claims of a trained model or accuracy. Sync `docs/DATA_SOURCES.md` with `data_source`. | none | todo | | no statement in docs that the code does not support |
 | T53 | Dockerfiles for api and web, full-stack compose, fresh-clone quick start verified by someone who did not write it. | none | todo | | quick start works in 10 minutes; instructions tested |
 | T54 | Deployment plan: Vercel (web, `/api` rewrite), Railway or Render (api), Supabase or managed Postgres, secrets, backups, one tested restore. | T53 | todo | | written plan with free-tier limits verified from current provider pages |
@@ -111,9 +125,17 @@ T50, T53, T55 devops/qa run in parallel
 | H6 | Confirm the branch and PR workflow (D-08) | all lanes |
 | H7 | Approve the range method | T25 |
 | H8 | Review and merge PRs; set statuses to `done` after green CI | all |
+| H9 | Provide a PostgreSQL 16 instance (local Docker, or a CI job that runs `alembic upgrade head` and `make seed-rates`) so the real rates → engine → API flow can be proven end to end. No Docker or PostgreSQL is installed on the owner's machine. | Phase A step 3, F2, T21/T22/T27/T51 |
+| H10 | Review the corrected `/meta/model` fallback copy (F5). No active `ModelVersion` row is seeded, so this response is what `/meta/model` returns today. | F5 |
+| H11 | Decide whether `/meta/options` must become data-driven from `rates.zone` now (T13/F4). It changes the zone ids the web app receives. | T13 |
 
 ## Found issues (outside the finder's lane)
 
 | ID | Found by | Lane to fix | Description | Evidence |
 |---|---|---|---|---|
-| | | | | |
+| F1 | Phase A closeout (OpenCode), 2026-11-15 | L2 | `apps/api/tests/conftest.py` silently fell back to SQLite when PostgreSQL was unreachable, so a green local `pytest` proved nothing about Postgres. Fixed on `release/A-prove-works`: the fixture now raises a named error and never swaps engines. | pre-fix local run: `80 passed`; post-fix local run: `57 passed, 23 errors` with `RuntimeError: Test database unreachable ... no SQLite fallback by design` |
+| F2 | Phase A closeout (OpenCode), 2026-11-15 | L3/L6 | No test seeds the `rates` schema or runs the real engine through HTTP. `tests/engine/test_calculator.py` and `tests/rates/test_repository.py` mock the repository, and `tests/api/test_estimates.py` mocks `calculate_estimate`. The real rates → engine → API chain has no end-to-end proof. | test module docstrings say "fully isolated using AsyncMock"; CI `python-lint-and-test` is green but does not exercise real rates |
+| F3 | Phase A closeout (OpenCode), 2026-11-15 | L2 | `get_estimate_by_id` returns `gap_inr=0`, a fixed confidence reason, and fixed `model.version="1.0.0"` / `data_version="v1.0.0"`. The `Estimate` row stores neither the gap nor the engine/dataset version, so reopening a saved estimate can show a wrong budget gap and version traceability claimed in `docs/methodology.md` is not implemented. | `apps/api/app/services/estimation.py:512,522,525`; `apps/api/app/models/estimate.py` |
+| F4 | Phase A closeout (OpenCode), 2026-11-15 | L2 | `/meta/options` hard-codes five display zones (`pune_central` …) instead of reading `rates.zone`; the web app maps those ids to rates zones in `apiClient.ts`. | `apps/api/app/api/v1/meta.py:20-44`; `apps/web/src/services/apiClient.ts:45-49` |
+| F5 | Phase A closeout (OpenCode), 2026-11-15 | L2 | `/meta/model` served `name="BuildSmart Baseline Stub"` and the card "Estimation engine is currently stubbed for Phase 2" whenever no `ModelVersion` row was active; none is seeded. Text corrected on `release/A-prove-works`. | `apps/api/app/api/v1/meta.py:64-72` (pre-fix) |
+| F6 | Phase A closeout (OpenCode), 2026-11-15 | L6/docs | `.agents/skills/buildsmart-ai/references/status-and-known-issues.md` and `frontend-design.md` still describe `VITE_USE_MOCK=true` as the default; that file was deleted from `apps/web`. | grep `VITE_USE_MOCK` in those references |
