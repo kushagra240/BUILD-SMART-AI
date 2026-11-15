@@ -40,6 +40,8 @@ Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradha
 > | Real material intelligence | Pending |
 > | Full production integration | In progress |
 >
+> **Current estimation data state (15 Nov 2026):** The production estimate is a bottom-up quantity × rate calculation using the **Maharashtra PWD State Schedule of Rates 2022-23 (Civil)** as the base, scaled by a flat **`2.85x` Pune market calibration multiplier**. It is an **indicative planning baseline**, not a verified market rate or a contractor quotation. Per-tier calibration (especially Premium) against verified Pune contractor rates and real projects remains **`TODO(data)`**. See [§8](#8-data-strategy) and [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
+>
 > *This README serves as the single source of truth and definitive roadmap for the build. All principles in [§2](#2-non-negotiable-principles) remain strictly binding.*
 
 ---
@@ -241,9 +243,11 @@ buildsmart-ai/
 
 **This is the highest-risk part of the project.** There is no ready, labelled public dataset of "Pune house specs → actual total cost". The plan below is honest about that and still yields a defensible system.
 
+**Current production baseline (15 Nov 2026).** The deployed estimator is bottom-up, not ML-first. It computes quantities from the inputs, prices them against the **Maharashtra PWD State Schedule of Rates 2022-23 (Civil)** (`SRC-01` in `data/rates`), and applies a flat **`2.85x` Pune market calibration multiplier** (`PUNE_MARKET_MULTIPLIER` in `apps/api/app/services/estimation.py`). The tier modifiers are coarse placeholders — economy `1.0`, standard `1.15`, premium `1.35` — applied to flooring, finishing, plumbing and electrical materials. These values are **code-level planning assumptions, not sourced market rates**; neither the `2.85x` factor nor the tier modifiers are rows in the sourced rates database yet. All outputs are **indicative planning baselines**, not quotations or verified market prices. Premium-tier calibration, a quality-tier specification table and contractor per-sq-ft rates remain `TODO(data)`; see `data/rates/README.md` and [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
+
 ### 8.1 Sources (in priority order)
 1. **Real project records (gold).** Collect as many completed/ongoing Pune residential projects as possible: family, relatives, local contractors, published case studies. Fields: area, floors, zone, quality tier, year, total cost, and (if available) stage costs. **Target: ≥ 40 records; more is better.** These are primarily the **validation set** ([§9.5](#95-evaluation-protocol)).
-2. **Published rate data.** Pune Municipal Corporation Schedule of Rates (SoR), and the regional cost/price sources cited in the synopsis (InfraLens, HouseWise). **Before use, open each URL, confirm it exists, read what it actually says, and record it in `data/DATA_SOURCES.md`.** The synopsis reference "nfraLens" looks like a typo for "InfraLens" and must be checked.
+2. **Published rate data.** Maharashtra PWD State Schedule of Rates 2022-23 (Civil) (`SRC-01` in `data/rates`), plus the regional cost/price sources cited in the synopsis (InfraLens, HouseWise), which remain unverified. **Before using any new source, open the document, confirm it exists, read what it actually says, and record it in [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).** The synopsis reference "nfraLens" looks like a typo for "InfraLens" and must be checked.
 3. **Rate-derived generated dataset.** Combine standard quantity norms (per-sq-ft material and labour quantities by quality tier) with sourced unit rates to compute component costs, then add controlled noise (market variance, site variance). Every such row is `data_type = published_rate_derived` or `synthetic`.
 
 ### 8.2 Honesty rules for data
@@ -336,6 +340,8 @@ Log input distribution summaries and out-of-range rejections (no personal data).
 ## 10. Cost breakdown engine
 
 The synopsis defines **9 categories:** Foundation, Structure, Masonry, Roofing, Flooring, Plumbing, Electrical, Finishing, Labour.
+
+**Current implementation (production baseline).** The API prices each category bottom-up from PWD SSR 2022-23 work items and then applies the flat `2.85x` Pune calibration factor. The output is an **indicative planning baseline**; the per-tier split is not yet backed by a sourced quality-tier specification table (`TODO(data)`). The `2.85x` factor and the coarse tier modifiers are planning assumptions to be replaced by sourced contractor rates and verified real projects, not measured market values.
 
 - Shares come from the `stage_allocations` table by `quality_tier` (and floors band if data supports it).
 - **Design decision to confirm:** Labour overlaps with every other stage in reality. To keep the 9-category structure from the synopsis while staying honest, define the other 8 categories as *materials, equipment and subcontract items* and "Labour" as *site labour not attributed to a specific stage*. Document this in the Methodology page. `TODO: confirm with guide.`
@@ -732,8 +738,8 @@ Resolve these in Week 1; record each as an ADR.
 
 ## 24. Disclaimer
 
-BuildSmart AI provides **preliminary, indicative estimates** based on historical and curated data for Pune and surrounding areas. It is **not** a quotation, a structural assessment, or professional engineering advice, and it does not use live market prices. Actual costs depend on site conditions, design, market prices at the time of purchase, contractor terms, and many factors the model cannot see. Always obtain detailed quotations and professional advice before committing to construction.
+BuildSmart AI provides **preliminary, indicative planning baselines** based on the Maharashtra PWD State Schedule of Rates 2022-23 (Civil) plus a flat `2.85x` Pune market calibration factor. It is **not** a quotation, a structural assessment, a verified market rate, or professional engineering advice, and it does not use live market prices. The calibration factor and tier modifiers are planning assumptions pending validation against real Pune projects and contractor quotes (`TODO(data)`). Actual costs depend on site conditions, design, market prices at the time of purchase, contractor terms, and many factors the model cannot see. Always obtain detailed quotations and professional advice before committing to construction.
 
 ---
 
-*Document owner: Group SY 112. Last updated: 30 Sep 2026. Update this file whenever a decision changes; if the code and this README disagree, fix one of them the same day.*
+*Document owner: Group SY 112. Last updated: 15 Nov 2026. Update this file whenever a decision changes; if the code and this README disagree, fix one of them the same day.*
