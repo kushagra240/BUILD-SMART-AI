@@ -1,9 +1,11 @@
+from typing import Literal
+
 from fastapi import APIRouter, Cookie, Depends, Request, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.deps import get_current_user, get_db
-from app.core.rate_limit import RateLimiter
+from app.core.rate_limit import RateLimiter, get_client_ip
 from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,
@@ -19,26 +21,42 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 REFRESH_COOKIE_NAME = "buildsmart_refresh"
 
 
+def _cookie_flags() -> tuple[bool, Literal["lax", "none"]]:
+    """Return (secure, samesite) for the refresh cookie.
+
+    The production frontend (Vercel) and this API (Render) are on different
+    registrable domains, so the refresh cookie is a cross-site cookie and must be
+    `SameSite=None; Secure`; `Lax` is silently dropped by the browser there.
+    Browsers reject `None` without `Secure`, hence Lax for local HTTP development.
+    """
+    if settings.is_production:
+        return True, "none"
+    return False, "lax"
+
+
 def set_refresh_cookie(response: Response, refresh_token: str) -> None:
     """Set opaque refresh token in HttpOnly cookie."""
-    is_prod = settings.ENVIRONMENT == "production"
+    secure, samesite = _cookie_flags()
     response.set_cookie(
         key=REFRESH_COOKIE_NAME,
         value=refresh_token,
         httponly=True,
-        secure=is_prod,
-        samesite="lax",
+        secure=secure,
+        samesite=samesite,
         path="/api/v1/auth",
         max_age=settings.REFRESH_TOKEN_TTL_DAYS * 24 * 3600,
     )
 
 
 def clear_refresh_cookie(response: Response) -> None:
-    """Clear refresh token cookie."""
+    """Clear refresh token cookie using the same attributes it was set with."""
+    secure, samesite = _cookie_flags()
     response.delete_cookie(
         key=REFRESH_COOKIE_NAME,
         path="/api/v1/auth",
         httponly=True,
+        secure=secure,
+        samesite=samesite,
     )
 
 
@@ -65,7 +83,7 @@ async def login(
     """Authenticate user, return JWT access token, set HttpOnly refresh cookie."""
     RateLimiter.check_rate_limit(request)
     user_agent = request.headers.get("User-Agent")
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
 
     access_token, raw_refresh_token, _user = await auth_service.login_user(
         db,
@@ -93,7 +111,7 @@ async def refresh(
     """Rotate refresh token using HttpOnly cookie, returning a new access token."""
     RateLimiter.check_rate_limit(request)
     user_agent = request.headers.get("User-Agent")
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
 
     raw_token = buildsmart_refresh or ""
 
@@ -141,3 +159,4 @@ async def update_me(
     return await auth_service.update_user_profile(
         db, user=current_user, full_name=req.full_name, password=req.password
     )
+

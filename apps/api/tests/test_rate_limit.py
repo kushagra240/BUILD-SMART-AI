@@ -83,6 +83,25 @@ def test_trusted_proxy_x_forwarded_for_resolution() -> None:
     assert get_client_ip(req_untrusted) == "198.51.100.1"
 
 
+def test_platform_edge_proxy_forwards_real_client_ip() -> None:
+    """Render terminates TLS on a private address; each user must keep their own bucket."""
+    req = create_mock_request("10.0.0.7", {"X-Forwarded-For": "203.0.113.195"})
+    assert get_client_ip(req) == "203.0.113.195"
+
+
+def test_spoofed_leftmost_forwarded_entry_is_ignored() -> None:
+    """A client cannot escape per-IP limiting by prepending its own X-Forwarded-For."""
+    req = create_mock_request(
+        "10.0.0.7", {"X-Forwarded-For": "1.2.3.4, 203.0.113.195, 10.0.0.7"}
+    )
+    assert get_client_ip(req) == "203.0.113.195"
+
+
+def test_forwarded_chain_with_only_private_hops_falls_back_to_peer() -> None:
+    req = create_mock_request("10.0.0.7", {"X-Forwarded-For": "10.0.0.9"})
+    assert get_client_ip(req) == "10.0.0.7"
+
+
 def test_per_account_lockout_expires_stale_accounts() -> None:
     """Stale failed login entries older than LOCKOUT_DURATION are automatically purged."""
     PerAccountLockout.reset()

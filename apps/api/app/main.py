@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import health
 from app.api.v1.router import api_v1_router
-from app.core.config import settings
+from app.core.config import resolve_cors_origins, resolve_origin_regex, settings
 from app.core.errors import setup_error_handlers
 from app.core.middleware import RequestIDMiddleware, SecurityHeadersMiddleware
 
@@ -19,25 +19,16 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 
-
-def _cors_origins(raw: str) -> list[str]:
-    """Parse the CORS allow-list and refuse credentialed wildcard access."""
-    origins = [origin.strip() for origin in raw.split(",") if origin.strip()]
-    if "*" in origins:
-        raise RuntimeError(
-            "ALLOWED_ORIGINS must not contain '*' because credentialed CORS is enabled"
-        )
-    return origins
-
-
-# CORS setup
-origins = _cors_origins(settings.ALLOWED_ORIGINS)
+# CORS setup. The resolver always allows the deployed frontend in production, so an
+# unset or stale platform variable cannot break browser authentication.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=resolve_cors_origins(settings.ALLOWED_ORIGINS, settings.ENVIRONMENT),
+    allow_origin_regex=resolve_origin_regex(settings.ALLOWED_ORIGIN_REGEX),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Request-ID", "Content-Disposition"],
 )
 
 # Error handlers setup

@@ -53,12 +53,73 @@ export function mapZoneToRatesZone(zoneId: string): string {
   return ZONE_ID_MAP[zoneId] || zoneId;
 }
 
-export const API_URL = (() => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (!envUrl) return 'http://localhost:8000/api/v1';
-  const trimmed = envUrl.replace(/\/+$/, '');
-  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
-})();
+const API_PATH = '/api/v1';
+
+/** Hosts served by the Vite dev proxy / same-origin deployment. */
+const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '0.0.0.0']);
+
+/**
+ * Normalise a configured API base URL.
+ *
+ * Deployment incident this guards against: the hosting env var was pasted from a
+ * chat as a markdown link, `[https://host](https://host)`, so every request became
+ * a relative path answered by the static host (404/405) instead of reaching FastAPI.
+ */
+function normalizeApiUrl(raw: string | undefined): string {
+  let value = (raw ?? '').trim();
+  if (!value) return '';
+
+  // Strip wrapping quotes/backticks and surrounding whitespace.
+  value = value.replace(/^[`'"]+/, '').replace(/[`'"]+$/, '').trim();
+
+  // Unwrap `[label](target)` and keep the target when it is an absolute URL.
+  const markdown = /^\[([^\]]*)\]\(([^)]+)\)$/.exec(value);
+  if (markdown) {
+    const [, label, target] = markdown;
+    value = (/^https?:\/\//i.test(target) ? target : label).trim();
+  }
+
+  // Accept a bare host such as `api.example.com` and assume HTTPS.
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(:\d+)?(\/.*)?$/i.test(value)) {
+    value = `https://${value}`;
+  }
+
+  return value;
+}
+
+/**
+ * Resolve the API base URL ending in `/api/v1`.
+ *
+ * Anything that is not a usable absolute http(s) URL falls back to the same-origin
+ * `/api/v1`, which both the Vite dev proxy and the Vercel rewrite forward to the API.
+ */
+export function resolveApiUrl(
+  raw: string | undefined,
+  options: { servedOverHttps?: boolean } = {}
+): string {
+  const normalized = normalizeApiUrl(raw);
+  if (!normalized) return API_PATH;
+
+  let url: URL;
+  try {
+    url = new URL(normalized);
+  } catch {
+    return API_PATH;
+  }
+
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return API_PATH;
+  if (LOCAL_HOSTS.has(url.hostname)) return API_PATH;
+  // An http:// API on an https:// page is blocked as mixed content.
+  if (options.servedOverHttps && url.protocol !== 'https:') return API_PATH;
+
+  const base = `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
+  return base.endsWith(API_PATH) ? base : `${base}${API_PATH}`;
+}
+
+export const API_URL = resolveApiUrl(import.meta.env.VITE_API_URL, {
+  servedOverHttps:
+    typeof window !== 'undefined' && window.location?.protocol === 'https:',
+});
 
 /**
  * Live mode is permanent: the app runs against the live FastAPI backend.

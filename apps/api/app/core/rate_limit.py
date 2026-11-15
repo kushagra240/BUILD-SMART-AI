@@ -1,3 +1,4 @@
+import ipaddress
 from collections import OrderedDict
 from datetime import UTC, datetime, timedelta
 from typing import ClassVar
@@ -6,27 +7,53 @@ from fastapi import HTTPException, Request, status
 
 from app.core.config import settings
 
+# Address ranges a hosting platform's edge proxy can connect from. A remote client
+# cannot present one of these as its source address, so treating them as trusted
+# hops is safe and stops every user from sharing one rate-limit bucket on Render.
+_INTERNAL_NETWORKS = (
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+    ipaddress.ip_network("127.0.0.0/8"),
+    ipaddress.ip_network("169.254.0.0/16"),
+    ipaddress.ip_network("::1/128"),
+    ipaddress.ip_network("fc00::/7"),
+    ipaddress.ip_network("fe80::/10"),
+)
+
+
+def _is_trusted_hop(address: str, trusted: set[str]) -> bool:
+    """True when `address` is a configured proxy or an internal/private address."""
+    if address in trusted or "*" in trusted:
+        return True
+    try:
+        parsed = ipaddress.ip_address(address)
+    except ValueError:
+        return False
+    return any(parsed in network for network in _INTERNAL_NETWORKS)
+
 
 def get_client_ip(request: Request) -> str:
-    """Extract real client IP address.
+    """Extract the real client IP address.
 
-    Only reads X-Forwarded-For if the immediate connection host is present in TRUSTED_PROXIES
-    to prevent header spoofing attacks.
+    X-Forwarded-For is only read when the immediate peer is a trusted proxy (an entry
+    in TRUSTED_PROXIES, or an internal/private address such as a cloud edge proxy).
+    The list is walked right-to-left and the first public hop wins, so a spoofed
+    entry prepended by the client cannot escape per-IP rate limiting.
     """
     direct_ip = request.client.host if request.client else "127.0.0.1"
-    trusted_list = [
-        ip.strip() for ip in settings.TRUSTED_PROXIES.split(",") if ip.strip()
-    ]
+    trusted_list = {ip.strip() for ip in settings.TRUSTED_PROXIES.split(",") if ip.strip()}
 
-    # If direct connection is not a trusted proxy, ignore X-Forwarded-For
-    if direct_ip not in trusted_list and "*" not in trusted_list:
+    if not _is_trusted_hop(direct_ip, trusted_list):
         return direct_ip
 
     forwarded_for = request.headers.get("X-Forwarded-For")
-    if forwarded_for:
-        ips = [ip.strip() for ip in forwarded_for.split(",") if ip.strip()]
-        if ips:
-            return ips[0]
+    if not forwarded_for:
+        return direct_ip
+
+    for candidate in reversed([ip.strip() for ip in forwarded_for.split(",") if ip.strip()]):
+        if not _is_trusted_hop(candidate, trusted_list):
+            return candidate
 
     return direct_ip
 

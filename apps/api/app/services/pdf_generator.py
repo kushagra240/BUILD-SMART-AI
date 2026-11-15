@@ -12,7 +12,6 @@ import io
 import logging
 from pathlib import Path
 from typing import Any
-from typing_extensions import override
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -30,6 +29,7 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
+from typing_extensions import override
 
 from app.models.estimate import Estimate
 from app.models.project import Project
