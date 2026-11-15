@@ -68,6 +68,7 @@ There is no public, labelled dataset of Pune house specifications paired with tr
 - ML does **not** produce the headline cost or the category breakdown.
 - No accuracy metric (MAE, RMSE, MAPE, R²) is claimed for the product, because no real-project validation set exists yet. Headline accuracy will be reported only from a script run on real completed projects, and only in a model card.
 - Generated or synthetic data may be used to exercise code and invariants, but it can never prove accuracy.
+- The shipped calibration model (`apps/api/ml/ml_model.pkl`) is trained on **synthetic estimates** generated from the bottom-up engine (`apps/api/ml/train_model.py`, `synthetic_estimates.csv`). The fit statistics recorded in `apps/api/ml/model_meta.json` describe that generated dataset only and are **not** a real-world accuracy claim.
 
 Real Pune project records, verified contractor per-square-foot rates and the related dataset/model cards remain `TODO(data)`.
 
