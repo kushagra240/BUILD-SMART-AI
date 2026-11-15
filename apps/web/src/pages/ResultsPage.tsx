@@ -12,6 +12,7 @@ import {
 import { categoryChartColor } from '../domain/estimateCategories';
 import { apiErrorMessage } from '../lib/errorMessage';
 import { formatDateTime, formatINR, formatNumber } from '../lib/formatters';
+import { isUuid } from '../lib/ids';
 import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { AuthContext } from '../auth/context';
@@ -187,6 +188,9 @@ export function ResultsPage() {
   );
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'redirect'>(() => {
     if (estimate) return 'success';
+    // Legacy demo links (`/app/estimates/BS-2026-004`) are not UUIDs; redirect
+    // instead of asking the API and rendering a 422 validation error.
+    if (targetId && !isUuid(targetId)) return 'redirect';
     return targetId ? 'loading' : 'redirect';
   });
   const [error, setError] = useState<string | null>(null);
@@ -235,6 +239,10 @@ export function ResultsPage() {
       return;
     }
     if (!targetId) {
+      setStatus('redirect');
+      return;
+    }
+    if (!isUuid(targetId)) {
       setStatus('redirect');
       return;
     }
@@ -375,8 +383,8 @@ export function ResultsPage() {
     );
   }
 
-  const projectName = locationState?.projectName || projectInfo?.name || 'Deshmukh residence';
-  const locality = locationState?.locality || projectInfo?.location || 'Baner, Pune';
+  const projectName = locationState?.projectName || projectInfo?.name || t('results.untitledProject');
+  const locality = locationState?.locality || projectInfo?.location || 'Pune, Maharashtra';
   const areaSqFt = estimate.inputs.built_up_area_sqft;
   const totalCost = estimate.total.p50;
   const ratePerSqFt = areaSqFt > 0 ? Math.round(totalCost / areaSqFt) : 0;

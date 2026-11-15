@@ -33,9 +33,9 @@ export function MaterialsGuidePage() {
             <p className="text-sm leading-6 text-ink-soft">{t('materials.subtitle')}</p>
           </div>
 
-          <Link to="/app/estimates/BS-2026-004" className="btn-ghost h-10 shrink-0 px-3.5 text-xs">
+          <Link to="/app" className="btn-ghost h-10 shrink-0 px-3.5 text-xs">
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>{t('materials.back')}</span>
+            <span>{t('results.backDashboard')}</span>
           </Link>
         </header>
 

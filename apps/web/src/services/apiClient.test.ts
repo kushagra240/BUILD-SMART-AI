@@ -306,6 +306,39 @@ describe('apiClient projects wiring', () => {
   });
 });
 
+describe('apiClient id guard', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('rejects a legacy non-UUID estimate id without calling the API', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.getEstimate('BS-2026-004')).rejects.toMatchObject({
+      status: 400,
+      code: 'INVALID_ID',
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects a legacy non-UUID project id without calling the API', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(apiClient.getProject('deshmukh-residence')).rejects.toMatchObject({
+      status: 400,
+      code: 'INVALID_ID',
+    });
+    await expect(apiClient.getProjectEstimate('kulkarni-family-home')).rejects.toMatchObject({
+      status: 400,
+      code: 'INVALID_ID',
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('apiClient estimate wiring', () => {
   const inputs = {
     built_up_area_sqft: 1800,

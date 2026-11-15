@@ -179,6 +179,16 @@ describe('ResultsPage contract rendering', () => {
     expect(screen.getByText('dashboard page')).toBeInTheDocument();
   });
 
+  it('redirects a legacy non-UUID demo link instead of requesting the estimate', () => {
+    const getSpy = vi.spyOn(apiClient, 'getEstimate');
+
+    renderResults({ path: '/app/estimates/BS-2026-004' });
+
+    expect(screen.getByText('dashboard page')).toBeInTheDocument();
+    expect(getSpy).not.toHaveBeenCalled();
+    expect(screen.queryByText(/Request payload validation failed/i)).not.toBeInTheDocument();
+  });
+
   it('renders a surplus budget gap as being above the estimate', () => {
     renderResults({
       state: { estimate: { ...estimate, budget: { status: 'within', gap_inr: 250000 } } },

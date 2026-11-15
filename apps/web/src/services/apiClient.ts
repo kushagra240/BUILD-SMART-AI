@@ -1,10 +1,6 @@
 import type { components } from '../types/api.generated';
 import type { ConstructionType, MetaOptions, QualityTier } from '../types/estimate';
-import {
-  calculateEstimateMock,
-  fetchMaterialCharacteristics,
-  fetchMetaOptions,
-} from './mockApi';
+import { isUuid } from '../lib/ids';
 
 export type UserResponse = components['schemas']['UserResponse'];
 export type TokenResponse = components['schemas']['TokenResponse'];
@@ -219,49 +215,15 @@ export class ApiError extends Error {
   }
 }
 
-const MOCK_PROJECTS: ProjectResponse[] = [
-  {
-    id: 'deshmukh-residence',
-    user_id: 'usr_mock_1',
-    name: 'Deshmukh residence',
-    notes: 'Baner, Pune · G+1 · 1,800 sq ft',
-    created_at: '2026-10-07T11:42:00Z',
-    updated_at: '2026-10-07T11:42:00Z',
-  },
-  {
-    id: 'kulkarni-family-home',
-    user_id: 'usr_mock_1',
-    name: 'Kulkarni family home',
-    notes: 'Kothrud, Pune · G+1 · 1,500 sq ft',
-    created_at: '2026-10-04T09:15:00Z',
-    updated_at: '2026-10-04T09:15:00Z',
-  },
-  {
-    id: 'wagholi-courtyard-home',
-    user_id: 'usr_mock_1',
-    name: 'Wagholi courtyard home',
-    notes: 'Wagholi, Pune · G+1 · 1,200 sq ft',
-    created_at: '2026-09-28T14:30:00Z',
-    updated_at: '2026-09-28T14:30:00Z',
-  },
-  {
-    id: 'patil-residence',
-    user_id: 'usr_mock_1',
-    name: 'Patil residence',
-    notes: 'Bavdhan, Pune · G+1 · 1,600 sq ft',
-    created_at: '2026-09-22T16:00:00Z',
-    updated_at: '2026-09-22T16:00:00Z',
-  },
-];
-
-let mockUser: UserResponse = {
-  id: 'usr_mock_1',
-  email: 'aniket@buildsmart.local',
-  full_name: 'Aniket Deshmukh',
-  role: 'user',
-  is_active: true,
-  created_at: '2026-10-07T10:00:00Z',
-};
+/**
+ * Fail before the request when an id cannot be a backend UUID, so a legacy demo
+ * link produces a clean client-side error instead of a 422 from FastAPI.
+ */
+function assertUuid(value: string, label: string): void {
+  if (!isUuid(value)) {
+    throw new ApiError(400, 'INVALID_ID', `"${value}" is not a valid ${label} id.`);
+  }
+}
 
 class ApiClient {
   private accessToken: string | null = null;
@@ -408,16 +370,6 @@ class ApiClient {
 
   // Auth flows
   async register(req: RegisterRequest): Promise<UserResponse> {
-    if (isMockApi()) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      mockUser = {
-        ...mockUser,
-        email: req.email,
-        full_name: req.full_name,
-        created_at: new Date().toISOString(),
-      };
-      return { ...mockUser };
-    }
     return this.request<UserResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(req),
@@ -425,17 +377,6 @@ class ApiClient {
   }
 
   async login(req: LoginRequest): Promise<TokenResponse> {
-    if (isMockApi()) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      mockUser = { ...mockUser, email: req.email };
-      const res: TokenResponse = {
-        access_token: 'mock_jwt_token_for_demo',
-        token_type: 'bearer',
-        expires_in: 900,
-      };
-      this.setAccessToken(res.access_token);
-      return res;
-    }
     const res = await this.request<TokenResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(req),
@@ -450,16 +391,6 @@ class ApiClient {
    * family only once.
    */
   async refresh(): Promise<TokenResponse> {
-    if (isMockApi()) {
-      const res: TokenResponse = {
-        access_token: 'mock_jwt_token_for_demo',
-        token_type: 'bearer',
-        expires_in: 900,
-      };
-      this.setAccessToken(res.access_token);
-      return res;
-    }
-
     if (!this.refreshPromise) {
       this.refreshPromise = this.send<TokenResponse>('/auth/refresh', {
         method: 'POST',
@@ -482,10 +413,6 @@ class ApiClient {
   }
 
   async logout(): Promise<{ message: string }> {
-    if (isMockApi()) {
-      this.setAccessToken(null);
-      return { message: 'Logged out successfully (Mock)' };
-    }
     try {
       return await this.request<{ message: string }>(
         '/auth/logout',
@@ -498,9 +425,6 @@ class ApiClient {
   }
 
   async getMe(): Promise<UserResponse> {
-    if (isMockApi()) {
-      return { ...mockUser };
-    }
     return this.request<UserResponse>('/auth/me', {
       method: 'GET',
     });
@@ -509,12 +433,6 @@ class ApiClient {
   // Projects flows
   /** GET /projects -> the signed-in user's saved projects. */
   async getProjects(): Promise<ProjectListResponse> {
-    if (isMockApi()) {
-      return {
-        items: MOCK_PROJECTS,
-        total: MOCK_PROJECTS.length,
-      };
-    }
     return this.request<ProjectListResponse>('/projects', {
       method: 'GET',
     });
@@ -526,18 +444,6 @@ class ApiClient {
   }
 
   async createProject(req: components['schemas']['ProjectCreate']): Promise<ProjectResponse> {
-    if (isMockApi()) {
-      const newProj: ProjectResponse = {
-        id: `proj_${Date.now()}`,
-        user_id: 'usr_mock_1',
-        name: req.name,
-        notes: req.notes ?? null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      MOCK_PROJECTS.unshift(newProj);
-      return newProj;
-    }
     return this.request<ProjectResponse>('/projects', {
       method: 'POST',
       body: JSON.stringify(req),
@@ -545,27 +451,14 @@ class ApiClient {
   }
 
   async getProject(projectId: string): Promise<ProjectResponse> {
-    if (isMockApi()) {
-      const found = MOCK_PROJECTS.find((p) => p.id === projectId);
-      if (!found) {
-        throw new ApiError(404, 'NOT_FOUND', 'Project not found');
-      }
-      return found;
-    }
+    assertUuid(projectId, 'project');
     return this.request<ProjectResponse>(`/projects/${projectId}`, {
       method: 'GET',
     });
   }
 
   async deleteProject(projectId: string): Promise<void> {
-    if (isMockApi()) {
-      const index = MOCK_PROJECTS.findIndex((p) => p.id === projectId);
-      if (index === -1) {
-        throw new ApiError(404, 'NOT_FOUND', 'Project not found');
-      }
-      MOCK_PROJECTS.splice(index, 1);
-      return;
-    }
+    assertUuid(projectId, 'project');
     await this.request<void>(`/projects/${projectId}`, {
       method: 'DELETE',
     });
@@ -573,26 +466,11 @@ class ApiClient {
 
   // Estimate flows
   /**
-   * The options shown by the wizard. Mock mode serves the in-browser mock layer;
-   * live mode serves `/meta/options` exactly as the backend defines it (ids and
-   * names only, no rates). Unknown ids are rejected instead of guessed.
+   * The options shown by the wizard, served by `/meta/options` exactly as the
+   * backend defines it (ids and names only, no rates). Unknown ids are rejected
+   * instead of guessed.
    */
   async getMetaOptions(): Promise<MetaOptions> {
-    if (isMockApi()) {
-      const mock = await fetchMetaOptions();
-      return {
-        ...mock,
-        quality_tiers: mock.quality_tiers.map((tier) => ({
-          ...tier,
-          id: asQualityTier(tier.id),
-        })),
-        construction_types: mock.construction_types.map((type) => ({
-          ...type,
-          id: asConstructionType(type.id),
-        })),
-      };
-    }
-
     const response = await this.request<components['schemas']['MetaOptionsResponse']>(
       '/meta/options',
       { method: 'GET' }
@@ -618,9 +496,7 @@ class ApiClient {
   }
 
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
-    if (isMockApi()) {
-      return calculateEstimateMock(req, projectId);
-    }
+    assertUuid(projectId, 'project');
 
     const payload: EstimateCreate = {
       ...req,
@@ -633,24 +509,13 @@ class ApiClient {
     });
   }
 
+  /**
+   * GET /estimates/{id}. The id must be a UUID: legacy demo links such as
+   * `/app/estimates/BS-2026-004` are rejected locally instead of being sent to the
+   * backend, which would answer 422 and surface a validation error to the user.
+   */
   async getEstimate(estimateId: string): Promise<EstimateResponse> {
-    if (isMockApi()) {
-      const proj = MOCK_PROJECTS.find((p) => p.id === estimateId);
-      const area = proj
-        ? parseInt((proj.notes || '').match(/([\d,]+)\s*sq\s*ft/i)?.[1].replace(/,/g, '') || '1800', 10)
-        : 1800;
-      return this.createEstimate(estimateId, {
-        built_up_area_sqft: area,
-        floors: 2,
-        bedrooms: 3,
-        bathrooms: 3,
-        zone_id: 'pune_west',
-        quality_tier: 'standard',
-        construction_type: 'rcc_framed',
-        plot_area_sqft: 1200,
-        budget_inr: area * 2400,
-      });
-    }
+    assertUuid(estimateId, 'estimate');
     return this.request<EstimateResponse>(`/estimates/${estimateId}`, {
       method: 'GET',
     });
@@ -660,9 +525,7 @@ class ApiClient {
    * GET /projects/{projectId}/estimate -> retrieve latest estimate for a project.
    */
   async getProjectEstimate(projectId: string): Promise<EstimateResponse> {
-    if (isMockApi()) {
-      return this.getEstimate(projectId);
-    }
+    assertUuid(projectId, 'project');
     return this.request<EstimateResponse>(`/projects/${projectId}/estimate`, {
       method: 'GET',
     });
@@ -676,9 +539,6 @@ class ApiClient {
   async getMaterialCharacteristics(
     category?: string
   ): Promise<MaterialCharacteristicResponse[]> {
-    if (isMockApi()) {
-      return fetchMaterialCharacteristics(category);
-    }
     const query = category ? `?category=${encodeURIComponent(category)}` : '';
     return this.request<MaterialCharacteristicResponse[]>(
       `/meta/material-characteristics${query}`,
@@ -703,3 +563,4 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+

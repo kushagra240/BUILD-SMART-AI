@@ -351,7 +351,8 @@
       "pdf": "Could not generate the PDF"
     },
     "backDashboard": "Back to dashboard",
-    "startNewEstimate": "Start a new estimate"
+    "startNewEstimate": "Start a new estimate",
+    "untitledProject": "Saved estimate"
   },
   "dashboard": {
     "kicker": "YOUR BUILDING NOTEBOOK",
@@ -499,9 +500,9 @@
     }
   },
   "materials": {
-    "kicker": "MATERIAL NOTEBOOK / DESHMUKH RESIDENCE",
+    "kicker": "MATERIAL NOTEBOOK / MATERIAL GUIDE",
     "title": "Choose for the way you'll live.",
-    "subtitle": "Practical material recommendations for your Standard-quality home in Baner, Pune.",
+    "subtitle": "Practical material recommendations for a standard-quality home in Pune.",
     "back": "Back to estimate",
     "intro": {
       "title": "Spend on the things you won't want to replace.",

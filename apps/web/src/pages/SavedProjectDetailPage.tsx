@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CalendarDays, FileText, Info, Plus } from 'lucide-react';
 import { motion, useReducedMotion, type Variants } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,15 @@ import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { DeleteProjectButton } from '../components/projects/DeleteProjectButton';
 import { useProject } from '../hooks/useProjects';
 import { formatDate, formatDateTime } from '../lib/formatters';
+import { isUuid } from '../lib/ids';
 
 export function SavedProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { project, status, error, reload, remove } = useProject(id);
+  // Legacy demo links (`/app/projects/deshmukh-residence`) are not UUIDs. Do not
+  // ask the API for them; redirect to the project list instead of a 422 screen.
+  const validId = isUuid(id) ? id : undefined;
+  const { project, status, error, reload, remove } = useProject(validId);
   const [actionError, setActionError] = useState<string | null>(null);
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
@@ -33,6 +37,10 @@ export function SavedProjectDetailPage() {
         hidden: { opacity: 0, y: 16 },
         show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
       };
+
+  if (!validId) {
+    return <Navigate to="/app/projects" replace />;
+  }
 
   if (status === 'loading') {
     return (

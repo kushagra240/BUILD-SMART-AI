@@ -13,9 +13,9 @@ const project = {
   updated_at: '2026-10-07T11:42:00Z',
 };
 
-function renderDetail() {
+function renderDetail(id: string = project.id) {
   return render(
-    <MemoryRouter initialEntries={[`/app/projects/${project.id}`]}>
+    <MemoryRouter initialEntries={[`/app/projects/${id}`]}>
       <Routes>
         <Route path="/app/projects" element={<div>projects index</div>} />
         <Route path="/app/projects/:id" element={<SavedProjectDetailPage />} />
@@ -53,6 +53,15 @@ describe('SavedProjectDetailPage', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Project not found');
     expect(screen.getByRole('link', { name: /Back to saved projects/i })).toBeInTheDocument();
+  });
+
+  it('redirects a legacy non-UUID project link instead of requesting the project', () => {
+    const getSpy = vi.spyOn(apiClient, 'getProject');
+
+    renderDetail('deshmukh-residence');
+
+    expect(screen.getByText('projects index')).toBeInTheDocument();
+    expect(getSpy).not.toHaveBeenCalled();
   });
 
   it('deletes the project and returns to the list', async () => {
