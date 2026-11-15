@@ -26,7 +26,20 @@ function renderHeader(value: AuthContextValue) {
   );
 }
 
-describe('ProductHeader logout', () => {
+describe('ProductHeader', () => {
+  it('labels the projects nav link from the dictionary, not the raw key', () => {
+    renderHeader({
+      status: 'authenticated',
+      user,
+      login: vi.fn(),
+      register: vi.fn(),
+      logout: vi.fn(),
+    });
+
+    expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/app');
+    expect(screen.queryByText('nav.projects')).not.toBeInTheDocument();
+  });
+
   it('shows the signed-in user and calls the API logout before navigating', async () => {
     const logout = vi.fn().mockResolvedValue(undefined);
     renderHeader({
