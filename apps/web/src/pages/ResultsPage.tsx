@@ -17,6 +17,7 @@ import { SampleDataBadge } from '../components/common/SampleDataBadge';
 import { ErrorState, LoadingState } from '../components/common/AsyncState';
 import { AuthContext } from '../auth/context';
 import { Glyph, type GlyphName } from '../components/common/Glyph';
+import { trackPdfDownload, trackCsvDownload } from '../services/analytics';
 import buildSmartLogo from '../assets/buildsmart-logo.png';
 import buildSmartMark from '../assets/buildsmart-mark.png';
 import {
@@ -304,6 +305,10 @@ export function ResultsPage() {
     try {
       const blob = await apiClient.downloadEstimatePdf(estimate.project_id, estimate.id);
       saveBlob(blob, `buildsmart-estimate-${shortId(estimate.id)}.pdf`);
+      trackPdfDownload({
+        project_id: estimate.project_id,
+        estimate_id: estimate.id,
+      });
       setPdfStatus('idle');
     } catch (cause: unknown) {
       setPdfError(apiErrorMessage(cause, t('results.errors.pdf')));
@@ -319,6 +324,11 @@ export function ResultsPage() {
       .join('\n');
     const totalRow = `\n"Total",${estimate.total.p50},100`;
     saveBlob(new Blob([header + rows + totalRow], { type: 'text/csv' }), 'buildsmart-estimate-breakdown.csv');
+    trackCsvDownload({
+      estimate_id: estimate.id,
+      project_id: estimate.project_id,
+      total_p50: estimate.total.p50,
+    });
   };
 
   const handleLogout = async () => {

@@ -13,6 +13,7 @@ import { QualityTier, ConstructionType, MetaOptions } from '../types/estimate';
 import { formatINR } from '../lib/formatters';
 import { ProductHeader } from '../components/layout/ProductHeader';
 import { Glyph } from '../components/common/Glyph';
+import { trackEstimateCalculated } from '../services/analytics';
 
 interface WizardFormData {
   projectName: string;
@@ -161,6 +162,14 @@ export function WizardPage() {
     try {
       if (isMockApi()) {
         const estimate = await calculateEstimateMock(buildInputs());
+        trackEstimateCalculated({
+          estimate_id: estimate.id,
+          total_p50: estimate.total.p50,
+          quality_tier: form.qualityTier,
+          zone_id: form.zoneId,
+          built_up_area_sqft: form.builtUpArea,
+          is_mock: true,
+        });
         navigate(`/app/estimates/${estimate.id}`, {
           state: {
             estimate,
@@ -182,6 +191,15 @@ export function WizardPage() {
       }
 
       const estimate = await apiClient.createEstimate(projectId, buildInputs());
+      trackEstimateCalculated({
+        estimate_id: estimate.id,
+        project_id: projectId,
+        total_p50: estimate.total.p50,
+        quality_tier: form.qualityTier,
+        zone_id: form.zoneId,
+        built_up_area_sqft: form.builtUpArea,
+        is_mock: false,
+      });
       navigate(`/app/estimates/${estimate.id}`, {
         state: {
           estimate,

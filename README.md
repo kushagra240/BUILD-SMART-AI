@@ -2,9 +2,13 @@
 
 **Intelligent Construction Cost Estimation and Material Recommendation System**
 
-MIT School of Computing · Dept. of Computer Science & Engineering · MIT-ADT University, Pune
-Group **SY 112** · Sem 3 · A.Y. 2026-27 · Guide: **Prof. Rinku Badgujar**
-Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradhan
+MIT School of Computing · Dept. of Computer Science & Engineering · MIT-ADT University, Pune  
+Group **SY 112** · Sem 3 · A.Y. 2026-27 · Guide: **Prof. Rinku Badgujar**  
+Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradhan  
+
+🌐 **Live Application (Frontend):** [https://build-smart-ai-vert.vercel.app](https://build-smart-ai-vert.vercel.app)  
+🚀 **Live API Service (Backend):** [https://build-smart-ai-42f1.onrender.com](https://build-smart-ai-42f1.onrender.com)  
+📖 **API Documentation (Swagger UI):** [https://build-smart-ai-42f1.onrender.com/docs](https://build-smart-ai-42f1.onrender.com/docs)  
 
 > **Current Status: Active Prototype / Foundation Implemented**
 >
@@ -78,6 +82,16 @@ Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradha
 ## 1. Product in one paragraph
 
 A homeowner or small contractor in Pune enters built-up area, floors, location zone, quality tier and (optionally) a budget. BuildSmart AI returns: a **predicted total construction cost with an honest low-high range and confidence label**, a **9-category cost breakdown**, **material recommendations per category** that fit the budget, and a **downloadable PDF**. Users keep a **history of projects and estimates**. Every number is traceable to a model version and a dataset version, and the product is upfront about what it is (a preliminary estimate, not a quotation).
+
+### Key features
+
+- 🏗️ **Pune-Calibrated Bottom-Up Estimation**: Computes preliminary residential construction costs from quantity takeoffs and Maharashtra PWD SSR 2022-23 base rates, calibrated with a 2.85x contractor multiplier.
+- 🧱 **Indian Standards (IS) Material Intelligence**: Actionable specifications compliant with Bureau of Indian Standards (IS 1786, IS 2185, IS 15622) featuring primary & alternative choices, engineering justifications, and on-site QA inspection checklists with high-definition visual references.
+- 📊 **9 Canonical BOQ Cost Categories**: Full allocation covering Site Prep, Foundation, RCC Superstructure, Masonry & Plaster, Flooring & Tiling, Openings, MEP Services, Painting & Finishing, and Contractor Margins.
+- 🌐 **Tri-Lingual Interface (i18n)**: Seamless language localization in English, Hindi (हिन्दी), and Marathi (मराठी) across the application and generated reports.
+- 📑 **Export & Project Management**: Downloadable server-generated ReportLab PDF reports, CSV allocation exports, and persistent multi-project management.
+- 🔒 **Enterprise-Grade Security**: Argon2id password hashing, 15-minute JWT access tokens, 7-day rotating refresh tokens with automatic reuse detection and revocation, and object-level IDOR protection.
+- 📈 **Privacy-First Telemetry**: PostHog analytics monitoring core milestones (estimate creation, PDF/CSV export) with automatic disabling in development and test environments.
 
 ---
 
@@ -170,24 +184,25 @@ flowchart LR
 
 ## 6. Tech stack and decisions
 
-Stack follows the approved synopsis. Deviations are listed explicitly.
+Stack follows the approved synopsis and production architecture contracts:
 
-| Layer | Choice | Notes |
-|-------|--------|-------|
-| Frontend | React + TypeScript (strict) + Vite + Tailwind CSS | Vite chosen for speed; synopsis only says "React.js" |
-| Charts | Chart.js via `react-chartjs-2` | As per synopsis |
-| Frontend data | TanStack Query, React Router, React Hook Form + Zod | Typed forms; shared validation rules mirrored from API |
-| Backend | Python 3.11+ (synopsis: 3.10+), FastAPI, Uvicorn, Pydantic v2 | |
-| ORM / migrations | SQLAlchemy 2.x (async) + asyncpg + Alembic | Migrations are mandatory; no `create_all` in prod |
-| Database | PostgreSQL | JSONB for snapshots |
-| ML | scikit-learn, pandas, numpy, joblib; XGBoost optional | As per synopsis |
-| Auth | JWT (access + rotating refresh) | **Deviation:** password hashing with **Argon2id** (via `argon2-cffi` or `pwdlib`) instead of Passlib/bcrypt. Reason: Passlib is lightly maintained and has had compatibility problems with newer bcrypt releases. Agent must verify current status before choosing; if the team prefers Passlib, use it with `argon2` scheme. |
-| PDF | ReportLab + matplotlib (server-side) | Avoids WeasyPrint system-library pain in Docker; identical output everywhere |
-| Rate limiting | `slowapi` (or equivalent) | |
-| Tooling | Ruff, mypy, pytest, ESLint, Prettier, Vitest, Playwright, pre-commit | |
-| Containers | Docker (multi-stage), docker-compose for local | |
-| CI/CD | GitHub Actions | |
-| Hosting | Vercel (frontend), Railway or Render (backend + managed Postgres) | Verify current free-tier limits and cold-start behaviour before committing |
+| Layer | Choice | Notes & Implementation |
+|---|---|---|
+| **Frontend Framework** | React 18 + TypeScript (strict) + Vite | Fast build and HMR; modern component architecture |
+| **Styling & Tokens** | Tailwind CSS + Lucide Icons + Framer Motion | Semantic tokens, mobile-first responsive design, reduced-motion compliance |
+| **Data Visualisation** | Recharts (SVG) | High-performance, accessible donut charts and category breakdown graphs |
+| **State & Routing** | TanStack Query, React Router v7, React Hook Form + Zod | Type-safe form validation strictly mirrored with backend schemas |
+| **Localization (i18n)** | `i18next` + `react-i18next` | Full tri-lingual interface: English, Hindi (हिन्दी), and Marathi (मराठी) |
+| **Product Analytics** | PostHog (`posthog-js`) | Privacy-friendly telemetry on key events (estimates, exports) with dev/test opt-out |
+| **Backend API** | Python 3.11+, FastAPI, Uvicorn, Pydantic v2 | High-throughput asynchronous REST API with OpenAPI 3.1 contract generation |
+| **Database & ORM** | PostgreSQL 16 + SQLAlchemy 2.0 (asyncio) + asyncpg | Production persistence, immutable JSONB snapshots, indexed project ownership |
+| **Schema Migrations** | Alembic | Version-controlled schema migrations with single-head enforcement |
+| **Rates & BOQ Engine** | Maharashtra PWD SSR 2022-23 (Civil) + Pune calibration | Sourced unit rates, IS code mappings, 2.85x contractor market calibration multiplier |
+| **Authentication** | Argon2id + PyJWT + HTTP-only cookies | 15-min access tokens, 7-day rotating refresh tokens with reuse detection |
+| **PDF Reporting** | ReportLab + Matplotlib | Server-side cryptographic snapshot report generator with Devanagari font support |
+| **Tooling & QA** | Ruff, mypy, pytest, ESLint, Prettier, Vitest, axe-core | Full unit, integration, accessibility (WCAG 2.1 AA), and type checks |
+| **Containers & CI** | Docker (multi-stage), GitHub Actions CI | Automated CI matrix (Python lint & test against Postgres 16 service, Web lint & test, Gitleaks) |
+| **Hosting & Cloud** | Vercel (Frontend), Render (FastAPI + Managed Postgres) | Live production deployment with same-origin cookie rewrites and CORS controls |
 
 ---
 
@@ -568,8 +583,112 @@ Generated server-side from the **saved estimate row** (so the PDF always matches
 
 ## 18. DevOps, deployment, observability
 
-### 18.1 Local development
-`docker-compose up` brings up Postgres, API (hot reload) and web (Vite). `make setup` installs, migrates and seeds reference data. `make train` runs the ML pipeline and writes artifacts. A fresh clone must reach a working app in **≤ 10 minutes** following the README.
+### 18.1 Local development setup
+
+Follow these instructions to run the entire BuildSmart AI stack locally on your machine.
+
+#### Prerequisites
+- **Node.js**: v18.0.0 or higher & `npm` v9+
+- **Python**: v3.11 or v3.12 & `pip`
+- **Docker & Docker Compose** (or a local PostgreSQL 16 instance)
+- **Git**
+
+---
+
+#### Step 1: Clone the repository & set up environment variables
+```bash
+git clone https://github.com/kushagra240/BUILD-SMART-AI.git
+cd BUILD-SMART-AI
+
+# Root/Backend environment configuration
+cp .env.example .env
+
+# Frontend environment configuration
+cp apps/web/.env.example apps/web/.env
+```
+
+---
+
+#### Step 2: Start PostgreSQL Database
+Using Docker Compose:
+```bash
+docker-compose up -d postgres
+```
+*Note: Verify the container is running with `docker ps`. The default database will be exposed on port `5432` (`POSTGRES_DB=buildsmart_db`).*
+
+---
+
+#### Step 3: Set up and start the Backend API (`apps/api`)
+1. Create and activate a Python virtual environment:
+   ```powershell
+   # Windows (PowerShell)
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+
+   # Linux / macOS
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+2. Install dependencies in editable mode:
+   ```bash
+   pip install --upgrade pip
+   pip install -e ".[dev]"
+   ```
+
+3. Run database migrations to create tables:
+   ```bash
+   cd apps/api
+   alembic upgrade head
+   cd ../..
+   ```
+
+4. Seed the rates database with Maharashtra PWD SSR data:
+   ```bash
+   python apps/api/app/db/seed_rates.py
+   ```
+
+5. Start the FastAPI development server:
+   ```bash
+   uvicorn apps.api.app.main:app --reload --port 8000
+   ```
+   - API is live at: `http://localhost:8000`
+   - Interactive Swagger API docs: `http://localhost:8000/docs`
+   - Healthcheck: `http://localhost:8000/api/v1/health/live`
+
+---
+
+#### Step 4: Set up and start the Frontend UI (`apps/web`)
+In a new terminal window:
+```bash
+cd apps/web
+
+# Install frontend dependencies
+npm install
+
+# Start Vite development server
+npm run dev
+```
+- Web application is live at: `http://localhost:5173`
+- The frontend dev server automatically proxies `/api` calls to `http://localhost:8000`.
+
+---
+
+#### Step 5: Run Verification & Test Suites
+Run the test suites across backend and frontend to verify system health:
+```bash
+# Frontend tests, linting & typechecks
+cd apps/web
+npm test -- --run      # Vitest unit & accessibility tests
+npm run lint           # ESLint
+npm run typecheck      # TypeScript compilation check
+npm run build          # Production build check
+
+# Backend linting & tests (from project root)
+python -m ruff check .
+python -m mypy ml apps/api
+pytest apps/api/tests ml/tests
+```
 
 ### 18.2 Environment variables (`.env.example` documents each)
 `DATABASE_URL, JWT_SECRET (or key paths), JWT_ISSUER, JWT_AUDIENCE, ACCESS_TOKEN_TTL_MIN, REFRESH_TOKEN_TTL_DAYS, ALLOWED_ORIGINS, COOKIE_SECURE, ENVIRONMENT, MODEL_PATH, LOG_LEVEL, RATE_LIMIT_*, SENTRY_DSN (optional), SMTP_* or email API key (for password reset)`.
