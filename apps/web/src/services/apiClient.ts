@@ -46,7 +46,7 @@ export const ZONE_ID_MAP: Record<string, string> = {
 };
 
 export function mapZoneToRatesZone(zoneId: string): string {
-  return ZONE_ID_MAP[zoneId] || zoneId;
+  return zoneId;
 }
 
 const API_PATH = '/api/v1';
@@ -498,14 +498,9 @@ class ApiClient {
   async createEstimate(projectId: string, req: EstimateCreate): Promise<EstimateResponse> {
     assertUuid(projectId, 'project');
 
-    const payload: EstimateCreate = {
-      ...req,
-      zone_id: mapZoneToRatesZone(req.zone_id),
-    };
-
     return this.request<EstimateResponse>(`/projects/${projectId}/estimates`, {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify(req),
     });
   }
 

@@ -40,6 +40,16 @@ _SKILL_ALIASES: dict[str, str] = {
     "un skilled": "Unskilled",
 }
 
+ZONE_ALIAS_MAP: dict[str, str] = {
+    "pune_central": "ZN-PMC",
+    "pune_east": "ZN-PMC",
+    "pune_west": "ZN-PMC",
+    "pcmc": "ZN-PCMC",
+    "pune_south_peripheral": "ZN-PMC",
+    "ZN-PMC": "pune_central",
+    "ZN-PCMC": "pcmc",
+}
+
 _REPRESENTATIVE_SSR_SR: dict[str, int] = {
     "Skilled": 3,
     "Semi-skilled": 20,
@@ -178,6 +188,15 @@ class RatesRepository:
             )
             z_res = await self.session.execute(z_stmt)
             z_val = z_res.scalar_one_or_none()
+            if z_val is None and clean_zone in ZONE_ALIAS_MAP:
+                alias_id = ZONE_ALIAS_MAP[clean_zone]
+                z_stmt = (
+                    sa.select(zone_table.c.min_wage_zone)
+                    .where(zone_table.c.zone_id == alias_id)
+                    .limit(1)
+                )
+                z_res = await self.session.execute(z_stmt)
+                z_val = z_res.scalar_one_or_none()
             if z_val:
                 min_wage_zone = str(z_val)
 
@@ -305,6 +324,11 @@ class RatesRepository:
         stmt = sa.select(zone_table).where(zone_table.c.zone_id == clean_id).limit(1)
         result = await self.session.execute(stmt)
         row = result.mappings().first()
+        if row is None and clean_id in ZONE_ALIAS_MAP:
+            alias_id = ZONE_ALIAS_MAP[clean_id]
+            stmt = sa.select(zone_table).where(zone_table.c.zone_id == alias_id).limit(1)
+            result = await self.session.execute(stmt)
+            row = result.mappings().first()
         if row is None:
             return None
         return ZoneRecord.model_validate(dict(row))

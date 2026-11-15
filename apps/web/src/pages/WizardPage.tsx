@@ -6,7 +6,6 @@ import {
   apiClient,
   ApiError,
   isMockApi,
-  mapZoneToRatesZone,
   type EstimateCreate,
 } from '../services/apiClient';
 import { apiErrorMessage } from '../lib/errorMessage';
@@ -144,7 +143,7 @@ export function WizardPage() {
     floors: form.floors,
     bedrooms: form.bedrooms,
     bathrooms: form.bathrooms,
-    zone_id: mapZoneToRatesZone(form.zoneId),
+    zone_id: form.zoneId,
     quality_tier: form.qualityTier,
     construction_type: form.structuralSystem,
     plot_area_sqft: form.plotArea > 0 ? form.plotArea : null,

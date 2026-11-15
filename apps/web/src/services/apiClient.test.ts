@@ -449,7 +449,7 @@ describe('apiClient estimate wiring', () => {
     });
   });
 
-  it('maps UI zone identifiers to regulatory backend rates zone codes in outgoing request', async () => {
+  it('passes UI zone identifier directly in estimate request', async () => {
     vi.stubEnv('VITE_USE_MOCK', 'false');
     const fetchMock = vi.fn(async () =>
       jsonResponse({ id: 'estimate-2', project_id: project.id, is_mock: false }, 200)
@@ -464,7 +464,7 @@ describe('apiClient estimate wiring', () => {
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(`/api/v1/projects/${project.id}/estimates`);
     const sentBody = JSON.parse(String(init.body));
-    expect(sentBody.zone_id).toBe('ZN-PMC');
+    expect(sentBody.zone_id).toBe('pune_west');
   });
 });
 

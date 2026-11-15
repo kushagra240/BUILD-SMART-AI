@@ -53,6 +53,11 @@ ZONE_ENCODING: dict[str, int] = {
     "ZN-CANT": 2,
     "ZN-COUNCIL": 3,
     "ZN-OTHER": 4,
+    "pune_central": 0,
+    "pune_east": 0,
+    "pune_west": 0,
+    "pcmc": 1,
+    "pune_south_peripheral": 4,
 }
 
 _MODEL_CANDIDATE_PATHS: list[Path] = [
