@@ -19,8 +19,19 @@ app = FastAPI(
 app.add_middleware(RequestIDMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 
+
+def _cors_origins(raw: str) -> list[str]:
+    """Parse the CORS allow-list and refuse credentialed wildcard access."""
+    origins = [origin.strip() for origin in raw.split(",") if origin.strip()]
+    if "*" in origins:
+        raise RuntimeError(
+            "ALLOWED_ORIGINS must not contain '*' because credentialed CORS is enabled"
+        )
+    return origins
+
+
 # CORS setup
-origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",") if origin.strip()]
+origins = _cors_origins(settings.ALLOWED_ORIGINS)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
