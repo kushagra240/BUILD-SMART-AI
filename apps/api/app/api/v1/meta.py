@@ -61,13 +61,21 @@ async def get_meta_model(db: AsyncSession = Depends(get_db)) -> MetaModelRespons
             is_active=True,
         )
 
-    # Default fallback when model card has not been trained yet (Phase 2 stub)
+    # No active model version registered: report that fact instead of implying
+    # the estimate itself is a stub. Estimates come from the bottom-up rates
+    # engine; the ML calibration model only adjusts the range.
     return MetaModelResponse(
-        name="BuildSmart Baseline Stub",
-        version="v0.1-stub",
-        data_version="pune-sor-v1-stub",
-        metrics={"real_data_mape": "N/A (Stub)"},
-        card={"note": "Estimation engine is currently stubbed for Phase 2"},
+        name="No active model version",
+        version="n/a",
+        data_version="n/a",
+        metrics=None,
+        card={
+            "note": (
+                "No active model version is registered. Estimates are produced "
+                "bottom-up from the rates dataset; the ML calibration model "
+                "adjusts only the range."
+            )
+        },
         is_active=False,
     )
 
