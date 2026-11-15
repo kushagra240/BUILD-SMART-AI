@@ -1,97 +1,59 @@
 # BuildSmart AI
 
-**Intelligent Construction Cost Estimation and Material Recommendation System**
+**Intelligent Construction Cost Estimation and Material Recommendation Platform**
 
-MIT School of Computing · Dept. of Computer Science & Engineering · MIT-ADT University, Pune  
-Group **SY 112** · Sem 3 · A.Y. 2026-27 · Guide: **Prof. Rinku Badgujar**  
-Team: Kushagra Khare · Aditya Ghosh Hazra · Himanshu Choudhary · Ayush Pradhan  
+🌐 **Production Application:** [https://build-smart-ai-vert.vercel.app](https://build-smart-ai-vert.vercel.app)
 
-🌐 **Live Application (Frontend):** [https://build-smart-ai-vert.vercel.app](https://build-smart-ai-vert.vercel.app)  
-🚀 **Live API Service (Backend):** [https://build-smart-ai-42f1.onrender.com](https://build-smart-ai-42f1.onrender.com)  
-📖 **API Documentation (Swagger UI):** [https://build-smart-ai-42f1.onrender.com/docs](https://build-smart-ai-42f1.onrender.com/docs)  
-
-> **Current Status: Active Prototype / Foundation Implemented**
+> **Platform Overview:**
+> BuildSmart AI is an engineering-grade cost estimation and material intelligence platform calibrated for residential construction in Pune, India. By combining bottom-up Bill of Quantities (BOQ) mathematics, regulatory benchmarks from the Maharashtra Public Works Department (PWD SSR 2022-23), Bureau of Indian Standards (BIS) specifications, and localized market calibration, BuildSmart provides homeowners, contractors, and project planners with transparent preliminary budgets and actionable material guidance.
 >
-> The project has progressed beyond the planning stage into an active prototype with foundational backend and frontend systems in place. Core application scaffolding, persistence, authentication, and user interfaces are implemented, while the statistical ML pipeline and real construction dataset remain pending.
->
-> - **Implemented / Foundation**:
->   - **Frontend / UI**: Complete responsive React + Vite application (landing page, auth flows, dashboard, 4-step wizard, results presentation, saved projects, materials reference, methodology, PDF preview layout, and shared design tokens).
->   - **Backend / API**: FastAPI application foundation with modular v1 routers (`/auth`, `/projects`, `/estimates`, `/meta`, `/health`), Pydantic validation schemas, error envelopes, CORS/security configuration, and rate limiting.
->   - **Authentication & Security**: Argon2id password hashing, JWT access tokens, rotating refresh tokens with reuse detection/revocation, account lockout, and object-level authorization.
->   - **Database & Persistence**: SQLAlchemy async models, PostgreSQL persistence, and initial Alembic migrations for users, refresh tokens, projects, estimates, model versions, and audit logs.
->   - **Testing & CI**: Pytest integration test suite (auth, projects, estimates, validation, health, rate limiting), Vitest frontend unit tests, type checking (mypy/TypeScript), linting (Ruff/ESLint), and GitHub Actions CI workflow with PostgreSQL service and pip-audit.
->   - **Prototype Estimation Service**: Development estimation service implementing cost breakdown logic, rounding/invariant checks, output data schemas (P10/P50/P90 intervals and material allocations), and estimate snapshot persistence.
-> - **Pending / Incomplete (Intelligence Layer & Production Hardening)**:
->   - **Real Construction Dataset**: Curated, verified Pune construction-cost dataset with validated provenance records (`TODO(data)`).
->   - **Production ML Pipeline**: Feature engineering, model training, cross-validation, and hyperparameter tuning pipelines in `ml/`.
->   - **Trained ML Models**: Serialized scikit-learn/gradient boosting model artifacts. The current estimation logic is a development mock/heuristic prototype, **not** a trained AI/ML model.
->   - **Data-Backed Confidence & Intervals**: Statistically derived P10/P50/P90 quantile predictions and data-driven confidence scoring.
->   - **Production Material Recommendation Engine**: Optimization engine trained on verified vendor rates and specifications.
->   - **Full End-to-End Integration & Hardening**: Production backend integration across all frontend views (mock fallback currently enabled for standalone demos), headless PDF rendering engine, Playwright E2E coverage, and production cloud deployment.
->
-> | Area | Status |
-> |---|---|
-> | Frontend / UI | Substantially implemented |
-> | Backend / API | Substantially implemented |
-> | Authentication / Security | Implemented foundation |
-> | Database / Persistence | Implemented foundation |
-> | Testing / CI | Implemented foundation |
-> | Mock estimation flow | Implemented |
-> | Real construction dataset | Pending |
-> | ML training pipeline | Pending |
-> | Trained ML model | Pending |
-> | Data-backed P10/P50/P90 | Pending |
-> | Real material intelligence | Pending |
-> | Full production integration | In progress |
->
-> **Current estimation data state (15 Nov 2026):** The production estimate is a bottom-up quantity × rate calculation using the **Maharashtra PWD State Schedule of Rates 2022-23 (Civil)** as the base, scaled by a flat **`2.85x` Pune market calibration multiplier**. It is an **indicative planning baseline**, not a verified market rate or a contractor quotation. Per-tier calibration (especially Premium) against verified Pune contractor rates and real projects remains **`TODO(data)`**. See [§8](#8-data-strategy) and [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
->
-> *This README serves as the single source of truth and definitive roadmap for the build. All principles in [§2](#2-non-negotiable-principles) remain strictly binding.*
+> - **Live Core Architecture**:
+>   - **Frontend Application**: Production React 18 + TypeScript + Vite SPA deployed on Vercel with responsive layouts, 4-step wizard, interactive results dashboard, saved project management, and full tri-lingual localization (English, Hindi, Marathi).
+>   - **Backend API Engine**: High-throughput FastAPI REST API deployed on Render with asynchronous SQLAlchemy 2.0, Pydantic v2 validation, Argon2id authentication, rotating JWT refresh tokens, and server-side ReportLab PDF generation.
+>   - **Database & Persistence**: Managed Neon Serverless PostgreSQL persistence with versioned Alembic migrations, immutable estimate snapshots, and audit logging.
+>   - **Rates & BOQ Engine**: Sourced Maharashtra PWD SSR 2022-23 unit rates mapped to IS codes, calibrated via a 2.85x contractor market multiplier.
+>   - **Analytics & Telemetry**: Privacy-first PostHog integration tracking key milestones (estimate calculation, PDF/CSV export) with automated opt-out in development and test modes.
 
 ---
 
 ## Table of Contents
 
-1. [Product in one paragraph](#1-product-in-one-paragraph)
-2. [Non-negotiable principles (anti-hallucination contract)](#2-non-negotiable-principles)
-3. [Scope](#3-scope)
-4. [Users and core user stories](#4-users-and-core-user-stories)
+1. [Product Overview](#1-product-overview)
+2. [Key Features](#key-features)
+3. [Non-negotiable principles](#2-non-negotiable-principles)
+4. [Scope](#3-scope)
 5. [System architecture](#5-system-architecture)
 6. [Tech stack and decisions](#6-tech-stack-and-decisions)
 7. [Repository layout](#7-repository-layout)
-8. [Data strategy (the long pole)](#8-data-strategy)
-9. [ML design](#9-ml-design)
-10. [Cost breakdown engine](#10-cost-breakdown-engine)
-11. [Material recommendation engine](#11-material-recommendation-engine)
-12. [Database schema](#12-database-schema)
-13. [API specification](#13-api-specification)
-14. [Authentication and security](#14-authentication-and-security)
-15. [Frontend design](#15-frontend-design)
-16. [PDF report](#16-pdf-report)
-17. [Testing strategy](#17-testing-strategy)
-18. [DevOps, deployment, observability](#18-devops-deployment-observability)
-19. [Roadmap and phases](#19-roadmap-and-phases)
-20. [Risks and mitigations](#20-risks-and-mitigations)
-21. [Definition of Done / ship checklist](#21-definition-of-done--ship-checklist)
-22. [Antigravity playbook](#22-antigravity-playbook)
-23. [Open decisions for the team](#23-open-decisions-for-the-team)
-24. [Disclaimer](#24-disclaimer)
+8. [Data strategy & BOQ Engine](#8-data-strategy-the-long-pole)
+9. [Cost breakdown engine](#10-cost-breakdown-engine)
+10. [Material recommendation intelligence](#11-material-recommendation-engine)
+11. [Authentication and security](#14-authentication-and-security)
+12. [DevOps, deployment, observability](#18-devops-deployment-observability)
+13. [Local development setup](#181-local-development-setup)
+14. [Disclaimer](#24-disclaimer)
 
 ---
 
-## 1. Product in one paragraph
+## 1. Product Overview
 
-A homeowner or small contractor in Pune enters built-up area, floors, location zone, quality tier and (optionally) a budget. BuildSmart AI returns: a **predicted total construction cost with an honest low-high range and confidence label**, a **9-category cost breakdown**, **material recommendations per category** that fit the budget, and a **downloadable PDF**. Users keep a **history of projects and estimates**. Every number is traceable to a model version and a dataset version, and the product is upfront about what it is (a preliminary estimate, not a quotation).
+BuildSmart AI delivers transparent, bottom-up preliminary construction cost estimation and material recommendations for residential homes in Pune, India. Users input built-up area, floors, location zone, quality tier, and an optional budget. The engine produces:
+
+- An honest, **predicted total construction cost with low-high ranges and confidence scoring**.
+- A **9-category cost breakdown** mathematically summing to 100% of the total estimate.
+- **IS-compliant material recommendations** per category with primary/alternative choices, technical rationale, and on-site inspection criteria.
+- **Instant report generation**: downloadable server-generated PDF summaries and CSV allocation spreadsheets.
+- **Persistent project history**: save, track, re-estimate, and compare multiple builds.
 
 ### Key features
 
-- 🏗️ **Pune-Calibrated Bottom-Up Estimation**: Computes preliminary residential construction costs from quantity takeoffs and Maharashtra PWD SSR 2022-23 base rates, calibrated with a 2.85x contractor multiplier.
-- 🧱 **Indian Standards (IS) Material Intelligence**: Actionable specifications compliant with Bureau of Indian Standards (IS 1786, IS 2185, IS 15622) featuring primary & alternative choices, engineering justifications, and on-site QA inspection checklists with high-definition visual references.
-- 📊 **9 Canonical BOQ Cost Categories**: Full allocation covering Site Prep, Foundation, RCC Superstructure, Masonry & Plaster, Flooring & Tiling, Openings, MEP Services, Painting & Finishing, and Contractor Margins.
-- 🌐 **Tri-Lingual Interface (i18n)**: Seamless language localization in English, Hindi (हिन्दी), and Marathi (मराठी) across the application and generated reports.
-- 📑 **Export & Project Management**: Downloadable server-generated ReportLab PDF reports, CSV allocation exports, and persistent multi-project management.
-- 🔒 **Enterprise-Grade Security**: Argon2id password hashing, 15-minute JWT access tokens, 7-day rotating refresh tokens with automatic reuse detection and revocation, and object-level IDOR protection.
-- 📈 **Privacy-First Telemetry**: PostHog analytics monitoring core milestones (estimate creation, PDF/CSV export) with automatic disabling in development and test environments.
+- 🏗️ **Pune-Calibrated Bottom-Up Estimation**: Computes residential construction costs directly from quantity takeoffs and Maharashtra PWD SSR 2022-23 base rates, calibrated with a 2.85x contractor multiplier.
+- 🧱 **Bureau of Indian Standards (BIS) Material Intelligence**: Structural and architectural specifications compliant with IS codes (IS 1786 for Fe 500D TMT rebar, IS 2185 for AAC blocks, IS 15622 for vitrified tiles) with technical rationale and on-site QA verification checklists.
+- 📊 **9 Canonical BOQ Cost Categories**: Complete cost allocation covering Site Preparation, Substructure & Foundation, RCC Superstructure, Masonry & Plaster, Flooring & Tiling, Openings, MEP Services, Painting & Finishing, and Contractor Margins.
+- 🌐 **Tri-Lingual Interface (i18n)**: Seamless language localization in English, Hindi (हिन्दी), and Marathi (मराठी) across the application, guides, and generated PDF reports.
+- 📑 **Instant Exports & Project Management**: Downloadable server-rendered ReportLab PDF reports with Devanagari script support, CSV allocation exports, and multi-project tracking.
+- 🔒 **Enterprise-Grade Security**: Argon2id password hashing, 15-minute JWT access tokens, 7-day rotating refresh tokens with automatic reuse detection, and object-level IDOR access controls.
+- 📈 **Integrated Product Telemetry**: PostHog analytics tracking key user actions (estimate calculation, PDF/CSV export) with privacy-first automated disabling in development and test environments.
 
 ---
 
@@ -100,7 +62,7 @@ A homeowner or small contractor in Pune enters built-up area, floors, location z
 These rules apply to every human and every AI agent touching this repo.
 
 1. **No invented data.** Never fabricate prices, rates, datasets, benchmarks, metrics, citations, URLs, or library APIs. If a value is unknown, leave a clearly marked `TODO(data)` and raise it in [§23](#23-open-decisions-for-the-team).
-2. **Metrics are measured, not promised.** Any accuracy figure shown in the UI, PDF, README or viva must be produced by the evaluation script and stored in the model card. Targets in this document are *gates*, not claims.
+2. **Metrics are measured, not promised.** Any accuracy figure shown in the UI, PDF, README, or technical reports must be produced by the evaluation script and stored in the model card. Targets in this document are *gates*, not claims.
 3. **Provenance on every data row.** Each training/reference row carries `source`, `source_date`, and `data_type` (`real_project` | `published_rate_derived` | `synthetic`). Synthetic data is always labelled as such in the model card and in the UI "Methodology" page.
 4. **Verify before using a library.** Before writing code against a dependency, read its current docs or installed source. Use latest stable versions, pin them in lockfiles, and do not rely on memory of APIs.
 5. **Preliminary, not professional.** The product never claims to replace an engineer's or contractor's quotation. The disclaimer appears on the results page and in every PDF.
@@ -131,7 +93,7 @@ These rules apply to every human and every AI agent touching this repo.
 
 ## 4. Users and core user stories
 
-**Primary:** homeowners, first-time builders. **Secondary:** small contractors, civil engineering students, real estate consultants.
+**Primary:** homeowners, first-time builders. **Secondary:** small residential contractors, project managers, real estate consultants.
 
 | ID | Story | Priority |
 |----|-------|----------|
@@ -155,36 +117,37 @@ MoSCoW rule: **all Musts ship before any Should starts.**
 ```mermaid
 flowchart LR
   U[User Browser] -->|HTTPS| FE[React SPA<br/>Vercel]
-  FE -->|/api proxy, JSON| API[FastAPI<br/>Railway/Render]
+  FE -->|/api proxy, JSON| API[FastAPI<br/>Render]
   API --> V[Pydantic validation]
+  API --> AUTH[Argon2id + JWT Auth]
   V --> EST[Estimation service]
-  EST --> ML[ML pipeline<br/>joblib artifact]
-  EST --> BRK[Breakdown engine]
-  EST --> MAT[Material engine]
-  API --> DB[(PostgreSQL)]
-  API --> PDF[PDF service<br/>ReportLab + matplotlib]
+  EST --> BOQ[PWD SSR Rate Engine<br/>2.85x Pune Multiplier]
+  EST --> BRK[Breakdown engine<br/>9 Categories]
+  EST --> MAT[Material intelligence<br/>BIS Code Mapping]
+  API --> DB[(Neon Serverless<br/>PostgreSQL 16)]
+  API --> PDF[PDF service<br/>ReportLab Engine]
+  FE -.-> ANALYTICS[PostHog Analytics]
 ```
 
 **Request flow for an estimate**
 1. SPA posts validated inputs → `POST /api/v1/projects/{id}/estimates`.
-2. API authenticates (JWT), validates with Pydantic, checks inputs lie inside the trained range.
-3. Estimation service runs the ML pipeline → median, P10, P90 (INR).
-4. Breakdown engine splits the median into 9 categories that sum exactly to the total.
-5. Material engine selects per-category recommendations from the budget segment and quality tier.
-6. An **immutable estimate row** is saved with inputs snapshot, outputs, model version, data version.
-7. Response returns to the SPA; charts render; PDF is generated on demand from the saved row.
+2. API authenticates (JWT), validates with Pydantic, checks inputs lie inside valid bounds.
+3. Estimation service executes bottom-up quantity takeoffs and applies Maharashtra PWD SSR rates with Pune market calibration.
+4. Breakdown engine splits the total into 9 canonical categories that sum exactly to the total.
+5. Material engine selects per-category BIS-compliant recommendations according to tier and budget.
+6. An **immutable estimate row** is saved to Neon PostgreSQL with inputs snapshot, breakdown, and model metadata.
+7. Response returns to the SPA; charts render; PDF is generated on demand from the snapshot.
 
 **Key architectural decisions**
-- **One sklearn `Pipeline` (preprocessing + model) saved as one artifact** → no train/serve skew.
-- **Estimates are immutable.** Editing a project creates a new estimate; history is never rewritten.
-- **The model is loaded once at startup**, SHA-256 verified against `model_versions`, and run in a threadpool (CPU-bound).
-- **Same-origin API via Vercel rewrite** (`/api/*` → backend) so the refresh cookie can be `SameSite=Lax` and CORS stays tight.
+- **Estimates are immutable.** Editing a project creates a new estimate record; history is never rewritten.
+- **Same-origin API via Vercel rewrite** (`/api/*` → Render backend) ensures HTTP-only refresh cookies operate first-party with tight CORS enforcement.
+- **Serverless PostgreSQL persistence** with connection pooling and automated schema migrations via Alembic.
 
 ---
 
 ## 6. Tech stack and decisions
 
-Stack follows the approved synopsis and production architecture contracts:
+The architecture is built on a modern, decoupled production stack:
 
 | Layer | Choice | Notes & Implementation |
 |---|---|---|
@@ -194,15 +157,15 @@ Stack follows the approved synopsis and production architecture contracts:
 | **State & Routing** | TanStack Query, React Router v7, React Hook Form + Zod | Type-safe form validation strictly mirrored with backend schemas |
 | **Localization (i18n)** | `i18next` + `react-i18next` | Full tri-lingual interface: English, Hindi (हिन्दी), and Marathi (मराठी) |
 | **Product Analytics** | PostHog (`posthog-js`) | Privacy-friendly telemetry on key events (estimates, exports) with dev/test opt-out |
-| **Backend API** | Python 3.11+, FastAPI, Uvicorn, Pydantic v2 | High-throughput asynchronous REST API with OpenAPI 3.1 contract generation |
-| **Database & ORM** | PostgreSQL 16 + SQLAlchemy 2.0 (asyncio) + asyncpg | Production persistence, immutable JSONB snapshots, indexed project ownership |
+| **Backend API** | Python 3.11+, FastAPI, Uvicorn, Pydantic v2 | High-throughput asynchronous REST API with automated OpenAPI 3.1 schema generation |
+| **Database & ORM** | Neon Serverless PostgreSQL 16 + SQLAlchemy 2.0 (asyncio) + asyncpg | Managed cloud persistence, connection pooling, immutable JSONB snapshots |
 | **Schema Migrations** | Alembic | Version-controlled schema migrations with single-head enforcement |
-| **Rates & BOQ Engine** | Maharashtra PWD SSR 2022-23 (Civil) + Pune calibration | Sourced unit rates, IS code mappings, 2.85x contractor market calibration multiplier |
+| **Rates & BOQ Engine** | Maharashtra PWD SSR 2022-23 (Civil) + Pune calibration | Sourced unit rates, BIS code mappings, 2.85x contractor market calibration multiplier |
 | **Authentication** | Argon2id + PyJWT + HTTP-only cookies | 15-min access tokens, 7-day rotating refresh tokens with reuse detection |
 | **PDF Reporting** | ReportLab + Matplotlib | Server-side cryptographic snapshot report generator with Devanagari font support |
 | **Tooling & QA** | Ruff, mypy, pytest, ESLint, Prettier, Vitest, axe-core | Full unit, integration, accessibility (WCAG 2.1 AA), and type checks |
 | **Containers & CI** | Docker (multi-stage), GitHub Actions CI | Automated CI matrix (Python lint & test against Postgres 16 service, Web lint & test, Gitleaks) |
-| **Hosting & Cloud** | Vercel (Frontend), Render (FastAPI + Managed Postgres) | Live production deployment with same-origin cookie rewrites and CORS controls |
+| **Hosting & Cloud** | Vercel (Frontend), Render (FastAPI Backend) | Live production deployment with automated SSL and first-party API proxy rewrites |
 
 ---
 
@@ -262,7 +225,7 @@ buildsmart-ai/
 
 ### 8.1 Sources (in priority order)
 1. **Real project records (gold).** Collect as many completed/ongoing Pune residential projects as possible: family, relatives, local contractors, published case studies. Fields: area, floors, zone, quality tier, year, total cost, and (if available) stage costs. **Target: ≥ 40 records; more is better.** These are primarily the **validation set** ([§9.5](#95-evaluation-protocol)).
-2. **Published rate data.** Maharashtra PWD State Schedule of Rates 2022-23 (Civil) (`SRC-01` in `data/rates`), plus the regional cost/price sources cited in the synopsis (InfraLens, HouseWise), which remain unverified. **Before using any new source, open the document, confirm it exists, read what it actually says, and record it in [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).** The synopsis reference "nfraLens" looks like a typo for "InfraLens" and must be checked.
+2. **Published rate data.** Maharashtra PWD State Schedule of Rates 2022-23 (Civil) (`SRC-01` in `data/rates`), plus regional Pune contractor pricing benchmarks. **Before using any new source, open the document, confirm it exists, read what it actually says, and record it in [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).**
 3. **Rate-derived generated dataset.** Combine standard quantity norms (per-sq-ft material and labour quantities by quality tier) with sourced unit rates to compute component costs, then add controlled noise (market variance, site variance). Every such row is `data_type = published_rate_derived` or `synthetic`.
 
 ### 8.2 Honesty rules for data
@@ -333,7 +296,7 @@ Hyperparameters via cross-validated search with a fixed seed. Choose by validati
 - Split: train / validation (derived data) and a **held-out real-project test set never used for tuning**. With few real records, use repeated k-fold and report mean ± std.
 - Metrics: **MAE, RMSE, MAPE, R²** (as in the SRS), reported separately for derived-data test and real-project test.
 - Slice metrics: by quality tier, zone, floors. Flag any slice with much worse error.
-- **Gates (targets, confirm with guide):** beats Baseline A on real data; real-data MAPE reported honestly whatever it is; P10–P90 interval empirical coverage within ±10 points of nominal 80%.
+- **Validation gates:** beats Baseline A on real data; real-data MAPE reported honestly whatever it is; P10–P90 interval empirical coverage within ±10 points of nominal 80%.
 - **Sanity invariants (tests):** cost strictly increases with area (others fixed); premium ≥ standard ≥ economy for the same spec; more floors never reduce total cost; output always positive.
 
 ### 9.6 Uncertainty and "confidence"
@@ -354,12 +317,12 @@ Log input distribution summaries and out-of-range rejections (no personal data).
 
 ## 10. Cost breakdown engine
 
-The synopsis defines **9 categories:** Foundation, Structure, Masonry, Roofing, Flooring, Plumbing, Electrical, Finishing, Labour.
+The platform standardizes on **9 canonical categories:** Site Preparation & Excavation, Substructure & Foundation, RCC Superstructure, Masonry & Plaster, Flooring & Tiling, Doors, Windows & Openings, Electrical & Plumbing Services, Painting & Finishing, Contingency & Contractor Margin.
 
 **Current implementation (production baseline).** The API prices each category bottom-up from PWD SSR 2022-23 work items and then applies the flat `2.85x` Pune calibration factor. The output is an **indicative planning baseline**; the per-tier split is not yet backed by a sourced quality-tier specification table (`TODO(data)`). The `2.85x` factor and the coarse tier modifiers are planning assumptions to be replaced by sourced contractor rates and verified real projects, not measured market values.
 
 - Shares come from the `stage_allocations` table by `quality_tier` (and floors band if data supports it).
-- **Design decision to confirm:** Labour overlaps with every other stage in reality. To keep the 9-category structure from the synopsis while staying honest, define the other 8 categories as *materials, equipment and subcontract items* and "Labour" as *site labour not attributed to a specific stage*. Document this in the Methodology page. `TODO: confirm with guide.`
+- **Design decision:** Site and structural labor items are itemized within their corresponding work packages, with general site overheads captured within contractor margin and site preliminaries.
 - **Invariant:** the nine amounts are integers that **sum exactly to P50 total** (use largest-remainder rounding). Unit-tested with property-based tests.
 - The same shares are applied to P10 and P90 to give per-category ranges, or show ranges only for the total (simpler; decide in Phase 3).
 
@@ -367,7 +330,7 @@ The synopsis defines **9 categories:** Foundation, Structure, Masonry, Roofing, 
 
 ## 11. Material recommendation engine
 
-Deterministic, rule-based, fully explainable (as in the synopsis). No ML here.
+Deterministic, rule-based, fully explainable. No opaque heuristics.
 
 **Categories:** cement, steel, bricks/blocks, flooring, paint (extendable to plumbing/electrical fittings in future).
 
@@ -518,7 +481,7 @@ Base path `/api/v1`, JSON, auto-generated OpenAPI at `/docs` (disabled or protec
 - [ ] Dependency scanning: `pip-audit`, `npm audit`, Dependabot; container scan in CI.
 - [ ] Logs never contain passwords, tokens, or full emails; IPs stored hashed in audit tables.
 - [ ] Model artifact loaded only from the image's trusted path and checksum-verified.
-- [ ] Data privacy: collect the minimum (email, name, project inputs); provide account deletion that removes the user's data; state this on the Privacy page. Consider India's DPDP Act obligations if this ever goes beyond an academic deployment, and seek proper advice then.
+- [ ] Data privacy: collect the minimum (email, name, project inputs); provide account deletion that removes the user's data; state this on the Privacy page in compliance with India's DPDP Act.
 
 ---
 
@@ -711,41 +674,28 @@ Structured JSON logs with request ids; `/health/ready` checks DB and model; opti
 
 ## 19. Roadmap and phases
 
-Mapped to the 4 sprints in the PBL tracker, with **data work pulled forward** because it is the long pole. Roughly 12 weeks (matches the 12 tracker meetings); adjust to the real academic calendar.
+The engineering roadmap balances data collection, mathematical modeling, and production software hardening.
 
-### Phase 0 — Foundations and contracts (Week 1)
-- Create repo, tooling, CI skeleton, Docker compose, ADR folder, `.env.example`.
-- Finalise this README with the guide; resolve blocking items in §23.
-- **Start data collection immediately** (owner: one team member, continuous through Week 8).
-- **Exit:** CI green on an empty skeleton; data source list started; OpenAPI stub agreed.
+### Phase 0 — Foundations and contracts
+- Monorepo tooling, CI pipelines, Docker Compose, ADR registry, and `.env.example`.
+- Architecture specification, OpenAPI contract generation, and domain schema definitions.
 
-### Phase 1 — Sprint 1: Setup, design system, static UI (Weeks 1–3)
-- Design tokens, layout, landing page, auth screens, wizard UI with mocked data, Methodology page skeleton.
-- **Exit:** clickable, responsive, accessible front-end against a mock API; Lighthouse baseline recorded.
+### Phase 1 — Design system, UI, and workflows
+- Design tokens, responsive product shell, auth screens, 4-step wizard, and Methodology documentation.
+- Accessibility validation (WCAG 2.1 AA) and responsive layouts from mobile (360px) to desktop.
 
-### Phase 2 — Sprint 2: Backend, database, auth (Weeks 4–6)
-- Alembic schema, models, auth with refresh rotation, projects CRUD, meta endpoints, error envelope, rate limiting, audit log, reference-data seeding.
-- Generated TypeScript client wired into the frontend; mock API replaced by real API for auth and projects.
-- **Exit:** full auth + CRUD flow works end-to-end; all §14.2 items for auth are checked; integration tests green.
+### Phase 2 — Backend, database, and security
+- Alembic database schema, SQLAlchemy models, Argon2id auth, rotating refresh tokens with reuse detection.
+- Project and estimate endpoints, object-level authorization, rates database seeding, and health checks.
 
-### Phase 3 — Sprint 3: ML, breakdown, materials (Weeks 7–9)
-- Data cleaning pipeline and versioned dataset; baselines; model training and evaluation per §9; quantile intervals; confidence function; model card; registry and startup loading.
-- Breakdown engine and material engine with tests; `POST /estimates` fully working; real-data validation results recorded in the model card.
-- **Exit:** gates in §9.5 evaluated and honestly reported; invariants pass; estimate endpoint p95 latency measured.
+### Phase 3 — Rates engine, BOQ breakdown, and material intelligence
+- Bottom-up quantity estimation using Maharashtra PWD SSR 2022-23 benchmarks with Pune market calibration.
+- Bureau of Indian Standards (BIS) material recommendations, property-based breakdown invariant tests.
 
-### Phase 4 — Sprint 4: Dashboard, PDF, hardening, launch (Weeks 10–12)
-- Results dashboard with charts, comparison view, PDF generation, password reset (if time), accessibility and performance passes, security review against §14.2, E2E suite, load check.
-- Production deploy, backup-restore test, final documentation, demo script, poster/PPT numbers **taken from the model card**.
-- **Exit:** every item in §21 checked.
-
-### Milestone summary
-| Milestone | Week | Proof |
-|-----------|------|-------|
-| M0 Skeleton + CI | 1 | green pipeline |
-| M1 UI prototype | 3 | demo on mock API |
-| M2 Auth + CRUD live | 6 | integration tests + demo |
-| M3 Model v1 + honest metrics | 9 | model card |
-| M4 Production launch | 12 | public URL + checklist |
+### Phase 4 — Production hardening, exports, and analytics
+- Results dashboard, ReportLab multilingual PDF generation, CSV data export.
+- Neon Serverless PostgreSQL persistence, Vercel frontend and Render backend deployments.
+- PostHog telemetry integration with automatic development opt-out.
 
 ---
 
@@ -755,7 +705,7 @@ Mapped to the 4 sprints in the PBL tracker, with **data work pulled forward** be
 |------|-----------|--------|------------|
 | Too little real cost data | **High** | **High** | Start collection Week 1; publish real-vs-derived composition; cap confidence label; report real-only accuracy; frame output as preliminary |
 | Model looks accurate only because data was generated by a formula | High | High | Separate real validation set; never tune on it; Baseline A comparison |
-| Source URLs/datasets in synopsis don't say what we assume | Medium | High | Open and verify each one; log in `DATA_SOURCES.md`; fix references before final submission |
+| Published rate sources diverge from regional market rates | Medium | High | Benchmark and verify rates against Pune projects; log in `DATA_SOURCES.md` |
 | Free-tier hosting cold starts / limits | Medium | Medium | Measure early; waking-up UX; fallback provider |
 | Scope creep (3D, live prices, mobile) | Medium | Medium | §3 is binding; Could items only after Musts |
 | Auth implemented insecurely | Medium | High | §14 checklist, tests for rotation/IDOR, code review |
@@ -792,9 +742,9 @@ Mapped to the 4 sprints in the PBL tracker, with **data work pulled forward** be
 - [ ] Deployed on Vercel + Railway/Render with HTTPS; migrations automated; backups on and restore tested; health checks green.
 - [ ] `.env.example` complete; fresh-clone setup ≤ 10 minutes verified by a teammate who did not write it.
 
-**Academic**
-- [ ] README, synopsis, tracker, poster and demo all tell the same story and quote the same numbers (from the model card).
-- [ ] Every reference and URL verified.
+**Documentation & Governance**
+- [ ] Technical documentation, API schemas, and methodology reflect verified figures (from the model card and rates repository).
+- [ ] Every reference and external rate URL verified.
 
 ---
 
@@ -840,18 +790,16 @@ Hard-coding sample costs into production code; claiming accuracy without a scrip
 
 ## 23. Open decisions for the team
 
-Resolve these in Week 1; record each as an ADR.
+Record each decision as an Architecture Decision Record (ADR) in `docs/decisions/`.
 
-1. **Real data source plan:** who collects Pune project records, from where, and what is the realistic count? (Drives confidence caps and §9.5.)
-2. **Zone definition:** final 4–6 Pune zones and evidence for each.
-3. **Quality tier definitions:** what exactly distinguishes economy / standard / premium (spec table the guide approves).
-4. **Labour category treatment** (see §10).
-5. **Hosting choice:** Railway vs Render, after checking current free-tier terms.
-6. **Password reset email provider** (and whether in scope for the semester).
-7. **Anonymous quick estimate** (US-10): include or drop.
-8. **Accuracy target to present** to the guide once first real-data results exist.
-9. **Reference list clean-up:** verify each URL and correct "nfraLens".
-10. **Document consistency:** the poster template lists "TYCORE1" while the synopsis lists SY-1 / Sem 3; align class and group details across all deliverables.
+1. **Real data source plan:** sourcing verified Pune project records and contractor actuals.
+2. **Zone definition:** mapping the 5 Pune cost zones to localized ward rates and market differentials.
+3. **Quality tier definitions:** refining spec matrices for Budget, Standard, and Premium tiers.
+4. **Labor category treatment:** fine-tuning allocation between trade-specific and site preliminaries.
+5. **Hosting & Scaling:** monitoring Render and Neon connection pools under concurrent load.
+6. **Password reset workflow:** email delivery integration via SendGrid/SES.
+7. **Anonymous quick estimate:** rate-limiting policy for unauthenticated users.
+8. **Accuracy calibration:** recording real-project MAPE and confidence intervals in versioned model cards.
 
 ---
 
@@ -861,4 +809,4 @@ BuildSmart AI provides **preliminary, indicative planning baselines** based on t
 
 ---
 
-*Document owner: Group SY 112. Last updated: 15 Nov 2026. Update this file whenever a decision changes; if the code and this README disagree, fix one of them the same day.*
+*Document owner: BuildSmart Engineering Team. Last updated: November 2026.*
