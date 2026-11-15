@@ -109,8 +109,8 @@ async def test_create_and_fetch_estimate(client: AsyncClient) -> None:
         assert total_p50 == 7125000
         assert est_data["total"]["p10"] == 6412500
         assert est_data["total"]["p90"] == 8193750
-        assert est_data["model"]["version"] == "1.0.0"
-        assert est_data["model"]["data_version"] == "v1.0.0"
+        assert est_data["model"]["version"] == "test-engine-9.9"
+        assert est_data["model"]["data_version"] == "test-dataset-9.9"
 
         # Verify 9 categories sum EXACTLY to P50 total
         breakdown = est_data["breakdown"]
