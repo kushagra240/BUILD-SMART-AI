@@ -35,30 +35,31 @@ def get_test_db_url() -> str:
 
 @pytest_asyncio.fixture(scope="session")
 async def test_engine() -> AsyncGenerator[AsyncEngine, None]:
-    """Create async engine for test DB (PostgreSQL in CI, SQLite fallback locally)."""
+    """Create the async engine for the configured test database.
+
+    DB-backed tests require PostgreSQL (CI runs postgres:16). There is
+    deliberately no SQLite fallback: a silent engine swap made local runs look
+    green while proving nothing about PostgreSQL (AGENTS.md section 9). Set
+    TEST_DATABASE_URL, or DATABASE_URL pointing at a test database, to run them.
+    """
     db_url = get_test_db_url()
     try:
         engine = create_async_engine(db_url, echo=False, pool_pre_ping=True)
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
-    except Exception:
-        fallback_url = "sqlite+aiosqlite:///local_test.db"
-        engine = create_async_engine(fallback_url, echo=False)
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+    except Exception as exc:
+        raise RuntimeError(
+            "Test database unreachable. DB-backed tests need PostgreSQL; "
+            "set TEST_DATABASE_URL or DATABASE_URL. There is no SQLite "
+            f"fallback by design (engine error: {type(exc).__name__})."
+        ) from exc
 
     yield engine
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
-    if os.path.exists("local_test.db"):
-        try:
-            os.remove("local_test.db")
-        except OSError:
-            pass
 
 
 @pytest_asyncio.fixture
