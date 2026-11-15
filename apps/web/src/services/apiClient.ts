@@ -206,7 +206,7 @@ class ApiClient {
   private accessToken: string | null = null;
   private refreshPromise: Promise<TokenResponse> | null = null;
   private unauthorizedHandler: (() => void) | null = null;
-  private baseUrl = '/api/v1';
+  private baseUrl = API_URL;
 
   setAccessToken(token: string | null) {
     this.accessToken = token;
@@ -338,7 +338,7 @@ class ApiClient {
         response.status,
         'NOT_A_PDF',
         `Expected a PDF but the server returned "${contentType || 'no content type'}". ` +
-          'The PDF export endpoint may not be deployed yet.'
+        'The PDF export endpoint may not be deployed yet.'
       );
     }
 
